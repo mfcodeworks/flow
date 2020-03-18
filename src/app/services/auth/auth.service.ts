@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, of, BehaviorSubject, iif, forkJoin } from 'rxjs';
-import { map, filter, tap, mergeMap, mergeMapTo, switchMap } from 'rxjs/operators';
+import { Observable, of, BehaviorSubject, iif } from 'rxjs';
+import { map, filter, tap, mergeMap } from 'rxjs/operators';
 import { UserService } from '../user/user.service';
 import { CacheService } from '../cache/cache.service';
 import { Profile } from 'src/app/main/core/profile';

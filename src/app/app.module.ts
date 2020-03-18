@@ -20,6 +20,7 @@ import { ThemeService } from './services/theme/theme.service';
 import { CacheService } from './services/cache/cache.service';
 import { NotificationService } from './services/notification/notification.service';
 import { environment } from '../environments/environment';
+import { NetworkService } from './services/network/network.service';
 
 @NgModule({
     declarations: [AppComponent],
@@ -46,8 +47,10 @@ import { environment } from '../environments/environment';
                 z: ZoomService,
                 t: ThemeService,
                 c: CacheService,
-                n: NotificationService
+                n: NotificationService,
+                net: NetworkService
             ) => () => {
+                net.init();
                 c.init();
                 z.init();
                 t.init();
@@ -57,7 +60,8 @@ import { environment } from '../environments/environment';
                 ZoomService,
                 ThemeService,
                 CacheService,
-                NotificationService
+                NotificationService,
+                NetworkService
             ],
             multi: true
         }
