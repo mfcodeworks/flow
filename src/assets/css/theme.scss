@@ -1,0 +1,28 @@
+@import '~@angular/material/theming';
+@import './component-themes.scss';
+@import './colors.scss';
+
+@include mat-core();
+
+// $background-color: map-get($custom-yellow, 100);
+
+$primary: mat-palette($custom-dark-purple, 500);
+$accent: mat-palette($custom-pink, 500);
+$warn: mat-palette($custom-orange, 500);
+$theme: mat-light-theme($primary, $accent, $warn);
+
+@include angular-material-theme($theme);
+@include component-themes($theme);
+
+.dark-theme {
+    // $background-color: #000;
+    // $primary: mat-palette($mat-grey, 800, A200, 900);
+    $dark-theme: mat-dark-theme($primary, $accent, $warn);
+
+    // $background: map-get($dark-theme, background);
+    // $background: map_merge($background, (background: $background-color));
+    // $dark-theme: map_merge($dark-theme, (background: $background));
+
+    @include component-themes($dark-theme);
+    @include angular-material-theme($dark-theme);
+}

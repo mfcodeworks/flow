@@ -1,0 +1,21 @@
+<div class='m-3 px-3'>
+    <h1 mat-dialog-title>Encrypt Login</h1>
+    <div mat-dialog-content class='d-flex flex-column justify-content-center'>
+        <form [formGroup]='encryptForm'>
+            <mat-form-field>
+                <mat-label>Password</mat-label>
+                <input matInput type='password' autocomplete="off" formControlName='password'>
+                <mat-error *ngIf="encryptForm.controls['password'].invalid">{{ getErrors('password') }}</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Confirm Password</mat-label>
+                <input matInput type='password' autocomplete="off" formControlName='password_repeat'>
+                <mat-error *ngIf="encryptForm.controls['password_repeat'].invalid">{{ getErrors('password_repeat') }}</mat-error>
+            </mat-form-field>
+        </form>
+    </div>
+    <div mat-dialog-actions class='d-flex flex-row justify-content-around'>
+        <button color='accent' mat-raised-button (click)='onNoClick()'>Cancel</button>
+        <button color='primary' mat-raised-button (click)='onSuccess()'>Save</button>
+    </div>
+</div>

@@ -1,29 +1,101 @@
+<!--
 <ion-app>
-  <ion-split-pane contentId="main-content">
-    <ion-menu contentId="main-content" type="overlay">
-      <ion-content>
-        <ion-list id="inbox-list">
-          <ion-list-header>Inbox</ion-list-header>
-          <ion-note>hi@ionicframework.com</ion-note>
+    <ion-split-pane contentId="main-content">
+        <ion-menu contentId="main-content" type="overlay">
+            <ion-content>
+                <ion-list id="inbox-list">
+                    <ion-list-header>Inbox</ion-list-header>
+                    <ion-note>hi@ionicframework.com</ion-note>
 
-          <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
-            <ion-item (click)="selectedIndex = i" routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" [class.selected]="selectedIndex == i">
-              <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
-              <ion-label>{{ p.title }}</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-        </ion-list>
+                    <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
+                        <ion-item (click)="selectedIndex = i" routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" [class.selected]="selectedIndex == i">
+                        <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
+                        <ion-label>{{ p.title }}</ion-label>
+                        </ion-item>
+                    </ion-menu-toggle>
+                </ion-list>
 
-        <ion-list id="labels-list">
-          <ion-list-header>Labels</ion-list-header>
+                <ion-list id="labels-list">
+                    <ion-list-header>Labels</ion-list-header>
 
-          <ion-item *ngFor="let label of labels" lines="none">
-            <ion-icon slot="start" ios="bookmark-outline" md="bookmark-sharp"></ion-icon>
-            <ion-label>{{ label }}</ion-label>
-          </ion-item>
-        </ion-list>
-      </ion-content>
-    </ion-menu>
-    <ion-router-outlet id="main-content"></ion-router-outlet>
-  </ion-split-pane>
+                    <ion-item *ngFor="let label of labels" lines="none">
+                        <ion-icon slot="start" ios="bookmark-outline" md="bookmark-sharp"></ion-icon>
+                        <ion-label>{{ label }}</ion-label>
+                    </ion-item>
+                </ion-list>
+            </ion-content>
+        </ion-menu>
+        <ion-router-outlet id="main-content"></ion-router-outlet>
+    </ion-split-pane>
+</ion-app>
+-->
+<ion-app>
+    <mat-progress-bar *ngIf="loading" color="warn" mode="indeterminate"></mat-progress-bar>
+    <mat-toolbar color='primary' class='sticky-top mat-elevation-z10 d-flex flex-row justify-content-between'>
+        <i *ngIf='smallView' class="fas fa-bars ml-3" (click)='onSidenavClick()'></i>
+        <div class='py-2 h-100 dark-theme'>
+            <div class='logo-branded h-100' (click)='sidenav.toggle()'></div>
+        </div>
+        <i *ngIf='smallView' class="fas fa-search mr-3" [routerLink]="['/search']"></i>
+    </mat-toolbar>
+
+    <mat-sidenav-container class='vh-100'>
+        <mat-sidenav #sidenav
+            class='col-8 col-md-2'
+            [mode]='smallView ? "over" : "side"'
+            [opened]='!smallView'
+            [fixedTopGap]='topOffset'
+            fixedInViewport>
+            <div class='w-100 mt-3 ml-1 text-center'>
+                <mat-nav-list *ngIf='!(auth.loggedIn | async)'>
+                    <a mat-list-item
+                        (click)='onSidenavClick()'
+                        [routerLink]="['/login']">Login</a>
+
+                    <a mat-list-item
+                        (click)='onSidenavClick()'
+                        [routerLink]="['/register']">Sign Up</a>
+
+                    <a mat-list-item
+                        (click)='onSidenavClick()'
+                        [routerLink]="['/password/reset']">Reset Password</a>
+                </mat-nav-list>
+                <mat-nav-list *ngIf='auth.loggedIn | async'>
+                    <a mat-list-item
+                        (click)='onSidenavClick()'
+                        [routerLink]="['/']">Wallet</a>
+
+                    <a mat-list-item
+                        *ngIf='!!user$.profile.stripeConnectId'
+                        (click)='onSidenavClick()'
+                        [routerLink]="['/withdraw']">Withdraw</a>
+
+                    <a mat-list-item
+                        (click)='onSidenavClick()'
+                        [routerLink]="['/search']">Search</a>
+
+                    <a mat-list-item
+                        (click)='onSidenavClick()'
+                        [routerLink]="['/profile/', user$.profile.id]">Profile</a>
+
+                    <a mat-list-item
+                        *ngIf='!!user$.profile.stripeConnectId'
+                        (click)='onSidenavClick()'
+                        [routerLink]="['transaction/create']"
+                        [queryParams]="{ to: 'me' }">Top-up Wallet</a>
+
+                    <a mat-list-item
+                        [routerLink]="['/settings']"
+                        (click)='onSidenavClick()'>Settings</a>
+                </mat-nav-list>
+                <button *ngIf='auth.loggedIn | async'
+                    class='mt-2'
+                    mat-button color='accent'
+                    (click)='auth.doSignOut()'>Logout</button>
+            </div>
+        </mat-sidenav>
+        <mat-sidenav-content>
+            <router-outlet></router-outlet>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
 </ion-app>

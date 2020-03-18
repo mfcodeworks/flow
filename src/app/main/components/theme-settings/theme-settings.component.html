@@ -1,0 +1,11 @@
+<mat-form-field>
+    <mat-label>Theme</mat-label>
+    <mat-select [value]="_theme.currentTheme()">
+        <mat-option *ngFor="let theme of _theme.availableThemes()" [value]='theme'>
+            {{ theme | titlecase }}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+<br>
+<mat-slide-toggle [checked]='_theme.isDarkMode() | async' (change)='onToggleDarkMode($event)'>Dark Mode</mat-slide-toggle>
+<br>

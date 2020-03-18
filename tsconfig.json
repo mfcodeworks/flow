@@ -11,6 +11,7 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "es2015",
+    "types": ["node"],
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -20,7 +21,8 @@
     ]
   },
   "angularCompilerOptions": {
-    "strictTemplates": true,
+    "strictTemplates": false,
+    "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true,
     "disableTypeScriptVersionCheck": true
   }

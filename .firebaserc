@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "nr-wallet-5e82a": {
+      "hosting": {
+        "app": [
+          "nr-wallet-5e82a"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+<form [formGroup]='settingsForm' class='text-left d-flex flex-column justify-content-start'>
+    <mat-form-field>
+        <mat-label>Username</mat-label>
+        <input matInput formControlName='username'>
+        <mat-error *ngIf="settingsForm.controls['username'].invalid">{{ getErrors('username') }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput formControlName='email'>
+        <mat-error *ngIf="settingsForm.controls['email'].invalid">{{ getErrors('email') }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput type='password' autocomplete="off" formControlName='password'>
+        <mat-error *ngIf="settingsForm.controls['password'].invalid">{{ getErrors('password') }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Confirm Password</mat-label>
+        <input matInput type='password' autocomplete="off" formControlName='password_repeat'>
+        <mat-error *ngIf="settingsForm.controls['password_repeat'].invalid">{{ getErrors('password_repeat') }}</mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button
+        class='my-3'
+        color='primary'
+        type='submit'
+        [disabled]='processing | async'
+        (click)='onSubmit()'>
+        Save
+        <i *ngIf='processing | async' class='far fa-spin fa-spinner'></i>
+    </button>
+</form>

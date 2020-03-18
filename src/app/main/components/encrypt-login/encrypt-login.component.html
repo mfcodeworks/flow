@@ -1,0 +1,5 @@
+<form [formGroup]='encryptForm'>
+    <mat-slide-toggle
+        formControlName='encrypt'
+        (change)='onEncryptLogin($event)'>Encrypt Login</mat-slide-toggle>
+</form>

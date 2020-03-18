@@ -1,0 +1,35 @@
+{
+  "name": "flow",
+  "version": "0.0.2",
+  "author": "MF Softworks <arranjamesfletcher2012@gmail.com>",
+  "description": "An Amazing Capacitor App",
+  "main": "index.js",
+  "scripts": {
+    "electron:start": "electron ./",
+    "electron:windows": "electron-builder build --windows",
+    "electron:mac": "electron-builder build --mac",
+    "electron:linux": "electron-builder build --linux"
+  },
+  "dependencies": {
+    "@capacitor/electron": "^1.5.1",
+    "electron-is-dev": "^1.1.0"
+  },
+  "devDependencies": {
+    "electron": "^7.0.0"
+  },
+  "keywords": [
+    "capacitor",
+    "electron"
+  ],
+  "license": "ISC",
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-zip"
+        }
+      ]
+    }
+  }
+}

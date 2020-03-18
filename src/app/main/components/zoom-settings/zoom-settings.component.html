@@ -1,0 +1,13 @@
+<mat-button-toggle-group
+    *ngIf='isElectron'
+    name="zoomLevel"
+    aria-label="Zoom Level"
+    appearance="legacy"
+    [value]='zoomLevel'
+    (change)='onZoomChange($event)'>
+    <mat-button-toggle value="100">100%</mat-button-toggle>
+    <mat-button-toggle value="125">125%</mat-button-toggle>
+    <mat-button-toggle value="150">150%</mat-button-toggle>
+    <mat-button-toggle value="175">175%</mat-button-toggle>
+    <mat-button-toggle value="200">200%</mat-button-toggle>
+</mat-button-toggle-group>

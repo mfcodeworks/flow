@@ -1,0 +1,33 @@
+<mat-progress-bar *ngIf="loading" mode="indeterminate" color='accent' class='w-100 my-0 py-0'></mat-progress-bar>
+
+<div class='row h-100 w-100'>
+    <div class='col-12 col-md-6'>
+        <div class='d-flex flex-column justify-content-start mx-3'>
+            <!-- Search Input -->
+            <mat-form-field class="mx-a mt-3">
+                <span matPrefix><i class="ti-search mr-2"></i></span>
+                <input matInput #search type="search" placeholder="Search" autofocus>
+            </mat-form-field>
+
+            <!-- Display search results -->
+            <span *ngIf="!(profiles | async)?.length">
+                <p class="mat-body error-placeholder">
+                    Haven't found anything yet&hellip;
+                </p>
+            </span>
+            <mat-list class="mb-2">
+                <mat-list-item *ngFor="let result of profiles | async">
+                    <mat-divider></mat-divider>
+                    <!-- <img matListAvatar [src]="result.profilePic" class="avatar"  [routerLink]="['/profile', result.username]"/> -->
+                    <h4 matLine [routerLink]="['/profile', result.id]" class="mat-h3">{{result.username}}</h4>
+                </mat-list-item>
+            </mat-list>
+        </div>
+    </div>
+
+    <div class='col-12 col-md-6 d-none d-md-flex flex-column justify-content-center align-items-center'>
+        <div class='my-auto'>
+            <app-quotes></app-quotes>
+        </div>
+    </div>
+</div>

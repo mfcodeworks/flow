@@ -1,0 +1,22 @@
+<div *ngIf='source$ | async; let source' class='text-center'>
+    <h1 mat-dialog-title *ngIf='source.type == "card"'>
+        <i class='fab fa-cc-{{source.card.brand}}'></i>
+        {{ source.card.brand | titlecase }}
+    </h1>
+    <div mat-dialog-content>
+        <div class='mat-h3'>
+            **** **** **** {{ source.card.last4 }}
+            &mdash; {{ source.card.exp_month }}/{{ source.card.exp_year }}
+        </div>
+    </div>
+    <div mat-dialog-actions class='pb-4'>
+        <button class='mx-auto'
+            color='accent'
+            mat-raised-button
+            (click)='onDelete()'
+            [disabled]='processing'>
+            Delete
+            <i *ngIf='processing' class='ml-2 fas fa-spin fa-spinner'></i>
+        </button>
+    </div>
+</div>

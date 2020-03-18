@@ -1,0 +1,25 @@
+<div class='my-3'>
+    <h1 mat-dialog-title>Save Payment Source</h1>
+    <div mat-dialog-content class='d-flex flex-column justify-content-center'>
+        <mat-form-field>
+            <mat-label>Type</mat-label>
+            <mat-select [(value)]="type" required>
+                <mat-option value="card">Debit/Credit Card</mat-option>
+                <!-- FIXME: IBAN not yet implemented
+                <mat-option value="iban">Bank (SEPA)</mat-option> -->
+            </mat-select>
+        </mat-form-field>
+
+        <div [class.d-none]="type != 'card'" #cardElement class='my-3' id='card-element'></div>
+        <div [class.d-none]="type != 'iban'" #sepaElement class='my-3' id='sepa-element'></div>
+    </div>
+    <div mat-dialog-actions class='d-flex flex-row justify-content-around'>
+        <button color='accent' mat-raised-button (click)='onCancel()'>Cancel</button>
+        <button color='primary'
+            [disabled]='processing'
+            mat-raised-button
+            (click)='createPaymentMethod()'>
+            Save <i *ngIf='processing' class='ml-2 fas fa-spin fa-spinner'></i>
+        </button>
+    </div>
+</div>

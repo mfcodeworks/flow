@@ -23,9 +23,20 @@ npm-debug.log*
 /.sourcemaps
 /.versions
 /.vscode
+/wrangler.toml
 /coverage
 /dist
 /node_modules
 /platforms
 /plugins
+/workers-site
 /www
+
+# Releases
+android/app/build/outputs
+electron/release
+
+# Env
+android/app/google-services.json
+google-services.json
+GoogleService-Info.plist

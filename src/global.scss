@@ -24,3 +24,102 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+/* Vendor styles */
+@import "~bootstrap/dist/css/bootstrap.min.css";
+@import "~@fortawesome/fontawesome-free/css/all.min.css";
+@import "assets/css/themify-icons.css";
+
+/* Theme Specific Styling */
+@import "assets/css/theme.scss";
+
+/* Remove Scrollbars Globally */
+* {
+    -ms-overflow-style: none;  // IE 10+
+    scrollbar-width: none;  // Firefox
+    scroll-behavior: smooth;
+}
+::-webkit-scrollbar, *::-webkit-scrollbar {
+    display: none;
+}
+ion-content {
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;  // IE 10+
+    scrollbar-width: none;  // Firefox
+    scroll-behavior: smooth;
+
+    &::-webkit-scrollbar {
+        display: none; // Safari and Chrome
+    }
+}
+
+*, *:focus, *:active {
+    /* Remove accessibility outline */
+    // outline: none !important;
+    // box-shadow: none;
+    // -webkit-box-shadow: none;
+    // -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+    // -webkit-tap-highlight-color: transparent !important;
+    /* Set better text rendering */
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Optimize mobile scrolling and longpress */
+    // -webkit-overflow-scrolling: touch;
+    // -webkit-touch-callout: none;
+    // -webkit-user-select: none;
+    // -khtml-user-select: none;
+    // -webkit-appearance: none;
+    // -moz-user-select: none;
+    // -ms-user-select: none;
+    // user-select: none;
+    /* Optimize image view */
+    image-rendering: -moz-crisp-edges; /* Firefox */
+    image-rendering: -o-crisp-edges; /* Opera */
+    image-rendering: -webkit-optimize-contrast; /* Webkit (non-standard naming) */
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    -webkit-overflow-scrolling: touch;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.logo-branded, .logo {
+    background-size: contain;
+    background-repeat: no-repeat;
+    min-width: 70px;
+    background-position: center;
+}
+.logo {
+    background-image: url("assets/images/logo-marker.png");
+}
+.logo-branded {
+    background-image: url("assets/images/Logo_Transparent-scaledown.png") !important;
+}
+.dark-theme .logo {
+    background-image: url("assets/images/logo-white.png");
+}
+.dark-theme .logo-branded {
+    background-image: url("assets/images/Logo_Transparent_White-scaledown.png") !important;
+}
+.avatar {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50%;
+}
+.ptr--icon,
+.ptr--text {
+    color: rgba(0, 0, 0, 0.87) !important;
+}
+.dark-theme .ptr--icon,
+.dark-theme .ptr--text {
+    color: rgba(250, 250, 250, 0.87) !important;
+}
+.text-black,
+.icon-black {
+    color: rgba(0, 0, 0, 0.87);
+}
