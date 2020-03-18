@@ -38,7 +38,7 @@ export class AppComponent implements OnInit {
         this.platform.ready().then(() => {
             this.statusBar.styleDefault();
             this.splashScreen.hide();
-            
+
             this.router.events.pipe(delay(0))
             .subscribe((event: any) => {
                 switch (true) {
@@ -77,12 +77,16 @@ export class AppComponent implements OnInit {
         this.onResize();
     }
 
-    onResize() {
+    doSignOut(): void {
+        this.auth.doSignOut();
+    }
+
+    onResize(): void {
         this.smallView = window.innerWidth < 768
         this.topOffset = window.innerWidth < 600 ? 52 : 56
     }
 
-    onSidenavClick() {
+    onSidenavClick(): void {
         this.smallView ? this.sidenav.toggle() : void(0);
     }
 }
