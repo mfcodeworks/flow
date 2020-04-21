@@ -1,111 +1,36 @@
-<!--
 <ion-app>
-    <ion-split-pane contentId="main-content">
-        <ion-menu contentId="main-content" type="overlay">
-            <ion-content>
-                <ion-list id="inbox-list">
-                    <ion-list-header>Inbox</ion-list-header>
-                    <ion-note>hi@ionicframework.com</ion-note>
+    <app-top-bar>
+        <ion-buttons slot="start">
+            <ion-menu-toggle id='main-menu-toggle' menu='dir'>
+                <ion-button><ion-icon slot='icon-only' name="menu-outline"></ion-icon></ion-button>
+            </ion-menu-toggle>
+        </ion-buttons>
+    </app-top-bar>
 
-                    <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
-                        <ion-item (click)="selectedIndex = i" routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" [class.selected]="selectedIndex == i">
-                        <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
-                        <ion-label>{{ p.title }}</ion-label>
+    <ion-split-pane contentId="main">
+        <ion-menu side='start' menuId='dir' contentId="main" type="overlay">
+            <ion-content>
+                <ion-list id="dir-list">
+                    <ng-container *ngFor='let l of activeLinks() | async'>
+                        <ion-menu-toggle auto-hide="false" *ngIf='l.condition'>
+                            <ion-item routerDirection="root"
+                                [routerLink]="l?.link"
+                                [queryParams]="l?.params"
+                                detail="false">
+                                <ion-icon *ngIf='l?.icon' slot='start' class='{{ l.icon }}'></ion-icon>
+                                <ion-label>{{ l.name }}</ion-label>
+                            </ion-item>
+                        </ion-menu-toggle>
+                    </ng-container>
+                    <ion-menu-toggle auto-hide="false" *ngIf='userSignedIn() | async'>
+                        <ion-item button (click)='doSignOut()'
+                            detail="false">
+                            <ion-label>Logout</ion-label>
                         </ion-item>
                     </ion-menu-toggle>
                 </ion-list>
-
-                <ion-list id="labels-list">
-                    <ion-list-header>Labels</ion-list-header>
-
-                    <ion-item *ngFor="let label of labels" lines="none">
-                        <ion-icon slot="start" ios="bookmark-outline" md="bookmark-sharp"></ion-icon>
-                        <ion-label>{{ label }}</ion-label>
-                    </ion-item>
-                </ion-list>
             </ion-content>
         </ion-menu>
-        <ion-router-outlet id="main-content"></ion-router-outlet>
+        <ion-router-outlet id="main"></ion-router-outlet>
     </ion-split-pane>
-</ion-app>
--->
-<ion-app>
-    <ion-header>
-        <ion-progress-bar *ngIf="loading" color="danger" type="indeterminate"></ion-progress-bar>
-        <ion-toolbar color='dark' class='w-100 d-flex flex-row justify-content-between'>
-            <ion-buttons slot='start' *ngIf='smallView'>
-                <ion-button (click)='onSidenavClick()'>
-                    <i class="fas fa-bars ml-3 icon-md"></i>
-                </ion-button>
-            </ion-buttons>
-            <ion-avatar (click)='sidenav.toggle()' class='w-100 d-flex flex-row'>
-                <div class='logo-branded w-100 h-100'></div>
-            </ion-avatar>
-            <ion-buttons slot='end' *ngIf='smallView'>
-                <ion-button>
-                    <i class="fas fa-search mr-3 icon-md" [routerLink]="['/search']"></i>
-                </ion-button>
-            </ion-buttons>
-        </ion-toolbar>
-    </ion-header>
-
-    <mat-sidenav-container class='vh-100'>
-        <mat-sidenav #sidenav
-            class='col-8 col-md-2'
-            [mode]='smallView ? "over" : "side"'
-            [opened]='!smallView'
-            [fixedTopGap]='topOffset'
-            fixedInViewport>
-            <div class='w-100 mt-3 ml-1 text-center'>
-                <mat-nav-list *ngIf='!(auth.loggedIn | async)'>
-                    <a mat-list-item
-                        (click)='onSidenavClick()'
-                        [routerLink]="['/login']">Login</a>
-
-                    <a mat-list-item
-                        (click)='onSidenavClick()'
-                        [routerLink]="['/register']">Sign Up</a>
-
-                    <a mat-list-item
-                        (click)='onSidenavClick()'
-                        [routerLink]="['/password/reset']">Reset Password</a>
-                </mat-nav-list>
-                <mat-nav-list *ngIf='auth.loggedIn | async'>
-                    <a mat-list-item
-                        (click)='onSidenavClick()'
-                        [routerLink]="['/']">Wallet</a>
-
-                    <a mat-list-item
-                        *ngIf='!!user$.profile.stripeConnectId'
-                        (click)='onSidenavClick()'
-                        [routerLink]="['/withdraw']">Withdraw</a>
-
-                    <a mat-list-item
-                        (click)='onSidenavClick()'
-                        [routerLink]="['/search']">Search</a>
-
-                    <a mat-list-item
-                        (click)='onSidenavClick()'
-                        [routerLink]="['/profile/', user$.profile.id]">Profile</a>
-
-                    <a mat-list-item
-                        *ngIf='!!user$.profile.stripeConnectId'
-                        (click)='onSidenavClick()'
-                        [routerLink]="['transaction/create']"
-                        [queryParams]="{ to: 'me' }">Top-up Wallet</a>
-
-                    <a mat-list-item
-                        [routerLink]="['/settings']"
-                        (click)='onSidenavClick()'>Settings</a>
-                </mat-nav-list>
-                <button *ngIf='auth.loggedIn | async'
-                    class='mt-2'
-                    mat-button color='accent'
-                    (click)='doSignOut()'>Logout</button>
-            </div>
-        </mat-sidenav>
-        <mat-sidenav-content>
-            <router-outlet #main></router-outlet>
-        </mat-sidenav-content>
-    </mat-sidenav-container>
 </ion-app>

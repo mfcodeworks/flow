@@ -21,9 +21,13 @@ import { CacheService } from './services/cache/cache.service';
 import { NotificationService } from './services/notification/notification.service';
 import { environment } from '../environments/environment';
 import { NetworkService } from './services/network/network.service';
+import { TopBarComponent } from './shared/components/top-bar/top-bar.component';
 
 @NgModule({
-    declarations: [AppComponent],
+    declarations: [
+        TopBarComponent,
+        AppComponent
+    ],
     entryComponents: [],
     imports: [
         BrowserModule,

@@ -1,10 +1,17 @@
-.icon-md {
-  font-size: 18px;
-}
-ion-menu {
-  max-width: 268px;
-}
+/* Set default safe space and width */
 ion-split-pane {
-  --side-max-width: 100%;
-  --side-width: 100%;
+    top: 56px;
+}
+
+/* Hide menu button for large screens */
+@media(min-width: 992px) {
+    #main-menu-toggle {
+        display: none;
+    }
+}
+/* Set secondary safe space */
+@media(min-width: 768px) {
+    ion-split-pane {
+        --side-max-width: 256px;
+    }
 }

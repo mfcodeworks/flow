@@ -11,7 +11,7 @@
     "electron:linux": "electron-builder build --linux"
   },
   "dependencies": {
-    "@capacitor/electron": "^1.5.1",
+    "@capacitor/electron": "^2.0.1",
     "electron-is-dev": "^1.1.0"
   },
   "devDependencies": {
