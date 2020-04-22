@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { UserService } from '../../../../services/user/user.service';
+import { UserService } from '../../../../../services/user/user.service';
 import { tap, mergeMap } from 'rxjs/operators';
-import { CacheService } from '../../../../services/cache/cache.service';
+import { CacheService } from '../../../../../services/cache/cache.service';
 
 export interface EncryptLoginDialogData {
     encrypt: boolean;

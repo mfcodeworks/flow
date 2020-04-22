@@ -1,9 +1,9 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { UserService } from '../../../services/user/user.service';
+import { UserService } from '../../../../services/user/user.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EncryptLoginDialogComponent } from './encrypt-login-dialog/encrypt-login-dialog.component';
-import { CacheService } from '../../../services/cache/cache.service';
+import { CacheService } from '../../../../services/cache/cache.service';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { mergeMap } from 'rxjs/operators';
 

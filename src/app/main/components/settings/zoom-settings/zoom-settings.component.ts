@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
-import { ZoomService } from '../../../services/zoom/zoom.service';
+import { ZoomService } from '../../../../services/zoom/zoom.service';
 
 @Component({
     selector: 'app-zoom-settings',

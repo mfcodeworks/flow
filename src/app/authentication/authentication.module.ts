@@ -9,6 +9,7 @@ import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { AuthorizeComponent } from './components/authorize/authorize.component';
+import { IonicModule } from '@ionic/angular';
 
 // TODO: Fix height of auth components (Follow Authorization page)
 @NgModule({
@@ -23,7 +24,8 @@ import { AuthorizeComponent } from './components/authorize/authorize.component';
     Routing,
     MaterialModule,
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    IonicModule.forRoot()
   ],
   exports: [
     SignInComponent,

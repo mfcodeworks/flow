@@ -10,8 +10,11 @@
             </mat-select>
         </mat-form-field>
 
-        <div [class.d-none]="type != 'card'" #cardElement class='my-3' id='card-element'></div>
-        <div [class.d-none]="type != 'iban'" #sepaElement class='my-3' id='sepa-element'></div>
+        <ng-container [ngSwitch]='type'>
+            <div *ngSwitchCase="'card'" #cardElement class='my-3' id='card-element'></div>
+            <div *ngSwitchCase="'iban'" #sepaElement class='my-3' id='sepa-element'></div>
+        </ng-container>
+
     </div>
     <div mat-dialog-actions class='d-flex flex-row justify-content-around'>
         <button color='accent' mat-raised-button (click)='onCancel()'>Cancel</button>

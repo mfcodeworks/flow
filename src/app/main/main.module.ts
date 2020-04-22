@@ -26,12 +26,13 @@ import { SearchComponent } from './components/search/search.component';
 import { QuotesComponent } from './components/quotes/quotes.component';
 import { DateFilterPipe } from '../main/pipes/date-filter.pipe';
 import { SettingsComponent } from './components/settings/settings.component';
-import { ZoomSettingsComponent } from './components/zoom-settings/zoom-settings.component';
-import { UserSettingsComponent } from './components/user-settings/user-settings.component';
-import { ThemeSettingsComponent } from './components/theme-settings/theme-settings.component';
-import { EncryptLoginComponent } from './components/encrypt-login/encrypt-login.component';
-import { EncryptLoginDialogComponent } from './components/encrypt-login/encrypt-login-dialog/encrypt-login-dialog.component';
+import { ZoomSettingsComponent } from './components/settings/zoom-settings/zoom-settings.component';
+import { UserSettingsComponent } from './components/settings/user-settings/user-settings.component';
+import { ThemeSettingsComponent } from './components/settings/theme-settings/theme-settings.component';
+import { EncryptLoginComponent } from './components/settings/encrypt-login/encrypt-login.component';
+import { EncryptLoginDialogComponent } from './components/settings/encrypt-login/encrypt-login-dialog/encrypt-login-dialog.component';
 import { PaymentSourceDialogComponent } from './components/payment-source-dialog/payment-source-dialog.component';
+import { IonicModule } from '@ionic/angular';
 
 @NgModule({
     imports: [
@@ -39,7 +40,8 @@ import { PaymentSourceDialogComponent } from './components/payment-source-dialog
         CommonModule,
         OverlayModule,
         ReactiveFormsModule,
-        Routing
+        Routing,
+        IonicModule.forRoot()
     ],
     declarations: [
         DateDiffPipe,

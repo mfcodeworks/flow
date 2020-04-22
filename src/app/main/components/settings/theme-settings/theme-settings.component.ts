@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { ThemeService } from '../../../services/theme/theme.service';
+import { ThemeService } from '../../../../services/theme/theme.service';
 
 @Component({
     selector: 'app-theme-settings',
