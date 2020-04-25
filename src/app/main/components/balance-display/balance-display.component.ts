@@ -2,16 +2,22 @@ import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy
 import { MoneyService } from 'src/app/services/money/money.service';
 import { MatSelectChange } from '@angular/material/select';
 
-interface IBalanceAmount {
+interface BalanceAmount {
     amount: number;
     currency: string;
 }
-interface IBalance {
+interface Balance {
     object: string;
-    available: IBalanceAmount[];
-    connect_reserved?: IBalanceAmount[];
+    available: BalanceAmount[];
+    connect_reserved?: BalanceAmount[];
     livemode: boolean;
-    pending: IBalanceAmount[];
+    pending: BalanceAmount[];
+}
+interface BalanceHoldings {
+    currency?: {
+        available: string,
+        pending: string
+    }
 }
 
 @Component({
@@ -22,13 +28,8 @@ interface IBalance {
 })
 export class BalanceDisplayComponent implements OnInit {
     @Output() currency: EventEmitter<string> = new EventEmitter();
-    @Input() balances: IBalance;
-    balance: {
-        currency?: {
-            available: string,
-            pending: string
-        }
-    } = {}
+    @Input() balances: Balance;
+    balance: BalanceHoldings = {}
     balanceCurrencies: string[] = [];
     selectedCurrency: string;
 
@@ -54,7 +55,8 @@ export class BalanceDisplayComponent implements OnInit {
         this.currency.emit(this.selectedCurrency);
     }
 
-    onCurrencyChange(ev: MatSelectChange): void {
+    onCurrencyChange(ev: any): void {
+        console.log('Currency change', ev);
         this.currency.emit(ev.value);
     }
 }

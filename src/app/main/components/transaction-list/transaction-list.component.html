@@ -2,21 +2,29 @@
     <mat-tab *ngFor='let month of months' [label]='month.format("MMM")'>
         <mat-list *ngIf='transactions'>
             <span *ngIf='!(transactions | dateFilter:"month":month.toDate():"createdAt").length'>
-                <h3 mat-subheader>No Transactions Found</h3>
+                <h3 mat-subheader>
+                    <ion-text color='dark'>No Transactions Found</ion-text>
+                </h3>
             </span>
             <span *ngFor='let transaction of transactions | dateFilter:"month":month.toDate():"createdAt"; trackBy:trackTransactionById'>
-                <h3 mat-subheader>{{ transaction.createdAt | date:'short' }}</h3>
+                <h3 mat-subheader>
+                    <ion-text color='dark'>{{ transaction.createdAt | date:'short' }}</ion-text>
+                </h3>
                 <mat-list-item>
                     <p mat-line class='lead'>
-                        From: {{ transaction.fromUser.username }}
+                        <ion-text color='dark'>From: {{ transaction.fromUser.username }}</ion-text>
                     </p>
                     <p mat-line class='my-3' *ngIf='transaction.description'>
-                        Note: {{ transaction.description }}
+                        <ion-text color='dark'>Note: {{ transaction.description }}</ion-text>
                     </p>
                     <p mat-line class='text-right'>
                         <span *ngIf='transaction.forUserId === user.id' class='debit'>+</span>
                         <span *ngIf='transaction.forUserId !== user.id' class='credit'>-</span>
-                        <span class='mx-1'>{{ money.format(transaction.amount, transaction.currency) }}</span>
+                        <span class='mx-1'>
+                            <ion-text color='dark'>
+                                {{ money.format(transaction.amount, transaction.currency) }}
+                            </ion-text>
+                        </span>
                     </p>
                 </mat-list-item>
                 <mat-divider></mat-divider>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -6,12 +6,13 @@ import { AuthService } from './services/auth/auth.service';
 import { UserService } from './services/user/user.service';
 import { Link } from './shared/interfaces/link';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { switchMap, mergeMap, tap } from 'rxjs/operators';
+import { switchMap, mergeMap, tap, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
     selector: 'app-root',
     templateUrl: 'app.component.html',
-    styleUrls: ['app.component.scss']
+    styleUrls: ['app.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
     private mainLinks$: BehaviorSubject<Link[]> = new BehaviorSubject([
@@ -68,7 +69,7 @@ export class AppComponent {
         }
     ]);
 
-    private menuLinks$: BehaviorSubject<any> = new BehaviorSubject([]);
+    private menuLinks$: BehaviorSubject<any> = new BehaviorSubject(this.authLinks$);
 
     constructor(
         private platform: Platform,
@@ -98,7 +99,9 @@ export class AppComponent {
     activeLinks(): Observable<Link[]> {
         return this.menuLinks$.pipe(
             // Switch auth status
-            switchMap(() => this.auth.isLoggedIn()),
+            mergeMap(() => this.userSignedIn()),
+            tap(m => console.log('auth.isLoggedIn', m)),
+            distinctUntilChanged(),
             // Return app links or auth links
             mergeMap(l => l ? this.mainLinks$ : this.authLinks$),
             tap(m => console.log('Menu links', m)),

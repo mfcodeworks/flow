@@ -1,6 +1,42 @@
 // Ionic Variables and Theming. For more info, please see:
 // http://ionicframework.com/docs/theming/
 
+// Add Angular Material theming
+@import '~@angular/material/theming';
+@import './component-themes.scss';
+@import './colors.scss';
+
+@include mat-core();
+
+/**
+  * Angular Material Theme
+  * -------------------------------------------
+  */
+$primary: mat-palette($custom-dark-purple, 500);
+$accent: mat-palette($custom-pink, 500);
+$warn: mat-palette($custom-orange, 500);
+$theme: mat-light-theme($primary, $accent, $warn);
+
+@include angular-material-theme($theme);
+@include component-themes($theme);
+
+/**
+  * General Branding
+  * -------------------------------------------
+  */
+.logo-branded, .logo {
+  background-size: contain;
+  background-repeat: no-repeat;
+  min-width: 70px;
+  background-position: center;
+}
+.logo {
+  background-image: url("../assets/images/logo-marker.png");
+}
+.logo-branded {
+  background-image: url("../assets/images/Logo_Transparent-scaledown.png") !important;
+}
+
 /** Ionic CSS Variables **/
 :root {
   /** primary **/
@@ -77,6 +113,28 @@
 }
 
 @media (prefers-color-scheme: dark) {
+// .dark-theme {
+
+  /**
+    * General Branding
+    * -------------------------------------------
+    */
+  .logo {
+    background-image: url("../assets/images/logo-white.png");
+  }
+  .logo-branded {
+    background-image: url("../assets/images/Logo_Transparent_White-scaledown.png") !important;
+  }
+
+  /*
+   * Angular Material Dark Theme
+   * -------------------------------------------
+   */
+  $dark-theme: mat-dark-theme($primary, $accent, $warn);
+
+  @include component-themes($dark-theme);
+  @include angular-material-theme($dark-theme);
+
   /*
    * Dark Colors
    * -------------------------------------------

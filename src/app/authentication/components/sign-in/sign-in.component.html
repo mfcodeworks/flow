@@ -24,8 +24,8 @@
         <span class="mb-5 text-center w-100"><ion-text color='danger' *ngIf="globalError" [innerHTML]="globalError"></ion-text></span>
 
         <!-- Login Submission -->
-        <div class="justify-content-center d-flex form-group mx-auto">
-            <button mat-raised-button color="primary" type="button" class="form-button-spacer" [routerLink]="['/password/reset']">Forgot Password</button>
+        <div class="d-flex flex-row justify-content-between form-group mx-auto">
+            <button mat-raised-button color="primary" type="button" class="mr-3" [routerLink]="['/password/reset']">Forgot Password</button>
             <button mat-raised-button color="primary" type="submit" [disabled]="processing">
                 Login
                 <i *ngIf="processing" class="ml-2 fas fa-spin fa-spinner"></i>

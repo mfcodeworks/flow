@@ -2,6 +2,9 @@
 ion-split-pane {
     top: 56px;
 }
+ion-icon {
+    width: 32px;
+}
 
 /* Hide menu button for large screens */
 @media(min-width: 992px) {
@@ -12,6 +15,6 @@ ion-split-pane {
 /* Set secondary safe space */
 @media(min-width: 768px) {
     ion-split-pane {
-        --side-max-width: 256px;
+        --side-max-width: 12%;
     }
 }

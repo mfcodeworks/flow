@@ -30,9 +30,6 @@
 @import "~@fortawesome/fontawesome-free/css/all.min.css";
 @import "assets/css/themify-icons.css";
 
-/* Theme Specific Styling */
-@import "assets/css/theme.scss";
-
 /* Remove Scrollbars Globally */
 * {
     -ms-overflow-style: none;  // IE 10+
@@ -88,24 +85,6 @@ html, body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.logo-branded, .logo {
-    background-size: contain;
-    background-repeat: no-repeat;
-    min-width: 70px;
-    background-position: center;
-}
-.logo {
-    background-image: url("assets/images/logo-marker.png");
-}
-.logo-branded {
-    background-image: url("assets/images/Logo_Transparent-scaledown.png") !important;
-}
-.dark-theme .logo {
-    background-image: url("assets/images/logo-white.png");
-}
-.dark-theme .logo-branded {
-    background-image: url("assets/images/Logo_Transparent_White-scaledown.png") !important;
-}
 .avatar {
     width: 40px !important;
     height: 40px !important;

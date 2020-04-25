@@ -22,13 +22,9 @@ import { NotificationService } from './services/notification/notification.servic
 import { environment } from '../environments/environment';
 import { NetworkService } from './services/network/network.service';
 import { TopBarComponent } from './shared/components/top-bar/top-bar.component';
+import { AuthService } from './services/auth/auth.service';
 
 @NgModule({
-    declarations: [
-        TopBarComponent,
-        AppComponent
-    ],
-    entryComponents: [],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
@@ -40,6 +36,11 @@ import { TopBarComponent } from './shared/components/top-bar/top-bar.component';
         MaterialModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: true }) //{ enabled: environment.production })
     ],
+    declarations: [
+        TopBarComponent,
+        AppComponent
+    ],
+    entryComponents: [],
     providers: [
         StatusBar,
         SplashScreen,
@@ -52,20 +53,23 @@ import { TopBarComponent } from './shared/components/top-bar/top-bar.component';
                 t: ThemeService,
                 c: CacheService,
                 n: NotificationService,
-                net: NetworkService
+                net: NetworkService,
+                a: AuthService
             ) => () => {
                 net.init();
                 c.init();
                 z.init();
                 t.init();
                 n.init();
+                a.init();
             },
             deps: [
                 ZoomService,
                 ThemeService,
                 CacheService,
                 NotificationService,
-                NetworkService
+                NetworkService,
+                AuthService
             ],
             multi: true
         }

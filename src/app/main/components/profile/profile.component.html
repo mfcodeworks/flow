@@ -5,9 +5,11 @@
                 <app-qr [data]='qrData | async'
                     logo='assets/images/logo-marker.png'></app-qr>
                 <div class='display-4 mt-3'>{{ user.username }}</div>
-                <mat-chip-list class='d-flex flex-row justify-content-center mat-typography'>
-                    <mat-chip class='display-4' color="accent" selected>{{ (stripeProfile | async)?.businessType || 'individual' | titlecase }}</mat-chip>
-                </mat-chip-list>
+                <ion-chip color='primary' outline>
+                    <ion-label class='profile-chip' color="dark">
+                        {{ (stripeProfile | async)?.businessType || 'individual' | titlecase }}
+                    </ion-label>
+                </ion-chip>
             </div>
             <div class='text-center w-100 my-5'>
                 <button color="primary"
