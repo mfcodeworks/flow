@@ -1,0 +1,12 @@
+/* Seperate balance and currency on extra small phones (iPhone 5-) */
+@media(max-width: 400px) {
+    #balance-display {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    #currency-display {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}

@@ -1,5 +1,5 @@
 <div class='row d-flex flex-row align-content-center justify-content-between'>
-    <div *ngIf='balanceCurrencies.length' class='px-2 pr-md-4 col-9 col-md-7'>
+    <div *ngIf='balanceCurrencies.length' class='px-2 pr-md-4 col-9 col-md-7' id='balance-display'>
         <p class='d-flex flex-row justify-content-between align-content-center'>
             <span class='mat-display-1 my-0 mr-3'>
                 <ion-text color='dark'>{{ balance[selectedCurrency].available }}</ion-text>
@@ -18,7 +18,7 @@
         </p>
     </div>
 
-    <div class='pr-1 pl-3 col-3 my-auto d-flex flex-column justify-content-center align-content-center'>
+    <div class='pr-1 pl-3 col-3 my-auto d-flex flex-column justify-content-center align-content-center' id='currency-display'>
         <ion-select [(value)]='selectedCurrency'
             (ionChange)='onCurrencyChange($event)'
             cancelText="Dismiss"

@@ -1,9 +1,14 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, CanActivateChild, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import {
+    CanActivate,
+    CanActivateChild,
+    ActivatedRouteSnapshot,
+    RouterStateSnapshot,
+    Router
+} from '@angular/router';
 import { Observable, of, iif } from 'rxjs';
-import { mergeMap, tap, map } from 'rxjs/operators';
+import { mergeMap, tap, map, switchMap } from 'rxjs/operators';
 import { AuthService } from '../../services/auth/auth.service';
-import { UserService } from '../../services/user/user.service';
 
 @Injectable({
     providedIn: 'root'
@@ -20,27 +25,19 @@ export class SignedInGuard implements CanActivate, CanActivateChild {
     ): Observable<boolean> {
         // Check user is logged in
         return this.auth.isLoggedIn().pipe(
-            tap(u => console.log('Retrieved user from service', u)),
-            mergeMap(u =>
-                // Switch user logged in answer
-                iif(
-                    () => u,
-
-                    // True returns true
-                    of(true),
-
-                    // False checks if an object exists in cache
-                    of(false).pipe(
-                        tap(() =>
-                            this.auth.hasSession().pipe(
-                                tap(e => console.log('User exists in cache', e))
-                            ).subscribe(e =>
-                                e ? this.router.navigate(['/authorize'], {
-                                    queryParams: { redirect: state.url }
-                                }) : this.router.navigate(['/login'])
-                            )
-                        )
-                    )
+            tap(u => console.log('SignedIn Guard - Retrieved auth from service', u)),
+            // Return true, or redirect to login/authorize
+            mergeMap(u => !!u
+                ? of(true)
+                : this.auth.hasSession().pipe(
+                    tap(e => console.log('SignedIn Guard - User exists in cache', e)),
+                    tap(e => !!e
+                        ? this.router.navigate(['/authorize'], {
+                            queryParams: { redirect: state.url }
+                        })
+                        : this.router.navigate(['/login'])
+                    ),
+                    map(() => false)
                 )
             )
         );
