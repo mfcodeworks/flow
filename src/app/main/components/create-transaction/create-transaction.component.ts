@@ -15,6 +15,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ThemeService } from 'src/app/services/theme/theme.service';
 declare const Stripe: any;
 
+/* TODO: Handle anonymous (guest) transactions */
 @Component({
     selector: 'app-create-transaction',
     changeDetection: ChangeDetectionStrategy.OnPush,

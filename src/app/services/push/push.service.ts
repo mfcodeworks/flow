@@ -50,7 +50,9 @@ export class PushService {
     // Default Non-Electron Init
     defaultInit() {
         // Register with Apple / Google to receive push via APNS/FCM
-        PushNotifications.register();
+        PushNotifications.requestPermission().then(({ granted }) =>
+            granted && PushNotifications.register()
+        );
 
         // On success, we should be able to receive notifications
         PushNotifications.addListener('registration', (token: PushNotificationToken) => {

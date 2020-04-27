@@ -15,6 +15,7 @@ import { WithdrawComponent } from './components/withdraw/withdraw.component';
 import { SearchComponent } from './components/search/search.component';
 import { SettingsComponent } from './components/settings/settings.component';
 
+/* TODO: Don't require SignedIn for Profile and CreateTransaction */
 export const routes: Routes = [
     {
         path: '',

@@ -6,7 +6,7 @@ import { AuthService } from './services/auth/auth.service';
 import { UserService } from './services/user/user.service';
 import { Link } from './shared/interfaces/link';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { switchMap, mergeMap, tap, distinctUntilChanged } from 'rxjs/operators';
+import { mergeMap, tap, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
     selector: 'app-root',
@@ -15,6 +15,8 @@ import { switchMap, mergeMap, tap, distinctUntilChanged } from 'rxjs/operators';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
+    /* TODO: Add QR Scanning */
+    
     private mainLinks$: BehaviorSubject<Link[]> = new BehaviorSubject([
         {
             name: 'Wallet',

@@ -26,10 +26,10 @@ import { AuthService } from './services/auth/auth.service';
 
 @NgModule({
     imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
         AngularFireModule.initializeApp(environment.firebase),
         AngularFireMessagingModule,
+        BrowserModule,
+        BrowserAnimationsModule,
         IonicModule.forRoot(),
         AppRoutingModule,
         HttpClientModule,
