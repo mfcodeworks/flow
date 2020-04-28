@@ -1,12 +1,12 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { Plugins } from '@capacitor/core';
 import { AuthService } from './services/auth/auth.service';
 import { UserService } from './services/user/user.service';
 import { Link } from './shared/interfaces/link';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { mergeMap, tap, distinctUntilChanged } from 'rxjs/operators';
+const { SplashScreen } = Plugins;
 
 @Component({
     selector: 'app-root',
@@ -16,7 +16,7 @@ import { mergeMap, tap, distinctUntilChanged } from 'rxjs/operators';
 })
 export class AppComponent {
     /* TODO: Add QR Scanning */
-    
+
     private mainLinks$: BehaviorSubject<Link[]> = new BehaviorSubject([
         {
             name: 'Wallet',
@@ -75,8 +75,6 @@ export class AppComponent {
 
     constructor(
         private platform: Platform,
-        private splashScreen: SplashScreen,
-        private statusBar: StatusBar,
         public user$: UserService,
         public auth: AuthService,
     ) {
@@ -84,9 +82,10 @@ export class AppComponent {
     }
 
     initializeApp() {
+        console.log('Initializing AppComponent');
         this.platform.ready().then(() => {
-            this.statusBar.styleDefault();
-            this.splashScreen.hide();
+            console.log('Hiding SplashScreen');
+            SplashScreen.hide();
         });
     }
 
