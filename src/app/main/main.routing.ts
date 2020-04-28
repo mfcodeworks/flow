@@ -23,10 +23,7 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                component: DashboardComponent,
-                resolve: {
-                    transactions: TransactionsResolver
-                }
+                component: DashboardComponent
             },
             {
                 path: 'search',
@@ -38,8 +35,7 @@ export const routes: Routes = [
             },
             {
                 path: 'withdraw',
-                component: WithdrawComponent,
-                resolve: { balances: BalanceResolver }
+                component: WithdrawComponent
             },
             {
                 path: 'signup/stripe',
@@ -49,12 +45,6 @@ export const routes: Routes = [
                 path: 'profile/:profile',
                 component: ProfileComponent,
                 resolve: { profile: ProfileResolver },
-                runGuardsAndResolvers: 'always'
-            },
-            {
-                path: 'transaction/list',
-                component: TransactionListComponent,
-                resolve: { transactions: TransactionsResolver },
                 runGuardsAndResolvers: 'always'
             },
             {

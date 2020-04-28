@@ -23,8 +23,7 @@
                         </ion-menu-toggle>
                     </ng-container>
                     <ion-menu-toggle auto-hide="false" *ngIf='userSignedIn() | async'>
-                        <ion-item button (click)='doSignOut()'
-                            detail="false">
+                        <ion-item button (click)='doSignOut()' detail="false">
                             <ion-label>Logout</ion-label>
                         </ion-item>
                     </ion-menu-toggle>

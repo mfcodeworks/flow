@@ -24,6 +24,8 @@ import { NetworkService } from './services/network/network.service';
 import { TopBarComponent } from './shared/components/top-bar/top-bar.component';
 import { AuthService } from './services/auth/auth.service';
 import { BalanceService } from './services/balance/balance.service';
+import { TransactionsService } from './services/transactions/transactions.service';
+import { SourcesService } from './services/sources/sources.service';
 
 @NgModule({
     imports: [
@@ -56,7 +58,9 @@ import { BalanceService } from './services/balance/balance.service';
                 n: NotificationService,
                 net: NetworkService,
                 a: AuthService,
-                b: BalanceService
+                b: BalanceService,
+                tr: TransactionsService,
+                s: SourcesService
             ) => () => {
                 net.init();
                 c.init();
@@ -65,6 +69,8 @@ import { BalanceService } from './services/balance/balance.service';
                 n.init();
                 a.init();
                 b.init();
+                tr.init();
+                s.init();
             },
             deps: [
                 ZoomService,
@@ -73,7 +79,9 @@ import { BalanceService } from './services/balance/balance.service';
                 NotificationService,
                 NetworkService,
                 AuthService,
-                BalanceService
+                BalanceService,
+                TransactionsService,
+                SourcesService
             ],
             multi: true
         }

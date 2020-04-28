@@ -1,20 +1,19 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { BackendService } from '../backend/backend.service';
-import { BehaviorSubject, Subject } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
-import { mergeMap, tap, switchMap, filter } from 'rxjs/operators';
-import { Balance } from '../../main/core/balance';
+import { switchMap, filter, mergeMap, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-export class BalanceService {
+export class SourcesService {
     // Observable trigger
     private refreshCount = 0;
     private trigger$: BehaviorSubject<number> = new BehaviorSubject(this.refreshCount);
 
     // Balance Observable
-    private balance$: BehaviorSubject<Balance|null> = new BehaviorSubject(null);
+    private sources$: BehaviorSubject<any[]|null> = new BehaviorSubject(null);
 
     constructor(
         private _backend: BackendService,
@@ -28,10 +27,10 @@ export class BalanceService {
             switchMap(() => this._auth.isLoggedIn()),
             filter(l => !!l),
             // Get balance from API
-            mergeMap(() => this._backend.getUserBalance()),
+            mergeMap(() => this._backend.getUserSources()),
             // DEBUG: Log balance
-            tap(b => console.warn(`${this.constructor.name} retrieved Balance:`, b))
-        ).subscribe(b => this.balance$.next(b));
+            tap(b => console.warn(`${this.constructor.name} retrieved Transactions:`, b))
+        ).subscribe(b => this.sources$.next(b));
 
         // Refetch on auth change
         this._auth.loggedIn.pipe(
@@ -39,13 +38,13 @@ export class BalanceService {
         ).subscribe(() => this.refresh());
     }
 
-    // Refetch balance
+    // Refetch transactions
     refresh(): void {
         this.trigger$.next(this.refreshCount++);
     }
 
-    // Return balance observable
-    get(): BehaviorSubject<Balance|null> {
-        return this.balance$;
+    // Return sources observable
+    get(): BehaviorSubject<any[]|null> {
+        return this.sources$;
     }
 }

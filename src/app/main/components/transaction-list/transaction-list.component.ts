@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Transaction } from '../../core/transaction';
 import { UserService } from 'src/app/services/user/user.service';
 import { Profile } from '../../core/profile';
@@ -28,7 +28,7 @@ export class TransactionListComponent implements OnInit {
         console.log('Displaying Transactions', this.transactions);
 
         // Create month array
-        for (let i = 0; i < 3; i++) {
+        for (let i in [0, 1, 2]) {
             this.months.push(moment().subtract(i, 'months'))
         }
     }

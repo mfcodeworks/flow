@@ -8,6 +8,7 @@ import { environment } from '../../../environments/environment';
 import { Profile } from '../../main/core/profile';
 import { Transaction } from '../../main/core/transaction';
 import { IOpenExchangeRates } from '../../main/core/open-exchange-rates';
+import { UserTransactions } from '../../main/core/user-transactions';
 
 const API_URL = environment.apiUrl;
 
@@ -176,9 +177,9 @@ export class ApiService {
     }
 
     // API: Get user transactions
-    getUserTransactions(): Observable<Transaction[]> {
+    getUserTransactions(): Observable<UserTransactions> {
         return this.http
-        .get<Transaction[]>(`${API_URL}/transaction`).pipe(
+        .get<UserTransactions>(`${API_URL}/transaction`).pipe(
             retry(1),
             catchError((error) => this.handleError(error))
         );

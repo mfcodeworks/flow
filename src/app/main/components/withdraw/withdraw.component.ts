@@ -10,18 +10,8 @@ import { CurrencyMinimumAmount } from '../../core/currency-minimum-amount.enum';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
-interface IBalanceAmount {
-    amount: number;
-    currency: string;
-}
-interface IBalance {
-    object: string;
-    available: IBalanceAmount[];
-    connect_reserved?: IBalanceAmount[];
-    livemode: boolean;
-    pending: IBalanceAmount[];
-}
+import { Balance } from '../../core/balance';
+import { BalanceService } from '../../../services/balance/balance.service';
 
 @Component({
     selector: 'app-withdraw',
@@ -33,7 +23,7 @@ export class WithdrawComponent implements OnInit {
     payout: FormGroup;
     user: Profile;
     stripeAccount: Observable<any>;
-    balance: Observable<IBalance>;
+    balance: Observable<Balance>;
     balanceCurrencies: string[] = [];
     selectedCurrency: string;
     externalAccounts: Observable<any[]>;
@@ -48,8 +38,8 @@ export class WithdrawComponent implements OnInit {
         private money: MoneyService,
         private fb: FormBuilder,
         private backend: BackendService,
-        private route: ActivatedRoute,
-        public toast: MatSnackBar
+        public toast: MatSnackBar,
+        private _balance: BalanceService
     ) { }
 
     ngOnInit() {
@@ -85,10 +75,7 @@ export class WithdrawComponent implements OnInit {
         );
 
         // Get User Balance
-        this.balance = this.route.data.pipe(
-            map(d => d.balances),
-            tap(b => console.log('Balances:', b))
-        );
+        this.balance = this._balance.get();
 
         // Get User Last Withdrawl
         this.lastWithdrawl = this.backend.getStripeWithdrawls().pipe(

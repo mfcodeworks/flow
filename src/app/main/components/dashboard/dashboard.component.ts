@@ -7,13 +7,15 @@ import { UserService } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { Transaction } from '../../core/transaction';
-import { map, tap, mergeMap, filter } from 'rxjs/operators';
-import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import { map, tap, distinctUntilChanged, filter } from 'rxjs/operators';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { AddPaymentSourceDialogComponent } from '../add-payment-source/add-payment-source-dialog.component';
 import { PaymentSourceDialogComponent } from '../payment-source-dialog/payment-source-dialog.component';
 import { BalanceService } from '../../../services/balance/balance.service';
 import { Balance } from '../../core/balance';
+import { TransactionsService } from '../../../services/transactions/transactions.service';
+import { SourcesService } from '../../../services/sources/sources.service';
 
 const { Browser } = Plugins;
 
@@ -28,49 +30,23 @@ export class DashboardComponent implements OnInit {
     user: Profile;
     qrData: string;
     dashboardLink: Observable<string>;
-    transactions: Observable<Transaction[]>;
-    balance: Observable<Balance>;
-    sources: Observable<any[]>;
-    refreshCount = 0;
-    trigger$: BehaviorSubject<any> = new BehaviorSubject(this.refreshCount);
 
     constructor(
         private _user: UserService,
         private backend: BackendService,
-        private route: ActivatedRoute,
         public dialog: MatDialog,
-        private _balance: BalanceService
+        private _balance: BalanceService,
+        private _transactions: TransactionsService,
+        private _sources: SourcesService
     ) { }
 
     ngOnInit() {
-        // console.log(this._user);
         this.user = this._user.profile;
-        // console.log(this.user);
         this.loginLink = `https://connect.stripe.com/express/oauth/authorize?redirect_uri=http://localhost:4200/wallet/signup/stripe&client_id=${environment.stripe.client_id}&state=${SHA256(this.user.toString(), environment.stripe.public_key).toString(enc.Hex)}&scope=read&write`;
         this.qrData = `${environment.appUrl}/profile/${this.user.id}`;
 
-        // Get transactions
-        this.transactions = this.route.data.pipe(
-            tap(d => console.log('Transactions', d)),
-            map(d => d.transactions),
-            map(t => Array.prototype.concat(t.sent, t.received))
-        );
-
-        // Get User Sources
-        this.sources = this.trigger$.pipe(
-            mergeMap(() => this.backend.getUserSources()),
-            tap(() => console.log('Dashboard received new sources')),
-            tap(s => console.log('Sources:', s))
-        );
-
+        // Get User Dashboard or Login Link
         if (this.user.stripeConnectId) {
-            // Get User Balance
-            // this.balance = this.route.data.pipe(
-            //     filter(d => d.balances),
-            //     map(d => d.balances)
-            // );
-
-            // Get User Dashboard Link
             this.dashboardLink = this.backend.getUserDashboard().pipe(
                 map(l => l.url),
                 tap(l => console.log('Dashboard link:', l))
@@ -80,13 +56,26 @@ export class DashboardComponent implements OnInit {
         }
     }
 
-    getBalance(): Subject<Balance> {
+    getBalance(): BehaviorSubject<Balance|null> {
         return this._balance.get();
+    }
+
+    getTransactions(): Observable<Transaction[]> {
+        return this._transactions.get().pipe(
+            distinctUntilChanged(),
+            filter(t => !!t),
+            map(t => Array.prototype.concat(t.sent, t.received))
+        );
+    }
+
+    getSources(): BehaviorSubject<any[]|null> {
+        return this._sources.get();
     }
 
     refresh(ev: any): void {
         this._balance.refresh();
-        this.trigger$.next(this.refreshCount++);
+        this._sources.refresh();
+        this._transactions.refresh();
         setTimeout(() => ev.target.complete(), 1500);
     }
 
@@ -96,30 +85,24 @@ export class DashboardComponent implements OnInit {
             data: { paymentMethod: id }
         });
 
-        // Handle dialog close (success/cancel)
-        dialogRef.afterClosed().subscribe(success => {
-            if (success) {
-                this.trigger$.next(1);
-            }
-        });
+        // Handle dialog close (success/cancel), if success then refresh sources
+        dialogRef.afterClosed().subscribe(success => !!success && this._sources.refresh());
     }
 
     openAddNewSource(): void {
         // Open add payment source dialog
         const dialogRef = this.dialog.open(AddPaymentSourceDialogComponent, { width: '600px' });
 
-        // Handle dialog close (success/cancel)
-        dialogRef.afterClosed().subscribe(success => {
-            if (success) {
-                this.trigger$.next(1);
-            }
-        });
+        // Handle dialog close (success/cancel), if success then refresh sources
+        dialogRef.afterClosed().subscribe(success => !!success && this._sources.refresh());
     }
 
+    // Open login link in browser window
     async openLoginLink(): Promise<void> {
         await Browser.open({url: this.loginLink});
     }
 
+    // Open dashboard link in browser window
     openDashboardLink(): void {
         this.dashboardLink.subscribe(async l => await Browser.open({url: l}));
     }

@@ -20,7 +20,7 @@
                 <div class='mat-typography my-4'>
                     <mat-nav-list>
                         <a mat-list-item
-                            *ngFor="let source of sources | async"
+                            *ngFor="let source of getSources() | async"
                             (click)="openSourceDialog(source.id)">
                             <!-- Popup update/delete modal -->
                             <div *ngIf='source.card'
@@ -59,7 +59,7 @@
         <div class='col-12 col-md-6'>
             <!-- Most Recent Transaction Log -->
             <div class='my-3 pt-md-3'>
-                <app-transaction-list [transactions]='transactions | async'></app-transaction-list>
+                <app-transaction-list [transactions]='getTransactions() | async'></app-transaction-list>
             </div>
         </div>
     </div>

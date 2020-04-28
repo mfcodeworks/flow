@@ -7,6 +7,7 @@ import { CacheService } from '../cache/cache.service';
 import { Profile } from '../../main/core/profile';
 import { Transaction } from '../../main/core/transaction';
 import { IOpenExchangeRates } from '../../main/core/open-exchange-rates';
+import { UserTransactions } from '../../main/core/user-transactions';
 
 @Injectable({
   providedIn: 'root'
@@ -58,7 +59,7 @@ export class BackendService {
     }
 
     // Get user transactions
-    getUserTransaction(): Observable<Transaction[]> {
+    getUserTransaction(): Observable<UserTransactions> {
         return this.api.getUserTransactions();
     }
 
