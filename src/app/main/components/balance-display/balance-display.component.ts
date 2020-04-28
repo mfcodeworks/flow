@@ -21,15 +21,15 @@ export class BalanceDisplayComponent implements OnChanges {
 
     ngOnChanges() {
         /* Map balances */
-        this.balances?.available.forEach((b: BalanceAmount) => {
+        this.balances?.available.forEach((b: BalanceAmount, i: number) => {
             this.balance[b.currency] = {
                 available: this.money.format(
                     b.amount,
                     b.currency
                 ),
                 pending: this.money.format(
-                    b.amount,
-                    b.currency
+                    this.balances.pending[i].amount,
+                    this.balances.pending[i].currency
                 )
             }
         });
