@@ -25,7 +25,6 @@ export const routes: Routes = [
                 path: '',
                 component: DashboardComponent,
                 resolve: {
-                    balances: BalanceResolver,
                     transactions: TransactionsResolver
                 }
             },

@@ -5,7 +5,7 @@ import { AuthService } from './services/auth/auth.service';
 import { UserService } from './services/user/user.service';
 import { Link } from './shared/interfaces/link';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { mergeMap, tap, distinctUntilChanged } from 'rxjs/operators';
+import { mergeMap, tap, distinctUntilChanged, switchMap } from 'rxjs/operators';
 const { SplashScreen } = Plugins;
 
 @Component({
@@ -82,7 +82,6 @@ export class AppComponent {
     }
 
     initializeApp() {
-        console.log('Initializing AppComponent');
         this.platform.ready().then(() => {
             console.log('Hiding SplashScreen');
             SplashScreen.hide();
@@ -94,13 +93,13 @@ export class AppComponent {
     }
 
     userSignedIn(): Observable<boolean> {
-        return this.auth.isLoggedIn();
+        return this.auth.loggedIn;
     }
 
     activeLinks(): Observable<Link[]> {
         return this.menuLinks$.pipe(
             // Switch auth status
-            mergeMap(() => this.userSignedIn()),
+            switchMap(() => this.userSignedIn()),
             tap(m => console.log('auth.isLoggedIn', m)),
             distinctUntilChanged(),
             // Return app links or auth links

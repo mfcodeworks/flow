@@ -1,4 +1,8 @@
 <ion-content>
+    <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
     <div class='row mx-3'>
         <div class='col-12 col-md-6'>
             <!-- Balance -->
@@ -8,7 +12,7 @@
                         (click)='openLoginLink()'>Complete login to start receiving</button>
                 </div>
 
-                <app-balance-display *ngIf='!!balance' [balances]='balance | async'></app-balance-display>
+                <app-balance-display [balances]='getBalance() | async'></app-balance-display>
             </div>
 
             <div class='col-12 col-md-9 mx-auto'>

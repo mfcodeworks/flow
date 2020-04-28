@@ -6,7 +6,9 @@ import { BackendService } from '../../services/backend/backend.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { filter, mergeMap } from 'rxjs/operators';
 import { UserService } from 'src/app/services/user/user.service';
+import { Deprecated } from '../../shared/decorators/deprecated.decorator';
 
+@Deprecated
 @Injectable()
 export class BalanceResolver implements Resolve<any[]> {
 
@@ -14,7 +16,9 @@ export class BalanceResolver implements Resolve<any[]> {
         private backend: BackendService,
         private auth: AuthService,
         private user: UserService
-    ) { }
+    ) {
+        console.warn()
+    }
 
     resolve(): Observable<any[]> {
         // Require account with Stripe Connect ID

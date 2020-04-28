@@ -23,6 +23,7 @@ import { environment } from '../environments/environment';
 import { NetworkService } from './services/network/network.service';
 import { TopBarComponent } from './shared/components/top-bar/top-bar.component';
 import { AuthService } from './services/auth/auth.service';
+import { BalanceService } from './services/balance/balance.service';
 
 @NgModule({
     imports: [
@@ -54,7 +55,8 @@ import { AuthService } from './services/auth/auth.service';
                 c: CacheService,
                 n: NotificationService,
                 net: NetworkService,
-                a: AuthService
+                a: AuthService,
+                b: BalanceService
             ) => () => {
                 net.init();
                 c.init();
@@ -62,6 +64,7 @@ import { AuthService } from './services/auth/auth.service';
                 t.init();
                 n.init();
                 a.init();
+                b.init();
             },
             deps: [
                 ZoomService,
@@ -69,7 +72,8 @@ import { AuthService } from './services/auth/auth.service';
                 CacheService,
                 NotificationService,
                 NetworkService,
-                AuthService
+                AuthService,
+                BalanceService
             ],
             multi: true
         }

@@ -8,24 +8,14 @@ import { environment } from 'src/environments/environment';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { Transaction } from '../../core/transaction';
 import { map, tap, mergeMap, filter } from 'rxjs/operators';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { AddPaymentSourceDialogComponent } from '../add-payment-source/add-payment-source-dialog.component';
 import { PaymentSourceDialogComponent } from '../payment-source-dialog/payment-source-dialog.component';
+import { BalanceService } from '../../../services/balance/balance.service';
+import { Balance } from '../../core/balance';
 
 const { Browser } = Plugins;
-
-interface IBalanceAmount {
-    amount: number;
-    currency: string;
-}
-interface IBalance {
-    object: string;
-    available: IBalanceAmount[];
-    connect_reserved?: IBalanceAmount[];
-    livemode: boolean;
-    pending: IBalanceAmount[];
-}
 
 @Component({
   selector: 'app-dashboard',
@@ -39,21 +29,23 @@ export class DashboardComponent implements OnInit {
     qrData: string;
     dashboardLink: Observable<string>;
     transactions: Observable<Transaction[]>;
-    balance: Observable<IBalance>;
+    balance: Observable<Balance>;
     sources: Observable<any[]>;
-    trigger$: BehaviorSubject<any> = new BehaviorSubject(0);
+    refreshCount = 0;
+    trigger$: BehaviorSubject<any> = new BehaviorSubject(this.refreshCount);
 
     constructor(
-        private user$: UserService,
+        private _user: UserService,
         private backend: BackendService,
         private route: ActivatedRoute,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        private _balance: BalanceService
     ) { }
 
     ngOnInit() {
-        console.log(this.user$);
-        this.user = this.user$.profile;
-        console.log(this.user);
+        // console.log(this._user);
+        this.user = this._user.profile;
+        // console.log(this.user);
         this.loginLink = `https://connect.stripe.com/express/oauth/authorize?redirect_uri=http://localhost:4200/wallet/signup/stripe&client_id=${environment.stripe.client_id}&state=${SHA256(this.user.toString(), environment.stripe.public_key).toString(enc.Hex)}&scope=read&write`;
         this.qrData = `${environment.appUrl}/profile/${this.user.id}`;
 
@@ -73,10 +65,10 @@ export class DashboardComponent implements OnInit {
 
         if (this.user.stripeConnectId) {
             // Get User Balance
-            this.balance = this.route.data.pipe(
-                filter(d => d.balances),
-                map(d => d.balances)
-            );
+            // this.balance = this.route.data.pipe(
+            //     filter(d => d.balances),
+            //     map(d => d.balances)
+            // );
 
             // Get User Dashboard Link
             this.dashboardLink = this.backend.getUserDashboard().pipe(
@@ -86,6 +78,16 @@ export class DashboardComponent implements OnInit {
         } else {
             Browser.prefetch({urls: [this.loginLink]});
         }
+    }
+
+    getBalance(): Subject<Balance> {
+        return this._balance.get();
+    }
+
+    refresh(ev: any): void {
+        this._balance.refresh();
+        this.trigger$.next(this.refreshCount++);
+        setTimeout(() => ev.target.complete(), 1500);
     }
 
     openSourceDialog(id: string): void {
@@ -116,7 +118,6 @@ export class DashboardComponent implements OnInit {
 
     async openLoginLink(): Promise<void> {
         await Browser.open({url: this.loginLink});
-        // window.open(this.loginLink);
     }
 
     openDashboardLink(): void {

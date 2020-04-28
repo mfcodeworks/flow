@@ -36,7 +36,7 @@ export class AuthService {
     }
 
     public isLoggedIn(): Observable<boolean> {
-        return of(!!this.user.token).pipe(distinctUntilChanged());
+        return of(!!this.user.token);
     }
 
     public hasSession(): Observable<boolean> {
