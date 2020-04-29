@@ -26,6 +26,7 @@ import { AuthService } from './services/auth/auth.service';
 import { BalanceService } from './services/balance/balance.service';
 import { TransactionsService } from './services/transactions/transactions.service';
 import { SourcesService } from './services/sources/sources.service';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 @NgModule({
     imports: [
@@ -47,6 +48,7 @@ import { SourcesService } from './services/sources/sources.service';
     providers: [
         StatusBar,
         SplashScreen,
+        BarcodeScanner,
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         {

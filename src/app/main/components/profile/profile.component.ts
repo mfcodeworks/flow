@@ -4,7 +4,7 @@ import { UserService } from 'src/app/services/user/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 
 @Component({
@@ -36,9 +36,7 @@ export class ProfileComponent implements OnInit {
         );
 
         // Create QR Data
-        this.qrData = this.profile.pipe(
-            map(u => `${environment.appUrl}/profile/${u.id}`)
-        );
+        this.qrData = of(`${environment.appUrl}/profile/${this.user.id}`);
 
         // Set User Stripe Profile
         this.stripeProfile = this.profile.pipe(

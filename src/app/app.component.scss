@@ -5,6 +5,10 @@ ion-split-pane {
 ion-icon {
     width: 32px;
 }
+#qrFile,
+#qrFileCanvas {
+    display: none;
+}
 
 /* Hide menu button for large screens */
 @media(min-width: 992px) {

@@ -1,12 +1,17 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Component, ChangeDetectionStrategy, ViewChild, ElementRef } from '@angular/core';
+import { Platform, IonInput, AlertController } from '@ionic/angular';
 import { Plugins } from '@capacitor/core';
 import { AuthService } from './services/auth/auth.service';
 import { UserService } from './services/user/user.service';
 import { Link } from './shared/interfaces/link';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { mergeMap, tap, distinctUntilChanged, switchMap, map } from 'rxjs/operators';
+import { tap, distinctUntilChanged, switchMap, map } from 'rxjs/operators';
+import { QRService } from './services/qr/qr.service';
+import { environment } from '../environments/environment';
+import { Router } from '@angular/router';
+
 const { SplashScreen } = Plugins;
+const qrTest = new RegExp(`${environment.appUrl}/profile/[0-9]`.replace('/', '\\/'));
 
 @Component({
     selector: 'app-root',
@@ -16,19 +21,83 @@ const { SplashScreen } = Plugins;
 })
 export class AppComponent {
     /* TODO: Add QR Scanning */
+    @ViewChild("qrFile", {static: true}) qrFile: IonInput;
+    @ViewChild("qrFileCanvas", {static: true}) qrCanvas: ElementRef<HTMLCanvasElement>;
 
     private menuLinks$: BehaviorSubject<Link[]> = new BehaviorSubject(this.authLinks());
 
     constructor(
         private platform: Platform,
-        public user$: UserService,
-        public auth: AuthService,
+        private user$: UserService,
+        private auth: AuthService,
+        private _qr: QRService,
+        private _router: Router,
+        private _alerts: AlertController
     ) {
         this.init();
     }
 
     init(): void {
         this.platform.ready().then(() => SplashScreen.hide());
+    }
+
+    isBrowser(): boolean {
+        return !this.platform.is('hybrid');
+    }
+
+    async getQrFile(): Promise<void> {
+        const file = await this.qrFile.getInputElement();
+        file.click();
+    }
+
+    async qrScan(ev?: any): Promise<void> {
+        const alert = await this._alerts.create({
+            header: 'No QR Detected',
+            message: 'No Flow QR code was detected',
+            buttons: ['Okay']
+        });
+
+        let data: string = '';
+
+        if (ev) {
+            // Get file
+            const {files} = await this.qrFile.getInputElement()
+            const file = files[0];
+
+            if (!file) {
+                return;
+            }
+
+            // Scan file
+            data = await this._qr.scan(file);
+
+            // Alert if no QR was found
+            if (!data) {
+                console.warn('Alerting no QR');
+                await alert.present();
+            }
+        } else {
+            // Camera scan
+            data = await this._qr.scan();
+            if (!data) {
+                return;
+            }
+        }
+
+        // DEBUG: Log QR data
+        console.log(`QR Scanner Detected ${data}`);
+        console.log('QR Testing', qrTest.test(data));
+
+        // Test if QR code has a valid profile URL
+        if (qrTest.test(data)) {
+            this._router.navigateByUrl(data.replace(environment.appUrl, ''));
+        } else {
+            console.warn('Alerting no QR');
+            await alert.present();
+        }
+
+        // Clear QR file input
+        (<HTMLInputElement>document.getElementById('qrFile')).value = "";
     }
 
     doSignOut(): void {
