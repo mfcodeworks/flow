@@ -2,13 +2,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { ModuleWithProviders } from '@angular/core';
 
 import { SignedInGuard } from '../shared/guards/signed-in.guard';
-import { TransactionsResolver } from '../main/resolvers/transactions.resolver';
 import { PaymentIntentResolver } from '../main/resolvers/payment-intent.resolver'
-import { TransactionListComponent } from './components/transaction-list/transaction-list.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { StripeSignupComponent } from './components/stripe-signup/stripe-signup.component';
 import { CreateTransactionComponent } from './components/create-transaction/create-transaction.component';
-import { BalanceResolver } from '../main/resolvers/balance.resolver';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ProfileResolver } from '../main/resolvers/profile.resolver';
 import { WithdrawComponent } from './components/withdraw/withdraw.component';

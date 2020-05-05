@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { PushService } from '../push/push.service';
 import { AuthService } from '../auth/auth.service';
 import { BackendService } from '../backend/backend.service';
-import { filter, tap, mergeMap } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class NotificationService {
-    // DEBUG: Fix backend save token and subscribe topic
+    // DEBUG: Subscribe topic
 
     constructor(
         private push: PushService,
@@ -21,19 +21,16 @@ export class NotificationService {
             tap(token => console.log(`New FCM token ${token}`)),
             filter(token => !!token),
             filter(() => auth.loggedIn.value),
-            mergeMap(token => this.saveToken(token))
-        ).subscribe()
+        ).subscribe(token => this.saveToken(token));
 
         // On new login status, update token status
         auth.loggedIn.pipe(
-            tap(l => console.log(`User Login Status Changed to ${l}`)),
-
+            
             // If token has no value we can't proceed
             filter(() => !!push.token.value),
 
-            // Merge to backend call
-            mergeMap(l => l ? this.saveToken(push.token.value) : this.deleteToken(push.token.value))
-        ).subscribe()
+        // Make to backend call
+        ).subscribe(l => l ? this.saveToken(push.token.value) : this.deleteToken(push.token.value));
     }
 
     // Init push services
@@ -47,7 +44,7 @@ export class NotificationService {
 
         // Send token to server
         return this.backend.saveFcm(token).pipe(
-            tap(() => console.log(`Saved FCM ${token}`))
+            tap(_ => console.log(`Saved FCM ${token}`))
         );
     }
 
@@ -57,7 +54,7 @@ export class NotificationService {
 
         // Send token to server
         return this.backend.deleteFcm(token).pipe(
-            tap(() => console.log(`Deleted FCM ${token}`))
+            tap(_ => console.log(`Deleted FCM ${token}`))
         );
     }
 

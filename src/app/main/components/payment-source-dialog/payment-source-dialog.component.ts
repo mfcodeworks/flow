@@ -35,7 +35,7 @@ export class PaymentSourceDialogComponent implements OnInit {
     onDelete() {
         this.processing = true;
         this.delete$.pipe(
-            tap(() => this.processing = false)
+            tap(_ => this.processing = false)
         ).subscribe(d => this.dialogRef.close(1));
     }
 }

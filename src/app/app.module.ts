@@ -63,17 +63,17 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
                 b: BalanceService,
                 tr: TransactionsService,
                 s: SourcesService
-            ) => () => {
-                net.init();
-                c.init();
-                z.init();
-                t.init();
-                n.init();
-                a.init();
-                b.init();
-                tr.init();
-                s.init();
-            },
+            ) => () => Promise.all([
+                net.init(),
+                c.init(),
+                z.init(),
+                t.init(),
+                n.init(),
+                a.init(),
+                b.init(),
+                tr.init(),
+                s.init(),
+            ]),
             deps: [
                 ZoomService,
                 ThemeService,

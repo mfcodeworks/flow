@@ -38,7 +38,7 @@ export class SearchComponent implements AfterViewInit {
             distinctUntilChanged(),
 
             // Set query as loading
-            tap(() => this.loading = true),
+            tap(_ => this.loading = true),
 
             // Get profile results
             switchMap((search: string) => this.backend.search(search).pipe(
@@ -49,7 +49,7 @@ export class SearchComponent implements AfterViewInit {
             tap(r => console.log('Results:', r)),
 
             // Set loading complete
-            tap(() => this.loading = false),
+            tap(_ => this.loading = false),
 
             // Catch errors
             catchError(err => {

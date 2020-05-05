@@ -21,21 +21,31 @@ export class SourcesService {
     ) {}
 
     init(): void {
-        // Fetch balance
+        // clear on logout
+        this._auth.loggedIn.pipe(
+            filter(l => !l)
+        ).subscribe(() => this.clear());
+
+        // Refetch on new login
+        this._auth.loggedIn.pipe(
+            filter(l => !!l)
+        ).subscribe(() => this.refresh());
+
+        // Fetch sources
         this.trigger$.pipe(
             // Confirm use is authorised first
             switchMap(() => this._auth.isLoggedIn()),
             filter(l => !!l),
-            // Get balance from API
+            // Get sources from API
             mergeMap(() => this._backend.getUserSources()),
-            // DEBUG: Log balance
+            // DEBUG: Log sources
             tap(b => console.warn(`${this.constructor.name} retrieved Transactions:`, b))
         ).subscribe(b => this.sources$.next(b));
+    }
 
-        // Refetch on auth change
-        this._auth.loggedIn.pipe(
-            filter(l => !!l)
-        ).subscribe(() => this.refresh());
+    // Clear sources
+    clear(): void {
+        this.sources$.next(null);
     }
 
     // Refetch transactions

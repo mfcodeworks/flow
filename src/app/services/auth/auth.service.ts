@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, of, BehaviorSubject, iif } from 'rxjs';
-import { map, filter, tap, mergeMap, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { map, filter, tap, mergeMap } from 'rxjs/operators';
 import { UserService } from '../user/user.service';
 import { CacheService } from '../cache/cache.service';
 import { Profile } from 'src/app/main/core/profile';
@@ -21,13 +21,14 @@ export class AuthService {
     ) {}
 
     public init(): void {
-        // On logged in status change update user TODO: Check this works
+        // On logged in status change update user
         this.loggedIn.pipe(
+
             // Only proceed on logged in true
             filter(l => !!l),
-            // Update user profile
-            switchMap(() => this.updateProfile())
-        ).subscribe();
+
+        // Update user profile
+        ).subscribe(() => this.updateProfile());
 
         console.log('Attempting to load user');
 
@@ -61,12 +62,12 @@ export class AuthService {
                 iif(
                     () => !!user.token,
                     of(true).pipe(
-                        tap(() => console.log('User exists, updating service')),
-                        tap(() => Object.assign(this.user, user)),
-                        tap(() => console.log('Service updated, fetching from backend')),
+                        tap(_ => console.log('User exists, updating service')),
+                        tap(_ => Object.assign(this.user, user)),
+                        tap(_ => console.log('Service updated, fetching from backend')),
                         mergeMap(() => this.updateProfile()),
-                        tap(() => console.log('Service updated', this.user)),
-                        tap(() => this.loggedIn.next(true)),
+                        tap(_ => console.log('Service updated', this.user)),
+                        tap(_ => this.loggedIn.next(true)),
                         map(() => true)
                     ),
                     of(false)

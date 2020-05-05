@@ -11,12 +11,10 @@ import { RouteTransformerDirective } from '../shared/directives/route-transforme
 import { LongholdDirective } from '../shared/directives/longhold.directive';
 import { AddPaymentSourceDialogComponent } from './components/add-payment-source/add-payment-source-dialog.component';
 import { TransactionListComponent } from './components/transaction-list/transaction-list.component';
-import { TransactionsResolver } from '../main/resolvers/transactions.resolver';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { StripeSignupComponent } from './components/stripe-signup/stripe-signup.component';
 import { CreateTransactionComponent } from './components/create-transaction/create-transaction.component';
 import { PaymentIntentResolver } from 'src/app/main/resolvers/payment-intent.resolver';
-import { BalanceResolver } from 'src/app/main/resolvers/balance.resolver';
 import { QRComponent } from './components/qr/qr.component';
 import { ProfileResolver } from 'src/app/main/resolvers/profile.resolver';
 import { ProfileComponent } from './components/profile/profile.component';
@@ -69,10 +67,7 @@ import { IonicModule } from '@ionic/angular';
         PaymentSourceDialogComponent
     ],
     providers: [
-        TransactionsResolver,
         PaymentIntentResolver,
-        BalanceResolver,
-        TransactionsResolver,
         ProfileResolver
     ],
     exports: [

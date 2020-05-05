@@ -247,7 +247,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
                 // Attempt creating payment method
                 this.createPaymentMethod().pipe(
                     // Log payment
-                    tap(() => console.log('Making payment with new card')),
+                    tap(_ => console.log('Making payment with new card')),
 
                     // Map to error or payment method
                     map(({ paymentMethod, error }) => {
@@ -263,14 +263,14 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
             case 'sepa':
                 // Confirm payment
                 this.confirmPayment(this.sepa, true, 'sepa')
-                .pipe(tap(() => console.log('Making SEPA payment')))
+                .pipe(tap(_ => console.log('Making SEPA payment')))
                 .subscribe(this.onSuccess.bind(this), this.onFailed.bind(this));
                 break;
 
             case 'balance':
                 // Confirm payment
                 this.confirmPayment(null, true, 'balance')
-                .pipe(tap(() => console.log('Making balance payment')))
+                .pipe(tap(_ => console.log('Making balance payment')))
                 .subscribe(this.onSuccess.bind(this), this.onFailed.bind(this));
                 break;
 
@@ -281,7 +281,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
                     map(s => s[this.paymentMethod.get('method').value]),
 
                     // Do payment confirmation
-                    switchMap(pm => this.confirmPayment(pm).pipe(tap(() => console.log('Making card payment'))))
+                    switchMap(pm => this.confirmPayment(pm).pipe(tap(_ => console.log('Making card payment'))))
                 ).subscribe(this.onSuccess.bind(this), this.onFailed.bind(this));
                 break;
         }

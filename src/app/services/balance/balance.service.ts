@@ -22,6 +22,16 @@ export class BalanceService {
     ) {}
 
     init(): void {
+        // clear on logout
+        this._auth.loggedIn.pipe(
+            filter(l => !l)
+        ).subscribe(() => this.clear());
+
+        // Refetch on new login
+        this._auth.loggedIn.pipe(
+            filter(l => !!l)
+        ).subscribe(() => this.refresh());
+
         // Fetch balance
         this.trigger$.pipe(
             // Confirm use is authorised first
@@ -32,11 +42,11 @@ export class BalanceService {
             // DEBUG: Log balance
             tap(b => console.warn(`${this.constructor.name} retrieved Balance:`, b))
         ).subscribe(b => this.balance$.next(b));
+    }
 
-        // Refetch on auth change
-        this._auth.loggedIn.pipe(
-            filter(l => !!l)
-        ).subscribe(() => this.refresh());
+    // Clear balance
+    clear(): void {
+        this.balance$.next(null);
     }
 
     // Refetch balance
