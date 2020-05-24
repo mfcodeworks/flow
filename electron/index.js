@@ -1,6 +1,7 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, Tray } = require('electron');
 const isDevMode = require('electron-is-dev');
 const { CapacitorSplashScreen, configCapacitor } = require('@capacitor/electron');
+const { setup: setupPushReceiver } = require('electron-push-receiver');
 
 const path = require('path');
 
@@ -14,19 +15,41 @@ let splashScreen = null;
 let useSplashScreen = true;
 
 // Create simple menu for easy devtools access, and for demo
-const menuTemplateDev = [
-  {
-    label: 'Options',
-    submenu: [
-      {
-        label: 'Open Dev Tools',
-        click() {
-          mainWindow.openDevTools();
-        },
+const menuTemplateDev = [{
+  label: 'Options',
+  submenu: [
+    {
+      label: 'Open Dev Tools',
+      click() {
+        mainWindow.openDevTools();
       },
-    ],
-  },
-];
+    },
+  ],
+}];
+
+// Setup tray icon
+const icon = `${__dirname}/assets/icons/icon-512x512.png`;
+const tray = new Tray(icon);
+const contextMenu = Menu.buildFromTemplate([
+    {
+        label: 'Open',
+        click: () => mainWindow.show()
+    }, {
+        label: 'Quit',
+        click: () => {
+            // app.quiting = true;
+            app.quit();
+        }
+    }
+])
+tray.setToolTip('Flow')
+tray.setContextMenu(contextMenu)
+tray.setIgnoreDoubleClickEvents(true)
+tray.on('click', (e) =>
+    mainWindow.isVisible()
+      ? mainWindow.hide()
+      : mainWindow.show()
+);
 
 async function createWindow () {
   // Define our main window size
@@ -41,6 +64,7 @@ async function createWindow () {
   });
 
   configCapacitor(mainWindow);
+  setupPushReceiver(mainWindow.webContents);
 
   if (isDevMode) {
     // Set our above template to the Menu Object if we are in development mode, dont want users having the devtools.
@@ -59,6 +83,11 @@ async function createWindow () {
     });
   }
 
+}
+
+// Force single instance
+if (!app.requestSingleInstanceLock()) {
+  app.quit();
 }
 
 // This method will be called when Electron has finished
