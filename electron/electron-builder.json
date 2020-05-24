@@ -1,19 +1,20 @@
 {
     "productName": "Flow",
     "appId": "com.ulfurmoon.flow",
+    "releaseInfo": {
+        "releaseName": "Flow"
+    },
     "directories": {
         "output": "release/",
         "buildResources": "app/assets/res/"
     },
     "files": [
         "app",
-        "splash_assets",
+        "!app/stats.json",
+        "capacitor.config.json",
+        "preload.js",
         "index.js",
-        "!app/stats.json"
-    ],
-    "extraResources": [
-        "app/assets/res/icon.png",
-        "app/assets/icons/**"
+        "splash_assets"
     ],
     "win": {
         "target": [

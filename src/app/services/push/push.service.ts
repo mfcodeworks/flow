@@ -8,11 +8,8 @@ import {
     PushNotificationActionPerformed
 } from '@capacitor/core';
 import { BehaviorSubject } from 'rxjs';
-
-import { environment } from '../../../environments/environment';
-import { IpcService } from '../ipc/ipc.service';
-import * as ipcChannels from 'electron-push-receiver/src/constants';
 import { mergeMapTo, tap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 const { PushNotifications, Device } = Plugins;
 
@@ -21,12 +18,15 @@ const { PushNotifications, Device } = Plugins;
 })
 export class PushService {
     token: BehaviorSubject<string> = new BehaviorSubject('')
+    pushApi: any;
 
     constructor(
-        private ipc: IpcService,
         private platform: Platform,
         private fire: AngularFireMessaging
-    ) {}
+    ) {
+        this.pushApi = window.push || null;
+        console.log(this.pushApi);
+    }
 
     init(): void {
         console.log('Running FCM init');
@@ -119,24 +119,24 @@ export class PushService {
     // Register push for electron
     electronInit(): void {
         // Handle push registration
-        this.ipc.on(ipcChannels.NOTIFICATION_SERVICE_STARTED, (_, token) => {
+        this.pushApi.onStart((_, token) => {
             console.log('Push service successfully started', token);
             this.token.next(token);
         });
 
         // Handle push errors
-        this.ipc.on(ipcChannels.NOTIFICATION_SERVICE_ERROR, (_, error) => {
+        this.pushApi.onError((_, error) => {
             console.warn('Push notification error', error);
         });
 
         // Send token to backend when updated
-        this.ipc.on(ipcChannels.TOKEN_UPDATED, (_, token) => {
+        this.pushApi.onTokenUpdated((_, token) => {
             console.log('Push token updated', token);
             this.token.next(token);
         });
 
         // Display notification
-        this.ipc.on(ipcChannels.NOTIFICATION_RECEIVED, (_, fcmNotification) => {
+        this.pushApi.onNotification((_, fcmNotification) => {
             // DEBUG: Log notification
             console.log('Notification', fcmNotification);
 
@@ -164,6 +164,6 @@ export class PushService {
 
         // Start service
         console.log('Starting Electron push');
-        this.ipc.send(ipcChannels.START_NOTIFICATION_SERVICE, environment.firebase.messagingSenderId);
+        this.pushApi.start(environment.firebase.messagingSenderId);
     }
 }

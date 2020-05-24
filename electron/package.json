@@ -1,6 +1,6 @@
 {
   "name": "flow",
-  "version": "0.10.200524",
+  "version": "0.20.200524-3",
   "author": "MF Softworks <arranjamesfletcher2012@gmail.com>",
   "description": "An Amazing Capacitor App",
   "homepage": "https://github.com/mfcodeworks/flow",
@@ -17,7 +17,7 @@
     "electron-push-receiver": "^2.1.3"
   },
   "devDependencies": {
-    "electron": "^9.0.0"
+    "electron": "^8.3.0"
   },
   "keywords": [
     "capacitor",

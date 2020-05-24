@@ -1,4 +1,10 @@
-const { app, BrowserWindow, Menu, Tray } = require('electron');
+const {
+  app,
+  BrowserWindow,
+  clipboard,
+  Menu,
+  Tray
+} = require('electron');
 const isDevMode = require('electron-is-dev');
 const { CapacitorSplashScreen, configCapacitor } = require('@capacitor/electron');
 const { setup: setupPushReceiver } = require('electron-push-receiver');
@@ -11,7 +17,10 @@ let mainWindow = null;
 // Placeholder for SplashScreen ref
 let splashScreen = null;
 
-//Change this if you do not wish to have a splash screen
+// Placeholder for Tray ref
+let tray = null;
+
+// Change this if you do not wish to have a splash screen
 let useSplashScreen = true;
 
 // Create simple menu for easy devtools access, and for demo
@@ -27,29 +36,17 @@ const menuTemplateDev = [{
   ],
 }];
 
-// Setup tray icon
-const icon = `${__dirname}/assets/icons/icon-512x512.png`;
-const tray = new Tray(icon);
-const contextMenu = Menu.buildFromTemplate([
-    {
-        label: 'Open',
-        click: () => mainWindow.show()
-    }, {
-        label: 'Quit',
-        click: () => {
-            // app.quiting = true;
-            app.quit();
-        }
-    }
-])
-tray.setToolTip('Flow')
-tray.setContextMenu(contextMenu)
-tray.setIgnoreDoubleClickEvents(true)
-tray.on('click', (e) =>
-    mainWindow.isVisible()
-      ? mainWindow.hide()
-      : mainWindow.show()
-);
+// Create tray menu
+const contextMenu = Menu.buildFromTemplate([{
+  label: 'Open',
+  click: () => mainWindow.show()
+}, {
+  label: 'Quit',
+  click: () => app.quit()
+}])
+
+// Set icon
+const icon = path.join(__dirname, 'app', 'assets', 'icons', 'icon-512x512.png');
 
 async function createWindow () {
   // Define our main window size
@@ -57,14 +54,29 @@ async function createWindow () {
     height: 920,
     width: 1600,
     show: false,
+    icon: icon,
+    title: 'Flow',
     webPreferences: {
-      nodeIntegration: true,
-      preload: path.join(__dirname, 'node_modules', '@capacitor', 'electron', 'dist', 'electron-bridge.js')
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js')
     }
   });
 
+  // Do setups
   configCapacitor(mainWindow);
   setupPushReceiver(mainWindow.webContents);
+
+  // Set tray icon
+  tray = new Tray(icon);
+  tray.setToolTip('Flow');
+  tray.setContextMenu(contextMenu);
+  tray.setIgnoreDoubleClickEvents(true);
+  tray.on('click', _ =>
+      mainWindow.isVisible()
+        ? mainWindow.hide()
+        : mainWindow.show()
+  );
 
   if (isDevMode) {
     // Set our above template to the Menu Object if we are in development mode, dont want users having the devtools.

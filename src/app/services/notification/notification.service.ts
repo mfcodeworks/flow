@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { PushService } from '../push/push.service';
 import { AuthService } from '../auth/auth.service';
 import { BackendService } from '../backend/backend.service';
-import { filter, tap } from 'rxjs/operators';
+import { filter, tap, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -21,16 +21,18 @@ export class NotificationService {
             tap(token => console.log(`New FCM token ${token}`)),
             filter(token => !!token),
             filter(() => auth.loggedIn.value),
-        ).subscribe(token => this.saveToken(token));
+            switchMap(this.saveToken)
+        ).subscribe(console.warn);
 
         // On new login status, update token status
         auth.loggedIn.pipe(
-            
+
             // If token has no value we can't proceed
             filter(() => !!push.token.value),
 
-        // Make to backend call
-        ).subscribe(l => l ? this.saveToken(push.token.value) : this.deleteToken(push.token.value));
+            // Make to backend call
+            switchMap(l => l ? this.saveToken(push.token.value) : this.deleteToken(push.token.value))
+        ).subscribe(console.warn);
     }
 
     // Init push services
