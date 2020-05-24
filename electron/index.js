@@ -1,3 +1,4 @@
+// @ts-nocheck
 const {
   app,
   BrowserWindow,
@@ -19,6 +20,9 @@ let splashScreen = null;
 
 // Placeholder for Tray ref
 let tray = null;
+
+// Placeholder for quitting
+let quitting = false;
 
 // Change this if you do not wish to have a splash screen
 let useSplashScreen = true;
@@ -42,7 +46,10 @@ const contextMenu = Menu.buildFromTemplate([{
   click: () => mainWindow.show()
 }, {
   label: 'Quit',
-  click: () => app.quit()
+  click: () => {
+    quitting = true;
+    app.quit();
+  }
 }])
 
 // Set icon
@@ -91,37 +98,71 @@ async function createWindow () {
   } else {
     mainWindow.loadURL(`file://${__dirname}/app/index.html`);
     mainWindow.webContents.on('dom-ready', () => {
+      mainWindow.webContents.send('window-id', mainWindow.id);
       mainWindow.show();
     });
   }
+
+  mainWindow.on('minimize', (e) => {
+    e.preventDefault();
+    mainWindow.hide();
+  });
+
+  // Emitted when the window is closed.
+  mainWindow.on('close', (e) => {
+    if (!quitting) {
+      e.preventDefault();
+      mainWindow.hide();
+    }
+
+    return false;
+  });
 
 }
 
 // Force single instance
 if (!app.requestSingleInstanceLock()) {
   app.quit();
+} else {
+  app.on('second-instance', (event, argv, cwd) => {
+    if (mainWindow) {
+      mainWindow.show();
+
+      if (mainWindow.isMinimized())
+        mainWindow.restore();
+
+      mainWindow.focus();
+    }
+  });
+
+  // This method will be called when Electron has finished
+  // initialization and is ready to create browser windows.
+  // Some Electron APIs can only be used after this event occurs.
+  app.on('ready', createWindow);
+
+  // Remove menu from all new windows including modals
+  app.on('browser-window-created',function(e,window) {
+    window.removeMenu();
+  });
+
+  // Quit when all windows are closed.
+  app.on('window-all-closed', function () {
+    // On OS X it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
+  });
+
+  app.on('activate', function () {
+    // On OS X it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (mainWindow === null) {
+      createWindow();
+    } else {
+      mainWindow.show();
+    }
+  });
+
+  // Define any IPC or other custom functionality below here
 }
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some Electron APIs can only be used after this event occurs.
-app.on('ready', createWindow);
-
-// Quit when all windows are closed.
-app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow();
-  }
-});
-
-// Define any IPC or other custom functionality below here
