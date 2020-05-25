@@ -1,35 +1,94 @@
 {
   "name": "flow",
-  "version": "0.20.200524-4",
-  "author": "MF Softworks <arranjamesfletcher2012@gmail.com>",
-  "description": "An Amazing Capacitor App",
+  "version": "0.20.200525",
+  "author": "MF Codeworks <arranjamesfletcher2012@gmail.com>",
+  "description": "Flow Comprehensive Global Wallet",
   "homepage": "https://github.com/mfcodeworks/flow",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mfcodeworks/flow.git"
+  },
   "main": "index.js",
   "scripts": {
     "electron:start": "electron ./",
-    "electron:windows": "electron-builder build --windows",
-    "electron:mac": "electron-builder build --mac",
-    "electron:linux": "electron-builder build --linux"
+    "start": "electron-forge start",
+    "build": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish"
   },
   "dependencies": {
     "@capacitor/electron": "^2.0.1",
+    "@electron-forge/publisher-github": "^6.0.0-beta.51",
+    "@electron-forge/publisher-snapcraft": "^6.0.0-beta.51",
     "electron-is-dev": "^1.1.0",
-    "electron-push-receiver": "^2.1.3"
+    "electron-push-receiver": "^2.1.3",
+    "electron-squirrel-startup": "^1.0.0",
+    "update-electron-app": "^1.5.0"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.51",
+    "@electron-forge/maker-deb": "^6.0.0-beta.51",
+    "@electron-forge/maker-dmg": "^6.0.0-beta.51",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.51",
+    "@electron-forge/maker-zip": "^6.0.0-beta.51",
     "electron": "^8.3.0"
   },
   "keywords": [
     "capacitor",
     "electron"
   ],
-  "license": "ISC",
+  "license": "Copyright (c) MF Codeworks 2020",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "asar": true,
+        "icon": "app/assets/res/icon.png",
+        "ignore": [
+          "environment.bat",
+          ".gitignore",
+          "app/stats.json"
+        ],
+        "name": "Flow"
+      },
       "makers": [
         {
-          "name": "@electron-forge/maker-zip"
+          "name": "@electron-forge/maker-squirrel",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ],
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {
+            "options": {
+              "maintainer": "MF Codworks",
+              "homepage": "https://mfcodeworks.com",
+              "categories": [
+                "Office"
+              ]
+            }
+          }
+        },
+        {
+          "name": "@electron-forge/maker-dmg",
+          "config": {}
+        }
+      ],
+      "publishers": [
+        {
+          "name": "@electron-forge/publisher-github",
+          "config": {
+            "repository": {
+              "owner": "mfcodeworks",
+              "name": "flow"
+            },
+            "prerelease": true
+          }
         }
       ]
     }

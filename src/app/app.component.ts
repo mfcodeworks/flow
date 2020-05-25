@@ -34,6 +34,7 @@ export class AppComponent {
         private _router: Router,
         private _alerts: AlertController
     ) {
+        console.log('App Component Load');
         this.init();
     }
 
@@ -165,6 +166,10 @@ export class AppComponent {
                 name: 'Settings',
                 icon: 'fas fa-cog',
                 link: '/settings',
+                condition: true
+            }, {
+                name: 'Test',
+                link: '#',
                 condition: true
             }
         ];

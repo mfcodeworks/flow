@@ -4,7 +4,6 @@
   "author": "MF Softworks <arranjamesfletcher2012@gmail.com>",
   "homepage": "https://ionicframework.com/",
   "scripts": {
-    "ng": "ng",
     "start": "ionic serve",
     "start:prod": "ionic serve --prod",
     "build": "ionic build --stats-json --base-href . && npm run ngsw && ionic cap copy",
@@ -20,10 +19,6 @@
     "ios": "npm run build && ionic cap open ios",
     "ios:prod": "npm run build:prod && ionic cap open ios",
     "electron": "npm run build && ionic cap open electron",
-    "electron:prod": "npm run build:prod && ionic cap open electron",
-    "electron:windows": "npm run build && cd electron && npm run electron:windows",
-    "electron:mac": "npm run build && cd electron && npm run electron:mac",
-    "electron:linux": "npm run build && cd electron && npm run electron:linux",
     "update:check": "ng update && npm outdated",
     "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points && jetifier && ionic cap update"
   },

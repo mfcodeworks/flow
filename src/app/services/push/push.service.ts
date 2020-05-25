@@ -18,14 +18,14 @@ const { PushNotifications, Device } = Plugins;
 })
 export class PushService {
     token: BehaviorSubject<string> = new BehaviorSubject('')
-    pushApi: any;
+    electronStartPush: any;
 
     constructor(
         private platform: Platform,
         private fire: AngularFireMessaging
     ) {
-        this.pushApi = window.push || null;
-        console.log(this.pushApi);
+        this.electronStartPush = window.push.start || null;
+        console.warn(window);
     }
 
     init(): void {
@@ -118,52 +118,59 @@ export class PushService {
 
     // Register push for electron
     electronInit(): void {
-        // Handle push registration
-        this.pushApi.onStart((_, token) => {
-            console.log('Push service successfully started', token);
-            this.token.next(token);
-        });
 
-        // Handle push errors
-        this.pushApi.onError((_, error) => {
-            console.warn('Push notification error', error);
-        });
-
-        // Send token to backend when updated
-        this.pushApi.onTokenUpdated((_, token) => {
-            console.log('Push token updated', token);
-            this.token.next(token);
-        });
-
-        // Display notification
-        this.pushApi.onNotification((_, fcmNotification) => {
-            // DEBUG: Log notification
-            console.log('Notification', fcmNotification);
-
-            // Check notification for display title
-            if (fcmNotification.notification.title || fcmNotification.notification.body) {
-                Notification.requestPermission().then(p => {
-                    if (p !== 'granted') {
-                        return;
-                    }
-
-                    const notification = new Notification(fcmNotification.notification.title, {
-                        body: fcmNotification.notification.body || '',
-                        icon: fcmNotification.notification.icon || 'assets/icons/icon-128x128.png'
-                    });
-
-                    notification.onclick = () => {
-                        console.log('Notification clicked');
-                    };
-                });
+        window.addEventListener('message', ({ data }) => {
+            if ((data?.type as string)?.indexOf('push:') === -1) {
                 return;
             }
 
-            // Payload has no body, so consider it silent (just consider the data portion)
-        });
+            const { type, token, error, notif } = data;
+
+            switch (type) {
+                case 'push:start':
+                    console.log('Push service successfully started', token);
+                    this.token.next(token);
+                    break;
+
+                case 'push:error':
+                    console.warn('Push notification error', error);
+                    break;
+
+                case 'push:updated':
+                    console.log('Push token updated', token);
+                    this.token.next(token);
+                    break;
+
+                case 'push:notification':
+                    // DEBUG: Log notification
+                    console.log('Notification', notif);
+
+                    // Check notification for display title
+                    if (notif.notification.title || notif.notification.body) {
+                        Notification.requestPermission().then(p => {
+                            if (p !== 'granted') {
+                                return;
+                            }
+
+                            const notification = new Notification(notif.notification.title, {
+                                body: notif.notification.body || '',
+                                icon: notif.notification.icon || 'assets/icons/icon-128x128.png'
+                            });
+
+                            notification.onclick = () => {
+                                console.log('Notification clicked');
+                            };
+                        });
+                        return;
+                    }
+
+                    // Payload has no body, so consider it silent (just consider the data portion)
+                    break;
+            }
+        }, false);
 
         // Start service
         console.log('Starting Electron push');
-        this.pushApi.start(environment.firebase.messagingSenderId);
+        this.electronStartPush(environment.firebase.messagingSenderId);
     }
 }

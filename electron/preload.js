@@ -11,20 +11,15 @@ const path = require('path');
 // Include capacitor preload script
 require(path.join(__dirname, 'node_modules', '@capacitor', 'electron', 'dist', 'electron-bridge.js'));
 
+// Set IPC Event Handlers
+ipcRenderer
+    .on(NOTIFICATION_SERVICE_STARTED, (_, token) => window.postMessage({type:'push:start', token}, '*'))
+    .on(NOTIFICATION_SERVICE_ERROR, (_, error) => window.postMessage({type:'push:error', error}, '*'))
+    .on(TOKEN_UPDATED, (_, token) => window.postMessage({type:'push:updated', token}, '*'))
+    .on(NOTIFICATION_RECEIVED, (_, notif) => window.postMessage({type:'push:notification', notif}, '*'))
+
 // Add custom API
 contextBridge.exposeInMainWorld('push', {
     // Start push service
-    start: token => typeof token === 'string' && ipcRenderer.send(START_NOTIFICATION_SERVICE, token),
-
-    // Handle push registration
-    onStart: callback => ipcRenderer.on(NOTIFICATION_SERVICE_STARTED, callback),
-
-    // Handle push errors
-    onError: callback => ipcRenderer.on(NOTIFICATION_SERVICE_ERROR, callback),
-
-    // Send token to backend when updated
-    onTokenUpdated: callback => ipcRenderer.on(TOKEN_UPDATED, callback),
-
-    // Display notification
-    onNotification: callback => ipcRenderer.on(NOTIFICATION_RECEIVED, callback)
+    start: token => typeof token === 'string' && ipcRenderer.send(START_NOTIFICATION_SERVICE, token)
 });

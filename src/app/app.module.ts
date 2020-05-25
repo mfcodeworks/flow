@@ -90,4 +90,8 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
     ],
     bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule {
+    constructor() {
+        console.log('App Module load');
+    }
+}
