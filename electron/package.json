@@ -1,6 +1,6 @@
 {
   "name": "flow",
-  "version": "0.20.200525",
+  "version": "0.21.200526",
   "author": "MF Codeworks <arranjamesfletcher2012@gmail.com>",
   "description": "Flow Comprehensive Global Wallet",
   "homepage": "https://github.com/mfcodeworks/flow",
@@ -87,7 +87,7 @@
               "owner": "mfcodeworks",
               "name": "flow"
             },
-            "prerelease": true
+            "prerelease": false
           }
         }
       ]

@@ -164,6 +164,4 @@ app.on('activate', function () {
 });
 
 // Configure auto-update
-require('update-electron-app') ({
-  updateInterval: '1 hour'
-});
+require('update-electron-app')();

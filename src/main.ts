@@ -9,6 +9,8 @@ if (environment.production) {
     enableProdMode();
 }
 
+console.log('Loading app');
 platformBrowserDynamic().bootstrapModule(AppModule)
+    .then(() => console.log('Bootstrapped'))
     .then(() => defineCustomElements(window))
     .catch(err => console.error);

@@ -167,10 +167,6 @@ export class AppComponent {
                 icon: 'fas fa-cog',
                 link: '/settings',
                 condition: true
-            }, {
-                name: 'Test',
-                link: '#',
-                condition: true
             }
         ];
     }
