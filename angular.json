@@ -34,7 +34,7 @@
                 "output": "./svg"
               },
               {
-                "glob": "**/qr-scanner-worker.*",
+                "glob": "**/qr-scanner-worker.min.js",
                 "input": "node_modules/qr-scanner",
                 "output": "./"
               }

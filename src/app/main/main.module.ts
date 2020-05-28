@@ -30,7 +30,6 @@ import { ThemeSettingsComponent } from './components/settings/theme-settings/the
 import { EncryptLoginComponent } from './components/settings/encrypt-login/encrypt-login.component';
 import { EncryptLoginDialogComponent } from './components/settings/encrypt-login/encrypt-login-dialog/encrypt-login-dialog.component';
 import { PaymentSourceDialogComponent } from './components/payment-source-dialog/payment-source-dialog.component';
-import { IonicModule } from '@ionic/angular';
 
 @NgModule({
     imports: [
@@ -38,8 +37,7 @@ import { IonicModule } from '@ionic/angular';
         CommonModule,
         OverlayModule,
         ReactiveFormsModule,
-        Routing,
-        IonicModule.forRoot()
+        Routing
     ],
     declarations: [
         DateDiffPipe,
