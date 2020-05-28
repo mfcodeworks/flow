@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { BackendService } from '../../../services/backend/backend.service';
 import { AuthService } from '../../../services/auth/auth.service';
+import { BehaviorSubject } from 'rxjs';
+import { map, catchError, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-authorize',
     templateUrl: './authorize.component.html',
-    styleUrls: ['./authorize.component.css']
+    styleUrls: ['./authorize.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthorizeComponent implements OnInit {
-    hide = true;
+    hide = new BehaviorSubject(true);
     globalError: string = null;
     processing = false;
 
@@ -35,7 +37,7 @@ export class AuthorizeComponent implements OnInit {
         }
     }
 
-    doSignIn(password: string) {
+    doSignIn() {
         // Reset error
         this.globalError = null;
 
@@ -46,17 +48,23 @@ export class AuthorizeComponent implements OnInit {
         // Submit request to API
         this.processing = true;
 
-        this.auth
-        .authorize(password)
-        .subscribe(
-            (success: boolean) => success
-                ? this.route.queryParamMap.subscribe(p => this.router.navigateByUrl(
-                    decodeURIComponent(p.get('redirect'))
-                ))
-                : this.globalError = 'Password incorrect',
-            () => console.warn,
-            () => this.processing = false
-        );
+        const password = this.authorizeForm.controls['password'].value
+
+        this.auth.authorize(password)
+        .pipe(
+            map(s => {
+                if(s) {
+                    return this.route.queryParamMap.subscribe(
+                        p => this.router.navigateByUrl(
+                            decodeURIComponent(p.get('redirect'))
+                        )
+                    );
+                }
+
+                this.globalError = 'Password incorrect';
+                return false;
+            }),
+        ).subscribe(_ => this.processing = false);
     }
 
     prettyCapitalize(text: string) {

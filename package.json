@@ -6,9 +6,9 @@
   "scripts": {
     "start": "ionic serve",
     "start:prod": "ionic serve --prod",
-    "build": "ionic build --stats-json --base-href . && npm run ngsw && ionic cap copy",
-    "build:small": "ionic build --aot --build-optimizer --base-href . && ionic cap copy",
-    "build:prod": "ionic build --prod --aot --build-optimizer --base-href . && ionic cap copy",
+    "build": "ng build --statsJson=true --baseHref=. && npm run ngsw && ionic cap copy",
+    "build:small": "ionic build --aot=true --buildOptimizer=true --baseHref=. && ionic cap copy",
+    "build:prod": "ionic build --prod --aot=true --buildOptimizer=true --optimization --baseHref=. && ionic cap copy",
     "ngsw": "npx ngsw-config www ngsw-config.json && cpx node_modules/@angular/service-worker/ngsw-worker.js www",
     "test": "ng test",
     "lint": "ng lint",
@@ -23,6 +23,7 @@
     "electron:build": "npm run build:small && cd electron && npm run make",
     "electron:publish": "npm run build:prod && cd electron && npm run publish",
     "update:check": "ng update && npm outdated",
+    "analyze": "npm run build && webpack-bundle-analyzer www/stats.json",
     "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points && jetifier && ionic cap update"
   },
   "private": true,

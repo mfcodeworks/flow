@@ -1,13 +1,15 @@
 <ion-content>
     <!-- Sign In Form -->
-    <form [formGroup]="authorizeForm" class="form-container d-flex flex-column h-100 pb-3" (ngSubmit)="doSignIn(authorizeForm.controls['password'].value)">
+    <form [formGroup]="authorizeForm"
+        class="form-container d-flex flex-column h-100 pb-3"
+        (ngSubmit)="doSignIn()">
 
         <!-- Branding -->
         <div class="branding logo logo-branded w-100 mx-auto my-5 d-block"></div>
 
         <mat-form-field class="form-group m-auto">
-            <input matInput formControlName="password" placeholder="Enter your password" [type]="hide ? 'password' : 'text'" />
-            <button mat-icon-button matSuffix (click)="hide = !hide" type="button" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+            <input matInput formControlName="password" placeholder="Enter your password" [type]="(hide | async) ? 'password' : 'text'" />
+            <button mat-icon-button matSuffix (click)="hide.next(!hide)" type="button" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide | async">
                 <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
             </button>
             <span matPrefix><i class="ti-lock form-input-prefix"></i></span>
