@@ -24,8 +24,7 @@ export class PushService {
         private platform: Platform,
         private fire: AngularFireMessaging
     ) {
-        this.electronStartPush = window.push.start || null;
-        console.warn(window);
+        this.electronStartPush = window?.push?.start;
     }
 
     init(): void {
