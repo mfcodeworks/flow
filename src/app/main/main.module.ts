@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { OverlayModule } from '@angular/cdk/overlay';
+import { IonicModule } from '@ionic/angular';
 
 import { Routing } from './main.routing';
 import { MaterialModule } from '../material/material.module';
@@ -39,7 +40,8 @@ import { PaymentSourceDialogComponent } from './components/payment-source-dialog
         CommonModule,
         OverlayModule,
         ReactiveFormsModule,
-        Routing
+        Routing,
+        IonicModule.forRoot()
     ],
     declarations: [
         DateDiffPipe,
