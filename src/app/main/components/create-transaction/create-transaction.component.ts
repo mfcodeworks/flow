@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy, OnDestroy, AfterViewInit } from '@angular/core';
 import { UserService } from 'src/app/services/user/user.service';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { Profile } from '../../core/profile';
@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { from, Observable, of, Subscription, BehaviorSubject } from 'rxjs';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { switchMap, map, catchError, tap, mergeMap, mergeMapTo } from 'rxjs/operators';
+import { switchMap, map, catchError, tap, mergeMap, filter } from 'rxjs/operators';
 import { CurrencyMinimumAmount } from '../../core/currency-minimum-amount.enum';
 import { MoneyService } from 'src/app/services/money/money.service';
 import { MatStepper } from '@angular/material/stepper';
@@ -22,7 +22,7 @@ declare const Stripe: any;
     templateUrl: './create-transaction.component.html',
     styleUrls: ['./create-transaction.component.scss']
 })
-export class CreateTransactionComponent implements OnInit, OnDestroy {
+export class CreateTransactionComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('paymentStepper') stepper: MatStepper
     paymentAmount: FormGroup;
     paymentMethod: FormGroup;
@@ -54,7 +54,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
         public toast: MatSnackBar
     ) {}
 
-    ngOnInit() {
+    ngOnInit(): void {
         // Get user and defaults
         this.user = this.user$.profile;
 
@@ -64,7 +64,6 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
 
         // Change style based on theme
         this.isDark$ = this.theme.isDarkMode().subscribe(d => {
-            console.log('Is dark:', d);
             this.options = !!d ? {
                 style: {
                     base: {
@@ -91,20 +90,6 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
             })
         ).subscribe(i => this.intent = i);
 
-        // Init forms
-        this.paymentAmount = this.fb.group({
-            amount: [null, [
-                Validators.required,
-                Validators.min(CurrencyMinimumAmount[`${this.user.defaultCurrency}`.toUpperCase()])
-            ]],
-            currency: [this.user.defaultCurrency, Validators.required],
-            description: ['']
-        });
-        this.paymentMethod = this.fb.group({
-            method: [0, Validators.required],
-            saveNewMethod: [false]
-        });
-
         // Get recipient
         this.route.queryParamMap.pipe(
             switchMap(params => this.backend.getProfile(
@@ -116,12 +101,32 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
         this.sources = this.backend.getUserSources();
 
         // Get balance
-        this.balance = this.user.stripeConnectId ? this.backend.getUserBalance().pipe(
+        this.balance = of(0).pipe(
+            filter(() => !!this.user?.stripeConnectId),
+            switchMap(() => this.backend.getUserBalance()),
             map(b => this.money.compress(
                 b.available.find(c => c.currency == this.user.defaultCurrency).amount,
                 this.user.defaultCurrency
             ))
-        ) : of(0);
+        );
+
+        // Init forms
+        this.paymentAmount = this.fb.group({
+            amount: [null, [
+                Validators.required,
+                Validators.min(CurrencyMinimumAmount[`${this.user.defaultCurrency}`.toUpperCase()])
+            ]],
+            currency: [this.user.defaultCurrency, Validators.required],
+            description: ['']
+        });
+
+        this.paymentMethod = this.fb.group({
+            method: [0, Validators.required],
+            saveNewMethod: ['']
+        });
+    }
+
+    ngAfterViewInit(): void {
     }
 
     onCurrencyChange(): void {

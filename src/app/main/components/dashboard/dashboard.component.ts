@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { Plugins } from '@capacitor/core';
 import { SHA256, enc } from 'crypto-js';
 import { Profile } from '../../core/profile';

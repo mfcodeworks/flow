@@ -27,7 +27,7 @@
         <ion-menu side='start' menuId='dir' contentId="main" type="overlay">
             <ion-content>
                 <ion-list id="dir-list">
-                    <ng-container *ngFor='let l of activeLinks() | async'>
+                    <ng-container *ngFor='let l of activeLinks | async'>
                         <ion-menu-toggle auto-hide="false" *ngIf='l.condition'>
                             <ion-item routerDirection="root"
                                 [routerLink]="l?.link"

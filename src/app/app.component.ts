@@ -26,6 +26,16 @@ export class AppComponent {
 
     private menuLinks$: BehaviorSubject<Link[]> = new BehaviorSubject(this.authLinks());
 
+    activeLinks: Observable<Link | Link[]> = this.menuLinks$.pipe(
+        // Switch auth status
+        switchMap(() => this.userSignedIn()),
+        distinctUntilChanged(),
+        tap(m => console.log('auth.isLoggedIn', m)),
+        // Return app links or auth links
+        map(l => !!l ? this.mainLinks() : this.authLinks()),
+        tap(m => console.log('Menu links', m)),
+    );
+
     constructor(
         private platform: Platform,
         private user$: UserService,
@@ -34,7 +44,6 @@ export class AppComponent {
         private _router: Router,
         private _alerts: AlertController
     ) {
-        console.log('App Component Load');
         this.init();
     }
 
@@ -169,17 +178,5 @@ export class AppComponent {
                 condition: true
             }
         ];
-    }
-
-    activeLinks(): Observable<Link | Link[]> {
-        return this.menuLinks$.pipe(
-            // Switch auth status
-            switchMap(() => this.userSignedIn()),
-            distinctUntilChanged(),
-            tap(m => console.log('auth.isLoggedIn', m)),
-            // Return app links or auth links
-            map(l => !!l ? this.mainLinks() : this.authLinks()),
-            tap(m => console.log('Menu links', m)),
-        );
     }
 }

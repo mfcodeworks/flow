@@ -15,28 +15,31 @@ export class NotificationService {
         private push: PushService,
         private auth: AuthService,
         private backend: BackendService
-    ) {
-        // On new token, if token has value and user is logged in, save
-        push.token.pipe(
-            tap(token => console.log(`New FCM token ${token}`)),
-            filter(token => !!token),
-            filter(() => auth.loggedIn.value),
-            switchMap(this.saveToken)
-        ).subscribe(console.warn);
-
-        // On new login status, update token status
-        auth.loggedIn.pipe(
-
-            // If token has no value we can't proceed
-            filter(() => !!push.token.value),
-
-            // Make to backend call
-            switchMap(l => l ? this.saveToken(push.token.value) : this.deleteToken(push.token.value))
-        ).subscribe(console.warn);
-    }
+    ) {}
 
     // Init push services
     init(): void {
+        // On new token, if token has value and user is logged in, save
+        this.push.token.pipe(
+            tap(token => console.log(`New FCM token ${token}`)),
+            filter(token => !!token),
+            filter(() => this.auth.loggedIn.value),
+            switchMap(t => this.saveToken(t))
+        ).subscribe(console.warn);
+
+        // On new login status, update token status
+        this.auth.loggedIn.pipe(
+
+            // If token has no value we can't proceed
+            filter(() => !!this.push.token.value),
+
+            // Make to backend call
+            switchMap(l => l
+                ? this.saveToken(this.push.token.value)
+                : this.deleteToken(this.push.token.value)
+            )
+        ).subscribe(console.warn);
+
         return this.push.init()
     }
 

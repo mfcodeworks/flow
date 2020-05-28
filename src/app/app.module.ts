@@ -38,7 +38,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
         AppRoutingModule,
         HttpClientModule,
         MaterialModule,
-        ServiceWorkerModule.register('ngsw-worker.js', { enabled: true }) //{ enabled: environment.production })
+        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
     ],
     declarations: [
         TopBarComponent,
@@ -90,8 +90,4 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
     ],
     bootstrap: [AppComponent]
 })
-export class AppModule {
-    constructor() {
-        console.log('App Module load');
-    }
-}
+export class AppModule {}
