@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, of, BehaviorSubject, iif } from 'rxjs';
-import { map, filter, tap, mergeMap } from 'rxjs/operators';
+import { map, filter, tap, mergeMap, switchMap } from 'rxjs/operators';
 import { UserService } from '../user/user.service';
 import { CacheService } from '../cache/cache.service';
 import { Profile } from 'src/app/main/core/profile';
@@ -27,8 +27,9 @@ export class AuthService {
             // Only proceed on logged in true
             filter(l => !!l),
 
-        // Update user profile
-        ).subscribe(() => this.updateProfile());
+            // Update user profile
+            switchMap(() => this.updateProfile())
+        ).subscribe();
 
         console.log('Attempting to load user');
 
