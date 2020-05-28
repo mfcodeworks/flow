@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
 
 import { Routing } from './auth.routing';
 import { MaterialModule } from '../material/material.module';
@@ -23,7 +24,8 @@ import { AuthorizeComponent } from './components/authorize/authorize.component';
     Routing,
     MaterialModule,
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    IonicModule.forRoot()
   ],
   exports: [
     SignInComponent,
