@@ -1,11 +1,11 @@
 <!-- TODO: Add UI skeleton -->
 <ion-content>
-    <div class='row mx-3 mat-typography'>
+    <div class='row mx-3 mat-typography' *ngIf='profile | async as p'>
         <div class='col-12'>
             <div class='text-center w-100 my-5'>
                 <app-qr [data]='qrData | async'
                     logo='assets/images/logo-marker.png'></app-qr>
-                <div class='display-4 mt-3'>{{ user.username }}</div>
+                <div class='display-4 mt-3'>{{ p?.username }}</div>
                 <ion-chip color='primary' outline>
                     <ion-label class='profile-chip' color="dark">
                         {{ (stripeProfile | async)?.businessType || 'individual' | titlecase }}
@@ -16,9 +16,9 @@
                 <button color="primary"
                     mat-raised-button
                     [routerLink]="['/transaction/create']"
-                    [queryParams]="{ to: (profile | async)?.id }">
-                    <span *ngIf='user.id === (profile | async)?.id'>Top-up</span>
-                    <span *ngIf='user.id !== (profile | async)?.id'>Transfer</span>
+                    [queryParams]="{ to: p.id }">
+                    <span *ngIf='user.id === p.id'>Top-up</span>
+                    <span *ngIf='user.id !== p.id'>Transfer</span>
                     <i class="ml-2 fas fa-money-check"></i>
                 </button>
             </div>
