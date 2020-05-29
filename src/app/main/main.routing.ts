@@ -11,6 +11,7 @@ import { ProfileResolver } from '../main/resolvers/profile.resolver';
 import { WithdrawComponent } from './components/withdraw/withdraw.component';
 import { SearchComponent } from './components/search/search.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { TransactionComponent } from './components/transaction/transaction.component';
 
 /* TODO: Don't require SignedIn for Profile and CreateTransaction */
 export const routes: Routes = [
@@ -41,14 +42,16 @@ export const routes: Routes = [
             {
                 path: 'profile/:profile',
                 component: ProfileComponent,
-                resolve: { profile: ProfileResolver },
-                runGuardsAndResolvers: 'always'
+                resolve: { profile: ProfileResolver }
             },
             {
                 path: 'transaction/create',
                 component: CreateTransactionComponent,
-                resolve: { intent: PaymentIntentResolver },
-                runGuardsAndResolvers: 'always'
+                resolve: { intent: PaymentIntentResolver }
+            },
+            {
+                path: 'transaction/:id',
+                component: TransactionComponent
             }
         ]
     }

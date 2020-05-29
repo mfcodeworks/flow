@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { of, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SHA256, enc } from 'crypto-js';
@@ -13,7 +13,8 @@ export class PaymentIntentResolver implements Resolve<Observable<any>> {
 
     constructor(
         private user$: UserService,
-        private backend: BackendService
+        private backend: BackendService,
+        private router: Router
     ) { }
 
     resolve(route: ActivatedRouteSnapshot): Observable<any> {
@@ -27,7 +28,7 @@ export class PaymentIntentResolver implements Resolve<Observable<any>> {
 
         return this.backend.getIntent(for_user_id, nonce).pipe(
             catchError((error) => {
-                // this.router.navigate(['/404']);
+                this.router.navigate(['/']);
                 return of(error);
             })
         );

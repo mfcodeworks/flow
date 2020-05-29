@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { environment } from 'src/environments/environment';
 import { Observable, of } from 'rxjs';
-import { tap, map } from 'rxjs/operators';
+import { tap, map, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-profile',
@@ -14,6 +14,8 @@ import { tap, map } from 'rxjs/operators';
     styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
+    // TODO: Fix 500 error
+    
     user: Profile;
     profile: Observable<Profile>;
     qrData: Observable<string>;
@@ -40,9 +42,8 @@ export class ProfileComponent implements OnInit {
 
         // Set User Stripe Profile
         this.stripeProfile = this.profile.pipe(
-            map(p => this.backend.getStripeProfile(p.id).pipe(
-                tap(s => console.log('Stripe profile:', s))
-            ))
+            switchMap(p => this.backend.getStripeProfile(p.id)),
+            tap(s => console.log('Stripe profile:', s))
         );
     }
 }

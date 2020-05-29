@@ -16,7 +16,8 @@
                 <button color="primary"
                     mat-raised-button
                     [routerLink]="['/transaction/create']"
-                    [queryParams]="{ to: p.id }">
+                    [queryParams]="{ to: p.id }"
+                    [disabled]='!(stripeProfile | async)?.canAcceptPayments'>
                     <span *ngIf='user.id === p.id'>Top-up</span>
                     <span *ngIf='user.id !== p.id'>Transfer</span>
                     <i class="ml-2 fas fa-money-check"></i>

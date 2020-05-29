@@ -344,9 +344,7 @@ export class ApiService {
         console.warn(error);
 
         // Set error message
-        if (!!error.error.error) errorMessage = `${error.error.error}`;
-        // else if (!!error.error) errorMessage = `(${error.status}) Message: ${error.error}`;
-        else errorMessage = `(${error.status}) Message: ${error.statusText}`
+        errorMessage = `(${error.status}) Message: ${error.error.message || error.statusText}`
 
         // Open error snackbar
         this.errorToast.open(errorMessage, 'close', {
