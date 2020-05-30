@@ -31,6 +31,7 @@ import { ThemeSettingsComponent } from './components/settings/theme-settings/the
 import { EncryptLoginComponent } from './components/settings/encrypt-login/encrypt-login.component';
 import { EncryptLoginDialogComponent } from './components/settings/encrypt-login/encrypt-login-dialog/encrypt-login-dialog.component';
 import { PaymentSourceDialogComponent } from './components/payment-source-dialog/payment-source-dialog.component';
+import { TransactionComponent } from './components/transaction/transaction.component';
 
 @NgModule({
     imports: [
@@ -64,7 +65,8 @@ import { PaymentSourceDialogComponent } from './components/payment-source-dialog
         ThemeSettingsComponent,
         EncryptLoginComponent,
         EncryptLoginDialogComponent,
-        PaymentSourceDialogComponent
+        PaymentSourceDialogComponent,
+        TransactionComponent
     ],
     providers: [
         PaymentIntentResolver,
