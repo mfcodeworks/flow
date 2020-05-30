@@ -17,7 +17,6 @@ import { StripeSignupComponent } from './components/stripe-signup/stripe-signup.
 import { CreateTransactionComponent } from './components/create-transaction/create-transaction.component';
 import { PaymentIntentResolver } from 'src/app/main/resolvers/payment-intent.resolver';
 import { QRComponent } from './components/qr/qr.component';
-import { ProfileResolver } from 'src/app/main/resolvers/profile.resolver';
 import { ProfileComponent } from './components/profile/profile.component';
 import { WithdrawComponent } from './components/withdraw/withdraw.component';
 import { BalanceDisplayComponent } from './components/balance-display/balance-display.component';
@@ -69,28 +68,7 @@ import { TransactionComponent } from './components/transaction/transaction.compo
         TransactionComponent
     ],
     providers: [
-        PaymentIntentResolver,
-        ProfileResolver
-    ],
-    exports: [
-        DateDiffPipe,
-        DateFilterPipe,
-        CurrencySymbolPipe,
-        BalanceDisplayComponent,
-        AddPaymentSourceDialogComponent,
-        TransactionListComponent,
-        DashboardComponent,
-        StripeSignupComponent,
-        ProfileComponent,
-        WithdrawComponent,
-        SearchComponent,
-        QuotesComponent,
-        SettingsComponent,
-        ZoomSettingsComponent,
-        UserSettingsComponent,
-        ThemeSettingsComponent,
-        EncryptLoginComponent,
-        EncryptLoginDialogComponent
+        PaymentIntentResolver
     ]
 })
 export class MainModule {}

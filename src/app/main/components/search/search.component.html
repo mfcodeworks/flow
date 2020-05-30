@@ -20,7 +20,7 @@
                     <mat-list-item *ngFor="let result of profiles | async">
                         <mat-divider></mat-divider>
                         <!-- <img matListAvatar [src]="result.profilePic" class="avatar"  [routerLink]="['/profile', result.username]"/> -->
-                        <h4 matLine [routerLink]="['/profile', result.id]" class="mat-h3">{{result.username}}</h4>
+                        <h4 matLine [routerLink]="['/profile', result.username]" class="mat-h3">{{result.username}}</h4>
                     </mat-list-item>
                 </mat-list>
             </div>

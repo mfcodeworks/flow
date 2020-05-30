@@ -26,13 +26,6 @@ import { AuthorizeComponent } from './components/authorize/authorize.component';
     CommonModule,
     ReactiveFormsModule,
     IonicModule.forRoot()
-  ],
-  exports: [
-    SignInComponent,
-    SignUpComponent,
-    ForgotPasswordComponent,
-    ResetPasswordComponent,
-    AuthorizeComponent
   ]
 })
 export class AuthenticationModule { }

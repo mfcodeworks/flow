@@ -26,7 +26,6 @@ export class QRComponent implements AfterViewInit {
     constructor() { }
 
     ngAfterViewInit() {
-        console.log('Making QR', this);
         this.qr = new QRCode(this.qrDisplay.nativeElement, {
             text: this.data,
             width: this.width,
@@ -40,7 +39,7 @@ export class QRComponent implements AfterViewInit {
             logoHeight: this.logoHeight,
             correctLevel: this.correctLevel,
             dotScale: this.dotScale,
-        })
+        });
     }
 
 }

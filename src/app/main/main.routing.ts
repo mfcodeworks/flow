@@ -7,7 +7,6 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { StripeSignupComponent } from './components/stripe-signup/stripe-signup.component';
 import { CreateTransactionComponent } from './components/create-transaction/create-transaction.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { ProfileResolver } from '../main/resolvers/profile.resolver';
 import { WithdrawComponent } from './components/withdraw/withdraw.component';
 import { SearchComponent } from './components/search/search.component';
 import { SettingsComponent } from './components/settings/settings.component';
@@ -41,8 +40,7 @@ export const routes: Routes = [
             },
             {
                 path: 'profile/:profile',
-                component: ProfileComponent,
-                resolve: { profile: ProfileResolver }
+                component: ProfileComponent
             },
             {
                 path: 'transaction/create',

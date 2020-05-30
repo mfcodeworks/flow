@@ -4,7 +4,7 @@ import { Plugins } from '@capacitor/core';
 import { AuthService } from './services/auth/auth.service';
 import { UserService } from './services/user/user.service';
 import { Link } from './shared/interfaces/link';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { tap, distinctUntilChanged, switchMap, map } from 'rxjs/operators';
 import { QRService } from './services/qr/qr.service';
 import { environment } from '../environments/environment';
@@ -24,7 +24,7 @@ export class AppComponent {
     @ViewChild("qrFile", {static: true}) qrFile: IonInput;
     @ViewChild("qrFileCanvas", {static: true}) qrCanvas: ElementRef<HTMLCanvasElement>;
 
-    private menuLinks$: BehaviorSubject<Link[]> = new BehaviorSubject(this.authLinks());
+    private menuLinks$: Observable<Link[]> = this.authLinks();
 
     activeLinks: Observable<Link | Link[]> = this.menuLinks$.pipe(
         // Switch auth status
@@ -32,7 +32,7 @@ export class AppComponent {
         distinctUntilChanged(),
         tap(m => console.log('auth.isLoggedIn', m)),
         // Return app links or auth links
-        map(l => !!l ? this.mainLinks() : this.authLinks()),
+        switchMap(l => !!l ? this.mainLinks() : this.authLinks()),
         tap(m => console.log('Menu links', m)),
     );
 
@@ -122,8 +122,8 @@ export class AppComponent {
         return this.auth.loggedIn;
     }
 
-    authLinks(): Link[] {
-        return [
+    authLinks(): Observable<Link[]> {
+        return of([
             {
                 name: 'Login',
                 icon: 'fas fa-sign-in-alt',
@@ -140,43 +140,45 @@ export class AppComponent {
                 link: '/password/reset',
                 condition: true
             }
-        ]
+        ])
     }
 
-    mainLinks(): Link[] {
-        return [
-            {
-                name: 'Wallet',
-                icon: 'fas fa-wallet',
-                link: '/',
-                condition: true
-            }, {
-                name: 'Withdraw',
-                icon: 'fas fa-coins',
-                link: '/withdraw',
-                condition: !!this.userHasAccount()
-            }, {
-                name: 'Search',
-                icon: 'fas fa-search-dollar',
-                link: '/search',
-                condition: true
-            }, {
-                name: 'Profile',
-                icon: 'fas fa-qrcode',
-                link: '/profile/me',
-                condition: true
-            }, {
-                name: 'Top-up Wallet',
-                icon: 'fas fa-hand-holding-usd',
-                link: '/transaction/create',
-                params: { to: 'me' },
-                condition: true
-            }, {
-                name: 'Settings',
-                icon: 'fas fa-cog',
-                link: '/settings',
-                condition: true
-            }
-        ];
+    mainLinks(): Observable<Link[]> {
+        return this.user$.profile$.pipe(
+            map(p => [
+                {
+                    name: 'Wallet',
+                    icon: 'fas fa-wallet',
+                    link: '/',
+                    condition: true
+                }, {
+                    name: 'Withdraw',
+                    icon: 'fas fa-coins',
+                    link: '/withdraw',
+                    condition: !!this.userHasAccount()
+                }, {
+                    name: 'Search',
+                    icon: 'fas fa-search-dollar',
+                    link: '/search',
+                    condition: true
+                }, {
+                    name: 'Profile',
+                    icon: 'fas fa-qrcode',
+                    link: `/profile/${p.username}`,
+                    condition: true
+                }, {
+                    name: 'Top-up Wallet',
+                    icon: 'fas fa-hand-holding-usd',
+                    link: '/transaction/create',
+                    params: { to: 'me' },
+                    condition: true
+                }, {
+                    name: 'Settings',
+                    icon: 'fas fa-cog',
+                    link: '/settings',
+                    condition: true
+                }
+            ])
+        );
     }
 }

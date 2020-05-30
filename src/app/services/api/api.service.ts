@@ -265,9 +265,20 @@ export class ApiService {
     }
 
     // API: Get Profile
-    getProfile(id: number): Observable<Profile> {
+    getProfile(id: string | number): Observable<Profile> {
         return this.http
         .get<Profile>(`${API_URL}/profile/${id}`).pipe(
+            publishReplay(),
+            refCount(),
+            retry(1),
+            catchError((error) => this.handleError(error)),
+            map(profile => new Profile(profile))
+        );
+    }
+
+    getProfileByName(name: string): Observable<Profile> {
+        return this.http
+        .get<Profile>(`${API_URL}/profile/${name}`).pipe(
             publishReplay(),
             refCount(),
             retry(1),

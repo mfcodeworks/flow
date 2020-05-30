@@ -119,7 +119,7 @@ export class BackendService {
     }
 
     // Get Profile
-    getProfile(id: number): Observable<Profile> {
+    getProfile(id: string | number): Observable<Profile> {
         return this.api.getProfile(id).pipe(
             catchError((error) => {
                 // Return from localStorage
