@@ -71,8 +71,8 @@ html, body {
 }
 
 .avatar {
-    width: 40px !important;
-    height: 40px !important;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
 }
 
@@ -80,13 +80,23 @@ html, body {
 .icon-black,
 .ptr--icon,
 .ptr--text {
-    color: rgba(0, 0, 0, 0.87) !important;
-    .dark-theme {
-        color: rgba(250, 250, 250, 0.87) !important;
-    }
+    color: var(--ulfurTextColor);
 }
 
 .dark-theme .text-secondary,
 .dark-theme .text-muted {
-    color: #b69c9c !important;
+    color: #b69c9c;
+}
+
+.logo-branded, .logo {
+    background-size: contain;
+    background-repeat: no-repeat;
+    min-width: 70px;
+    background-position: center;
+}
+.logo {
+    background-image: var(--ulfurLogo);
+}
+.logo-branded {
+    background-image: var(--ulfurLogoBranded);
 }

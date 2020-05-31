@@ -1,11 +1,12 @@
 <ion-app>
-    <app-top-bar
-        hasMenuButton=true
-        hasQRButton=true>
-    </app-top-bar>
-
     <ion-split-pane contentId="main">
         <ion-menu side='start' menuId='dir' contentId="main" type="overlay">
+            <ion-header>
+                <ion-toolbar color="light">
+                    <ion-title>Flow</ion-title>
+                </ion-toolbar>
+            </ion-header>
+
             <ion-content>
                 <ion-list id="dir-list">
                     <ng-container *ngFor='let l of activeLinks | async'>
@@ -27,6 +28,7 @@
                 </ion-list>
             </ion-content>
         </ion-menu>
+
         <ion-router-outlet id="main"></ion-router-outlet>
     </ion-split-pane>
 </ion-app>

@@ -20,7 +20,7 @@ import { CacheService } from './services/cache/cache.service';
 import { NotificationService } from './services/notification/notification.service';
 import { environment } from '../environments/environment';
 import { NetworkService } from './services/network/network.service';
-import { TopBarComponent } from './shared/components/top-bar/top-bar.component';
+import { SharedModule } from './shared/shared.module';
 import { AuthService } from './services/auth/auth.service';
 import { BalanceService } from './services/balance/balance.service';
 import { TransactionsService } from './services/transactions/transactions.service';
@@ -37,13 +37,12 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
         AppRoutingModule,
         HttpClientModule,
         MaterialModule,
+        SharedModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
     ],
     declarations: [
-        TopBarComponent,
         AppComponent
     ],
-    entryComponents: [],
     providers: [
         SplashScreen,
         BarcodeScanner,

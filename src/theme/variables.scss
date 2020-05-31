@@ -20,25 +20,14 @@ $theme: mat-light-theme($primary, $accent, $warn);
 @include angular-material-theme($theme);
 @include component-themes($theme);
 
-/**
-  * General Branding
-  * -------------------------------------------
-  */
-.logo-branded, .logo {
-  background-size: contain;
-  background-repeat: no-repeat;
-  min-width: 70px;
-  background-position: center;
-}
-.logo {
-  background-image: url("../assets/images/logo-marker.png");
-}
-.logo-branded {
-  background-image: url("../assets/images/Logo_Transparent-scaledown.png") !important;
-}
-
 /** Ionic CSS Variables **/
 :root {
+  --ulfurTextColor: rgba(0, 0, 0, 0.87);
+
+  /** logo **/
+  --ulfurLogo: url('../assets/images/logo-marker.png');
+  --ulfurLogoBranded: url("../assets/images/Logo_Transparent-scaledown.png");
+
   /** primary **/
   --ion-color-primary: #3880ff;
   --ion-color-primary-rgb: 56, 128, 255;
@@ -114,17 +103,11 @@ $theme: mat-light-theme($primary, $accent, $warn);
 
 // @media (prefers-color-scheme: dark) {
 body.dark-theme {
-
-  /**
-    * General Branding
-    * -------------------------------------------
-    */
-  .logo {
-    background-image: url("../assets/images/logo-white.png");
-  }
-  .logo-branded {
-    background-image: url("../assets/images/Logo_Transparent_White-scaledown.png") !important;
-  }
+  --ulfurTextColor: rgba(250, 250, 250, 0.87);
+  
+  /** logo **/
+  --ulfurLogo: url('../assets/images/logo-white.png');
+  --ulfurLogoBranded: url("../assets/images/Logo_Transparent_White-scaledown.png");
 
   /*
    * Angular Material Dark Theme
@@ -280,10 +263,5 @@ body.dark-theme {
 
   ion-title.title-large {
     --color: white;
-  }
-
-  /* Toolbar Branding */
-  ion-toolbar {
-    --background: var(--ion-color-light) url('../assets/images/logo-white.png') no-repeat center/40px;
   }
 }
