@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { environment } from 'src/environments/environment';
 import { Observable, of } from 'rxjs';
-import { tap, switchMap, pluck, filter, map } from 'rxjs/operators';
+import { tap, switchMap, filter, map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-profile',

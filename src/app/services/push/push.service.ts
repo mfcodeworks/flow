@@ -52,8 +52,10 @@ export class PushService {
         PushNotifications.requestPermission().then(({granted}) => {
             granted && PushNotifications.register();
 
-            // TODO: Set channels
-            // PushNotification.createChannel()
+            // Set channels
+            for (const [id, description] of Object.entries(environment.fcm.channels)) {
+                PushNotifications.createChannel({id, name: id, description, importance: 1});
+            }
         });
 
         // On success, we should be able to receive notifications

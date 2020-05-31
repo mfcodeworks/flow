@@ -228,6 +228,24 @@ export class ApiService {
         );
     }
 
+    // API: Get Transaction
+    getTransaction(id: number): Observable<Transaction> {
+        return this.http
+        .get<Transaction>(`${API_URL}/transaction/${id}`)
+        .pipe(
+            retry(1),
+            catchError((error) => this.handleError(error))
+        );
+    }
+    getTransactionByIntent(intent: string): Observable<Transaction> {
+        return this.http
+        .get<Transaction>(`${API_URL}/transaction/intent/${intent}`)
+        .pipe(
+            retry(1),
+            catchError((error) => this.handleError(error))
+        );
+    }
+
     // API: Get PaymentIntent
     getIntent(for_user_id: number, nonce: string): Observable<any> {
         return this.http

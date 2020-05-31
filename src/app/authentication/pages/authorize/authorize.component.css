@@ -1,7 +1,3 @@
-.branding {
-    height: 180px !important;
-}
-
 .form-container {
     display: flex;
     flex-direction: column;

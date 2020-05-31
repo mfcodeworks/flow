@@ -118,6 +118,14 @@ export class BackendService {
         return this.api.unsubscribeFcm(token, topic);
     }
 
+    // Get Transaction
+    getTransaction(id: number): Observable<Transaction> {
+        return this.api.getTransaction(id);
+    }
+    getTransactionByIntent(intent: string): Observable<Transaction> {
+        return this.api.getTransactionByIntent(intent);
+    }
+
     // Get Profile
     getProfile(id: string | number): Observable<Profile> {
         return this.api.getProfile(id).pipe(

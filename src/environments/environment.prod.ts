@@ -3,7 +3,7 @@ export const environment = {
 
     // API: Server URL
     apiUrl: 'https://api.wallet.nygmarosebeauty.com/api/v1',
-    appUrl: 'https://wallet.nygmarosebeauty.com',
+    appUrl: 'https://flow.ulfurmoon.com',
 
     // API: Exchange Rates API
     fx: {
@@ -34,7 +34,6 @@ export const environment = {
         iconColor: 'black',
         icon: 'assets/images/logo',
         channels: {
-            'PushPluginChannel': 'Miscellaneous',
             'transfers': 'Transfers',
             'payouts': 'Withdrawls',
             'payment_methods': 'Payment Sources'

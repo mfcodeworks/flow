@@ -30,6 +30,7 @@ import { EncryptLoginComponent } from './components/encrypt-login/encrypt-login.
 import { EncryptLoginDialogComponent } from './components/encrypt-login/encrypt-login-dialog/encrypt-login-dialog.component';
 import { PaymentSourceDialogComponent } from './components/payment-source-dialog/payment-source-dialog.component';
 import { TransactionComponent } from './pages/transaction/transaction.component';
+import { MoneyPipe } from './pipes/money.pipe';
 
 @NgModule({
     imports: [
@@ -63,7 +64,8 @@ import { TransactionComponent } from './pages/transaction/transaction.component'
         EncryptLoginComponent,
         EncryptLoginDialogComponent,
         PaymentSourceDialogComponent,
-        TransactionComponent
+        TransactionComponent,
+        MoneyPipe
     ],
     providers: [
         PaymentIntentResolver

@@ -13,8 +13,6 @@ import { MatStepper } from '@angular/material/stepper';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ThemeService } from 'src/app/services/theme/theme.service';
-import { NavController } from '@ionic/angular';
-import { TransactionComponent } from '../transaction/transaction.component';
 declare const Stripe: any;
 
 /* TODO: Handle anonymous (guest) transactions */
@@ -46,7 +44,6 @@ export class CreateTransactionComponent implements OnInit, AfterViewInit, OnDest
     isDark$: Subscription;
 
     constructor(
-        private nav: NavController,
         private router: Router,
         private fb: FormBuilder,
         private route: ActivatedRoute,
@@ -378,13 +375,14 @@ export class CreateTransactionComponent implements OnInit, AfterViewInit, OnDest
             'status': paymentIntent.status,
             'type': type,
             'for_user_id': this.receiver
-        }).subscribe(() => this.nav.navigateForward(`/transaction/${paymentIntent.id}`));
-
-        // Show success toast
-        this.processing.next(false);
-        this.toast.open(`Transaction Complete`, 'close', { duration: 3000 });
-        this.paymentAmount.reset();
-        this.paymentMethod.reset();
+        }).subscribe(() => {
+            this.processing.next(false);
+            // Show success toast
+            // this.toast.open(`Transaction Complete`, 'close', { duration: 3000 });
+            this.paymentAmount.reset();
+            this.paymentMethod.reset();
+            this.router.navigateByUrl(`/transaction/${paymentIntent.id}`)
+        });
     }
 
     // Handle Error
