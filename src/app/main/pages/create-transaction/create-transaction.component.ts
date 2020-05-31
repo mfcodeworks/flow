@@ -376,14 +376,12 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
             this.processing.next(false);
             // Show success toast
             // this.toast.open(`Transaction Complete`, 'close', { duration: 3000 });
-            
-            // Reset forms
-            this.paymentAmount.reset();
-            this.paymentMethod.reset();
-            this.stepper.reset();
 
-            // Show success
-            this.router.navigateByUrl(`/transaction/${paymentIntent.id}`);
+            // Reset form
+            this.stepper.previous();
+
+            // Show success after reset complete
+            setTimeout(() => this.router.navigateByUrl(`/transaction/${paymentIntent.id}`), 0);
         });
     }
 

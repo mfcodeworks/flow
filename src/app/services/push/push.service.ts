@@ -48,13 +48,20 @@ export class PushService {
 
     // Default Non-Electron Init
     defaultInit() {
-        // Register with Apple / Google to receive push via APNS/FCM
+        // Register with Apple/Google to receive push via APNS/FCM
         PushNotifications.requestPermission().then(({granted}) => {
             granted && PushNotifications.register();
 
             // Set channels
             for (const [id, description] of Object.entries(environment.fcm.channels)) {
-                PushNotifications.createChannel({id, name: description, description, importance: 5});
+                PushNotifications.createChannel({
+                    description,
+                    id,
+                    name: description,
+                    importance: 5, // High priority
+                    vibration: true,
+                    visibility: -1 // Secret
+                });
             }
         });
 
