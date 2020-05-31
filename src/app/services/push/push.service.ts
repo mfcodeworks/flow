@@ -54,7 +54,7 @@ export class PushService {
 
             // Set channels
             for (const [id, description] of Object.entries(environment.fcm.channels)) {
-                PushNotifications.createChannel({id, name: description, description, importance: 1});
+                PushNotifications.createChannel({id, name: description, description, importance: 5});
             }
         });
 
