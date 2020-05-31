@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ChangeDetectionStrategy, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { UserService } from 'src/app/services/user/user.service';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { Profile } from '../../core/profile';
@@ -22,7 +22,7 @@ declare const Stripe: any;
     templateUrl: './create-transaction.component.html',
     styleUrls: ['./create-transaction.component.scss']
 })
-export class CreateTransactionComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CreateTransactionComponent implements OnInit, OnDestroy {
     @ViewChild('paymentStepper') stepper: MatStepper
     paymentAmount: FormGroup;
     paymentMethod: FormGroup;
@@ -124,9 +124,6 @@ export class CreateTransactionComponent implements OnInit, AfterViewInit, OnDest
             method: [0, Validators.required],
             saveNewMethod: ['']
         });
-    }
-
-    ngAfterViewInit(): void {
     }
 
     onCurrencyChange(): void {
@@ -379,9 +376,14 @@ export class CreateTransactionComponent implements OnInit, AfterViewInit, OnDest
             this.processing.next(false);
             // Show success toast
             // this.toast.open(`Transaction Complete`, 'close', { duration: 3000 });
+            
+            // Reset forms
             this.paymentAmount.reset();
             this.paymentMethod.reset();
-            this.router.navigateByUrl(`/transaction/${paymentIntent.id}`)
+            this.stepper.reset();
+
+            // Show success
+            this.router.navigateByUrl(`/transaction/${paymentIntent.id}`);
         });
     }
 
