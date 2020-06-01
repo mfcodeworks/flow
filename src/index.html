@@ -4,7 +4,12 @@
     <meta charset="utf-8"/>
     <title>Flow</title>
 
-    <base href="/"/>
+    <script>
+        // Change base href for Electron
+        navigator.userAgent.toLowerCase().indexOf(' electron/') > -1
+            ? document.write(`<base href="./" />`)
+            : document.write(`<base href="/" />`);
+    </script>
 
     <meta name="viewport" content="
         viewport-fit=cover,

@@ -18,6 +18,12 @@
     "SplashScreen": {
       "launchAutoHide": false,
       "backgroundColor": "#000000"
+    },
+    "PushNotifications": {
+      "presentationOptions": [
+        "sound",
+        "alert"
+      ]
     }
   },
   "android": {
