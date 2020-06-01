@@ -3,7 +3,7 @@ import { Platform } from '@ionic/angular';
 import { Plugins } from '@capacitor/core';
 import { AuthService } from './services/auth/auth.service';
 import { UserService } from './services/user/user.service';
-import { Link } from './shared/interfaces/link';
+import { Link } from './shared/core/link';
 import { Observable, of } from 'rxjs';
 import { tap, distinctUntilChanged, switchMap, map } from 'rxjs/operators';
 
@@ -37,7 +37,8 @@ export class AppComponent {
     }
 
     init(): void {
-        this.platform.ready().then(() => SplashScreen.hide());
+        this.platform.ready()
+            .then(() => SplashScreen.hide());
     }
 
     doSignOut(): void {
@@ -79,7 +80,7 @@ export class AppComponent {
                 {
                     name: 'Wallet',
                     icon: 'fas fa-wallet',
-                    link: '/',
+                    link: '/wallet',
                     condition: true
                 }, {
                     name: 'Withdraw',
@@ -94,13 +95,13 @@ export class AppComponent {
                 }, {
                     name: 'Profile',
                     icon: 'fas fa-qrcode',
-                    link: `/profile/${p.username}`,
+                    link: `/profile/${p?.username}`,
                     condition: true
                 }, {
                     name: 'Top-up Wallet',
                     icon: 'fas fa-hand-holding-usd',
                     link: '/transaction/create',
-                    params: { to: 'me' },
+                    params: {to: 'me'},
                     condition: true
                 }, {
                     name: 'Settings',

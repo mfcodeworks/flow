@@ -1,7 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { Transaction } from '../../core/transaction';
+import { Transaction } from '../../../shared/core/transaction';
 import { UserService } from 'src/app/services/user/user.service';
-import { Profile } from '../../core/profile';
+import { Profile } from '../../../shared/core/profile';
 import { MoneyService } from 'src/app/services/money/money.service';
 import * as moment from 'moment';
 

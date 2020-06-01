@@ -1,18 +1,18 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Plugins } from '@capacitor/core';
 import { SHA256, enc } from 'crypto-js';
-import { Profile } from '../../core/profile';
+import { Profile } from '../../../shared/core/profile';
 import { UserService } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
 import { BackendService } from 'src/app/services/backend/backend.service';
-import { Transaction } from '../../core/transaction';
+import { Transaction } from '../../../shared/core/transaction';
 import { map, tap, distinctUntilChanged, filter } from 'rxjs/operators';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { AddPaymentSourceDialogComponent } from '../../components/add-payment-source/add-payment-source-dialog.component';
 import { PaymentSourceDialogComponent } from '../../components/payment-source-dialog/payment-source-dialog.component';
 import { BalanceService } from '../../../services/balance/balance.service';
-import { Balance } from '../../core/balance';
+import { Balance } from '../../../shared/core/balance';
 import { TransactionsService } from '../../../services/transactions/transactions.service';
 import { SourcesService } from '../../../services/sources/sources.service';
 

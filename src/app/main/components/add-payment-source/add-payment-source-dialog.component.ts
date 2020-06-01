@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { from, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { UserService } from 'src/app/services/user/user.service';
-import { Profile } from '../../core/profile';
+import { Profile } from '../../../shared/core/profile';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { map, tap, mergeMap } from 'rxjs/operators';
 import { MatDialogRef } from '@angular/material/dialog';

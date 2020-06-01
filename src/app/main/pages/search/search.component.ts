@@ -2,7 +2,7 @@ import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectionStrateg
 import { fromEvent, Observable } from 'rxjs';
 import { map, filter, debounceTime, distinctUntilChanged, tap, catchError, switchMap } from 'rxjs/operators';
 import { CacheService } from 'src/app/services/cache/cache.service';
-import { Profile } from '../../core/profile';
+import { Profile } from '../../../shared/core/profile';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { MatInput } from '@angular/material/input';
 

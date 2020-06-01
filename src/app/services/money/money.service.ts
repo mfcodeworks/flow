@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import Decimal from 'decimal.js';
 import * as fx from 'money';
-import { CurrencyDecimalPlaces } from '../../main/core/currency-decimal-places.enum';
+import { CurrencyDecimalPlaces } from '../../shared/core/currency-decimal-places.enum';
 import { BackendService } from '../backend/backend.service';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { IOpenExchangeRates } from '../../main/core/open-exchange-rates';
+import { IOpenExchangeRates } from '../../shared/core/open-exchange-rates';
 
 @Injectable({
     providedIn: 'root'

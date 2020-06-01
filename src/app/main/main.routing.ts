@@ -20,6 +20,11 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
+                redirectTo: 'wallet',
+                pathMatch: 'full'
+            },
+            {
+                path: 'wallet',
                 component: DashboardComponent
             },
             {
@@ -37,21 +42,21 @@ export const routes: Routes = [
             {
                 path: 'signup/stripe',
                 component: StripeSignupComponent
-            },
-            {
-                path: 'profile/:profile',
-                component: ProfileComponent
-            },
-            {
-                path: 'transaction/create',
-                component: CreateTransactionComponent,
-                resolve: { intent: PaymentIntentResolver }
-            },
-            {
-                path: 'transaction/:id',
-                component: TransactionComponent
             }
         ]
+    },
+    {
+        path: 'profile/:profile',
+        component: ProfileComponent
+    },
+    {
+        path: 'transaction/create',
+        component: CreateTransactionComponent,
+        resolve: { intent: PaymentIntentResolver }
+    },
+    {
+        path: 'transaction/:id',
+        component: TransactionComponent
     }
 ];
 

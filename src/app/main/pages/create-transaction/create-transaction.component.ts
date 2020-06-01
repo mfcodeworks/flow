@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { UserService } from 'src/app/services/user/user.service';
 import { BackendService } from 'src/app/services/backend/backend.service';
-import { Profile } from '../../core/profile';
+import { Profile } from '../../../shared/core/profile';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { from, Observable, of, Subscription, BehaviorSubject } from 'rxjs';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { switchMap, map, catchError, tap, mergeMap, filter } from 'rxjs/operators';
-import { CurrencyMinimumAmount } from '../../core/currency-minimum-amount.enum';
+import { switchMap, map, catchError, tap, mergeMap, filter, delay } from 'rxjs/operators';
+import { CurrencyMinimumAmount } from '../../../shared/core/currency-minimum-amount.enum';
 import { MoneyService } from 'src/app/services/money/money.service';
 import { MatStepper } from '@angular/material/stepper';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
@@ -372,16 +372,16 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
             'status': paymentIntent.status,
             'type': type,
             'for_user_id': this.receiver
-        }).subscribe(() => {
-            this.processing.next(false);
-            // Show success toast
-            // this.toast.open(`Transaction Complete`, 'close', { duration: 3000 });
-
-            // Reset form
-            this.stepper.previous();
-
+        }).pipe(
+            tap(_ => {
+                // Reset form
+                this.processing.next(false);
+                this.stepper.previous();
+            }),
+            delay(1)
+        ).subscribe(_ => {
             // Show success after reset complete
-            setTimeout(() => this.router.navigateByUrl(`/transaction/${paymentIntent.id}`), 0);
+            this.router.navigateByUrl(`/transaction/${paymentIntent.id}`);
         });
     }
 

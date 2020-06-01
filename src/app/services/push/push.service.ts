@@ -57,9 +57,8 @@ export class PushService {
                 PushNotifications.createChannel({
                     description,
                     id,
-                    name: description,
                     importance: 5, // High priority
-                    vibration: true,
+                    name: description,
                     visibility: -1 // Secret
                 });
             }

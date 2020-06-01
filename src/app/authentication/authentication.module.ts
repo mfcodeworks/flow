@@ -15,12 +15,12 @@ import { SharedModule } from '../shared/shared.module';
 // TODO: Fix height of auth components (Follow Authorization page)
 @NgModule({
   imports: [
-    Routing,
-    MaterialModule,
     CommonModule,
-    ReactiveFormsModule,
     IonicModule.forRoot(),
-    SharedModule
+    MaterialModule,
+    SharedModule,
+    ReactiveFormsModule,
+    Routing
   ],
   declarations: [
     SignInComponent,

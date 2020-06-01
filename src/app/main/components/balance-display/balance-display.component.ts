@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnChanges } from '@angular/core';
 import { MoneyService } from 'src/app/services/money/money.service';
-import { Balance } from '../../core/balance';
-import { BalanceAmount } from '../../core/balance-amount';
-import { BalanceHoldings } from '../../core/balance-holdings';
+import { Balance } from '../../../shared/core/balance';
+import { BalanceAmount } from '../../../shared/core/balance-amount';
+import { BalanceHoldings } from '../../../shared/core/balance-holdings';
 
 @Component({
     selector: 'app-balance-display',

@@ -1,16 +1,16 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import * as moment from 'moment';
-import { Profile } from '../../core/profile';
+import { Profile } from '../../../shared/core/profile';
 import { UserService } from 'src/app/services/user/user.service';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { ActivatedRoute } from '@angular/router';
 import { MoneyService } from 'src/app/services/money/money.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { CurrencyMinimumAmount } from '../../core/currency-minimum-amount.enum';
+import { CurrencyMinimumAmount } from '../../../shared/core/currency-minimum-amount.enum';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Balance } from '../../core/balance';
+import { Balance } from '../../../shared/core/balance';
 import { BalanceService } from '../../../services/balance/balance.service';
 
 @Component({

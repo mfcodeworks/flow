@@ -5,10 +5,10 @@ import { Observable, throwError } from 'rxjs';
 import { map, retry, catchError, publishReplay, refCount } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { Profile } from '../../main/core/profile';
-import { Transaction } from '../../main/core/transaction';
-import { IOpenExchangeRates } from '../../main/core/open-exchange-rates';
-import { UserTransactions } from '../../main/core/user-transactions';
+import { Profile } from '../../shared/core/profile';
+import { Transaction } from '../../shared/core/transaction';
+import { IOpenExchangeRates } from '../../shared/core/open-exchange-rates';
+import { UserTransactions } from '../../shared/core/user-transactions';
 
 const API_URL = environment.apiUrl;
 
@@ -289,8 +289,7 @@ export class ApiService {
             publishReplay(),
             refCount(),
             retry(1),
-            catchError((error) => this.handleError(error)),
-            map(profile => new Profile(profile))
+            catchError((error) => this.handleError(error))
         );
     }
 
@@ -300,8 +299,7 @@ export class ApiService {
             publishReplay(),
             refCount(),
             retry(1),
-            catchError((error) => this.handleError(error)),
-            map(profile => new Profile(profile))
+            catchError((error) => this.handleError(error))
         );
     }
 

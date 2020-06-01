@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 
-import { Profile } from '../../main/core/profile';
+import { Profile } from '../../shared/core/profile';
 import { CacheService } from '../cache/cache.service';
 import { filter, catchError, map } from 'rxjs/operators';
 
@@ -10,8 +10,8 @@ import { filter, catchError, map } from 'rxjs/operators';
 })
 export class UserService {
     public token: string;
-    public profile: Profile = new Profile();
-    public profile$: BehaviorSubject<Profile> = new BehaviorSubject(new Profile())
+    public profile: Profile = null;
+    public profile$: BehaviorSubject<Profile> = new BehaviorSubject(null);
 
     constructor(private cache: CacheService) {}
 

@@ -4,10 +4,10 @@ import { catchError } from 'rxjs/operators';
 
 import { ApiService } from '../api/api.service';
 import { CacheService } from '../cache/cache.service';
-import { Profile } from '../../main/core/profile';
-import { Transaction } from '../../main/core/transaction';
-import { IOpenExchangeRates } from '../../main/core/open-exchange-rates';
-import { UserTransactions } from '../../main/core/user-transactions';
+import { Profile } from '../../shared/core/profile';
+import { Transaction } from '../../shared/core/transaction';
+import { IOpenExchangeRates } from '../../shared/core/open-exchange-rates';
+import { UserTransactions } from '../../shared/core/user-transactions';
 
 @Injectable({
   providedIn: 'root'

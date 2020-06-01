@@ -3,7 +3,7 @@ import { BackendService } from '../backend/backend.service';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { mergeMap, tap, switchMap, filter } from 'rxjs/operators';
-import { Balance } from '../../main/core/balance';
+import { Balance } from '../../shared/core/balance';
 
 @Injectable({
   providedIn: 'root'

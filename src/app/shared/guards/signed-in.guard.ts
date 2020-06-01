@@ -6,8 +6,8 @@ import {
     RouterStateSnapshot,
     Router
 } from '@angular/router';
-import { Observable, of, iif } from 'rxjs';
-import { mergeMap, tap, map, switchMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { tap, map, switchMap } from 'rxjs/operators';
 import { AuthService } from '../../services/auth/auth.service';
 
 @Injectable({
@@ -25,17 +25,20 @@ export class SignedInGuard implements CanActivate, CanActivateChild {
     ): Observable<boolean> {
         // Check user is logged in
         return this.auth.isLoggedIn().pipe(
-            tap(u => console.log('SignedIn Guard - Retrieved auth from service', u)),
-            // Return true, or redirect to login/authorize
-            mergeMap(u => !!u
+            // Check logged in state
+            switchMap(u => !!u
+                // If logged in return true
                 ? of(true)
+                // If not logged in check if a user exists in cache
                 : this.auth.hasSession().pipe(
-                    tap(e => console.log('SignedIn Guard - User exists in cache', e)),
+                    // Direct to authorize or logged in based on cache
                     tap(e => !!e
                         ? this.router.navigate(['/authorize'], {
                             queryParams: { redirect: state.url }
                         })
-                        : this.router.navigate(['/login'])
+                        : this.router.navigate(['/login'], {
+                            queryParams: { redirect: state.url }
+                        })
                     ),
                     map(() => false)
                 )

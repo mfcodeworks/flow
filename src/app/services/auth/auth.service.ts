@@ -4,7 +4,7 @@ import { Observable, of, BehaviorSubject, iif } from 'rxjs';
 import { map, filter, tap, mergeMap, switchMap } from 'rxjs/operators';
 import { UserService } from '../user/user.service';
 import { CacheService } from '../cache/cache.service';
-import { Profile } from 'src/app/main/core/profile';
+import { Profile } from 'src/app/shared/core/profile';
 import { BackendService } from '../backend/backend.service';
 
 @Injectable({

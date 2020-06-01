@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { BackendService } from '../../../services/backend/backend.service';
-import { Transaction } from '../../core/transaction';
+import { Transaction } from '../../../shared/core/transaction';
 
 @Component({
     selector: 'app-transaction',

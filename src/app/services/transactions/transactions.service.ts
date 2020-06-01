@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Transaction } from '../../main/core/transaction';
+import { Transaction } from '../../shared/core/transaction';
 import { BackendService } from '../backend/backend.service';
 import { AuthService } from '../auth/auth.service';
 import { filter, tap, mergeMap, switchMap } from 'rxjs/operators';
-import { UserTransactions } from '../../main/core/user-transactions';
+import { UserTransactions } from '../../shared/core/user-transactions';
 
 @Injectable({
   providedIn: 'root'

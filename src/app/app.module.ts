@@ -18,8 +18,6 @@ import { environment } from '../environments/environment';
 
 @NgModule({
     imports: [
-        AngularFireModule.initializeApp(environment.firebase),
-        AngularFireMessagingModule,
         BrowserModule,
         BrowserAnimationsModule,
         IonicModule.forRoot(),
@@ -27,14 +25,16 @@ import { environment } from '../environments/environment';
         HttpClientModule,
         MaterialModule,
         SharedModule,
-        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+        AngularFireModule.initializeApp(environment.firebase),
+        AngularFireMessagingModule,
+        ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production})
     ],
     declarations: [
         AppComponent
     ],
     providers: [
-        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+        {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
+        {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}
     ],
     bootstrap: [AppComponent]
 })

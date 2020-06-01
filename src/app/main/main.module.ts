@@ -34,13 +34,13 @@ import { MoneyPipe } from './pipes/money.pipe';
 
 @NgModule({
     imports: [
-        MaterialModule,
         CommonModule,
+        IonicModule.forRoot(),
+        MaterialModule,
+        SharedModule,
         OverlayModule,
         ReactiveFormsModule,
-        Routing,
-        IonicModule.forRoot(),
-        SharedModule
+        Routing
     ],
     declarations: [
         DateDiffPipe,
