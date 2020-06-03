@@ -43,9 +43,10 @@ export class AppComponent {
         // Route deeplinks
         App.addListener('appUrlOpen', data => {
             this.zone.run(() => {
-                console.log('Opening deeplink', data);
+                console.log(`Opening deeplink ${JSON.stringify(data)}`);
                 const slug = data.url.split(".com").pop();
-                slug && this.router.navigateByUrl(slug);
+                console.log(`Load slug: ${slug}`);
+                !!slug && this.router.navigateByUrl(slug).catch(console.error);
             });
         });
 

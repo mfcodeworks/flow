@@ -1,11 +1,12 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { UserService } from '../../../services/user/user.service';
-import { MatDialog } from '@angular/material/dialog';
 import { EncryptLoginDialogComponent } from './encrypt-login-dialog/encrypt-login-dialog.component';
 import { CacheService } from '../../../services/cache/cache.service';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { mergeMap } from 'rxjs/operators';
+import { ModalController } from '@ionic/angular';
+import { from } from 'rxjs';
 
 @Component({
     selector: 'app-encrypt-login',
@@ -20,11 +21,11 @@ export class EncryptLoginComponent implements OnInit {
         private fb: FormBuilder,
         private _user: UserService,
         private _cache: CacheService,
-        public dialog: MatDialog
+        public dialog: ModalController
     ) {
         this.encryptForm = this.fb.group({
             encrypt: false
-        })
+        });
     }
 
     ngOnInit() {
@@ -35,12 +36,15 @@ export class EncryptLoginComponent implements OnInit {
         );
     }
 
-    openDialog(): void {
+    async openDialog(): Promise<void> {
         // Open dialog
-        const dialogRef = this.dialog.open(EncryptLoginDialogComponent);
+        const dialogRef = await this.dialog.create({
+            component: EncryptLoginDialogComponent
+        });
+        await dialogRef.present();
 
         // Handle dialog close (Encrypt success/cancel)
-        dialogRef.afterClosed().subscribe(encrypt => {
+        from(dialogRef.onDidDismiss()).subscribe(({data: {encrypt} = {encrypt: false}}) => {
             this.encryptForm.patchValue({ encrypt: !!encrypt })
         });
     }

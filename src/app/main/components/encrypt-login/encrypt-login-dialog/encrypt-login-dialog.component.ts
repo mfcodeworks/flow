@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { UserService } from '../../../../services/user/user.service';
 import { tap, mergeMap } from 'rxjs/operators';
 import { CacheService } from '../../../../services/cache/cache.service';
+import { ModalController } from '@ionic/angular';
 
 export interface EncryptLoginDialogData {
     encrypt: boolean;
@@ -21,7 +21,7 @@ export class EncryptLoginDialogComponent implements OnInit {
         private fb: FormBuilder,
         private _user: UserService,
         private _cache: CacheService,
-        public dialogRef: MatDialogRef<EncryptLoginDialogData>
+        public dialogRef: ModalController
     ) { }
 
     ngOnInit() {
@@ -61,7 +61,7 @@ export class EncryptLoginDialogComponent implements OnInit {
     }
 
     onNoClick(): void {
-        this.dialogRef.close(false);
+        this.close(false);
     }
 
     onSuccess(): void {
@@ -76,18 +76,22 @@ export class EncryptLoginDialogComponent implements OnInit {
             tap(console.log),
             mergeMap(() => this._cache.store('encrypt-login', true))
         ).subscribe(
-            () => this.dialogRef.close(true),
+            () => this.close(true),
             err => {
                 console.warn('Encrypt Login Error:', err);
                 // Ensure unencrypted login
                 this._user.cacheUser().pipe(
                     mergeMap(() => this._cache.store('encrypt-login', false))
-                ).subscribe(() => this.dialogRef.close(false));
+                ).subscribe(() => this.close(false));
             }
         )
     }
 
     prettyCapitalize(text: string) {
         return text[0].toUpperCase() + text.substring(1);
+    }
+
+    close(encrypt = false): void {
+        this.dialogRef.dismiss({encrypt});
     }
 }
