@@ -7,7 +7,7 @@
         </ion-buttons>
         <ion-title>
             <ng-container *ngIf='title | async as t'>
-                <i class='fab fa-cc-{{t}}'></i>
+                <i class='mr-1 fab fa-cc-{{t}}'></i>
             </ng-container>
             {{ title | async | titlecase }}
         </ion-title>
@@ -20,9 +20,8 @@
         <ion-row class='w-100'>
             <ion-col size='12'>
                 <ion-text class='ion-text-center'>
-                    <h1 class='mat-display-2 mb-0' *ngIf='source.type === "card"'>
+                    <h1 class='mat-display-4 mb-0' *ngIf='source.type === "card"'>
                         <i class='fab fa-cc-{{source.card.brand}}'></i>
-                        {{ source.card.brand | titlecase }}
                     </h1>
                 </ion-text>
             </ion-col>
