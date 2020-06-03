@@ -1,23 +1,86 @@
-<!-- TODO: Add UI skeleton -->
-<div *ngIf='source$ | async; let source' class='text-center'>
-    <h1 mat-dialog-title *ngIf='source.type == "card"'>
-        <i class='fab fa-cc-{{source.card.brand}}'></i>
-        {{ source.card.brand | titlecase }}
-    </h1>
-    <div mat-dialog-content>
-        <div class='mat-h3'>
-            **** **** **** {{ source.card.last4 }}
-            &mdash; {{ source.card.exp_month }}/{{ source.card.exp_year }}
-        </div>
-    </div>
-    <div mat-dialog-actions class='pb-4'>
-        <button class='mx-auto'
-            color='accent'
-            mat-raised-button
-            (click)='onDelete()'
-            [disabled]='processing'>
-            Delete
-            <i *ngIf='processing' class='ml-2 fas fa-spin fa-spinner'></i>
-        </button>
-    </div>
-</div>
+<ion-header translucent='true'>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-button (click)='close()'>
+                <ion-icon slot='start' md='arrow-back-outline' ios='chevron-back-outline'></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>
+            <ng-container *ngIf='title | async as t'>
+                <i class='fab fa-cc-{{t}}'></i>
+            </ng-container>
+            {{ title | async | titlecase }}
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class='text-center'>
+    <ion-grid *ngIf='source$ | async as source'
+        class='h-100 d-flex flex-column ion-align-items-center ion-justify-content-evenly'>
+        <ion-row class='w-100'>
+            <ion-col size='12'>
+                <ion-text class='ion-text-center'>
+                    <h1 class='mat-display-2 mb-0' *ngIf='source.type === "card"'>
+                        <i class='fab fa-cc-{{source.card.brand}}'></i>
+                        {{ source.card.brand | titlecase }}
+                    </h1>
+                </ion-text>
+            </ion-col>
+        </ion-row>
+
+        <ion-row class='w-100'>
+            <ion-col size='12'>
+                <ion-text class='ion-text-center'>
+                    <p class='mat-headline'>
+                        **** **** **** {{ source.card.last4 }}
+                        &mdash; {{ source.card.exp_month }}/{{ source.card.exp_year }}
+                    </p>
+                </ion-text>
+            </ion-col>
+        </ion-row>
+
+        <ion-row class='w-100'>
+            <ion-col size='12'>
+                <ion-button class='mx-auto'
+                    color='danger'
+                    (click)='onDelete()'
+                    [disabled]='processing | async'>
+                    Delete
+                    <ion-icon *ngIf='processing | async' class='ml-2 fas fa-spin fa-spinner'></ion-icon>
+                </ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+
+    <!-- Skeleton -->
+    <ion-grid *ngIf='!(loaded | async)'
+        class='h-100 d-flex flex-column ion-align-items-center ion-justify-content-evenly'>
+        <ion-row class='w-100 mt-3 mb-0'>
+            <ion-col size='12'>
+                <ion-text>
+                    <h1 class='d-flex flex-row justify-content-center align-items-center'>
+                        <ion-skeleton-text animated style="width: 50%; height: 4rem;"></ion-skeleton-text>
+                    </h1>
+                </ion-text>
+            </ion-col>
+        </ion-row>
+
+        <ion-row class='w-100 mt-3'>
+            <ion-col size='12'>
+                <ion-text>
+                    <p class='d-flex flex-row justify-content-center align-items-center'>
+                        <ion-skeleton-text animated style="width: 90%; height: 1.6rem;"></ion-skeleton-text>
+                    </p>
+                </ion-text>
+            </ion-col>
+        </ion-row>
+
+        <ion-row class='w-100 mt-4'>
+            <ion-col size='12'>
+                <ion-button class='mx-auto' color='danger' disabled>
+                    Delete
+                </ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>

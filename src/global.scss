@@ -85,7 +85,7 @@ html, body {
 
 .dark-theme .text-secondary,
 .dark-theme .text-muted {
-    color: #b69c9c;
+    color: #908787 !important;
 }
 
 .branding {
@@ -102,4 +102,11 @@ html, body {
 }
 .logo-branded {
     background-image: var(--ulfurLogoBranded);
+}
+
+@media(min-width: 768px) {
+    .narrow-dialog .modal-wrapper {
+        --max-width: 500px;
+        --max-height: 400px;
+    }
 }

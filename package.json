@@ -1,13 +1,13 @@
 {
   "name": "flow",
-  "version": "0.35.0",
+  "version": "0.36.0",
   "author": "MF Codeworks <arranjamesfletcher2012@gmail.com>",
   "homepage": "https://mfcodeworks.com/",
   "scripts": {
     "start": "ionic serve",
     "start:prod": "ionic serve --prod",
     "build": "ionic build",
-    "build:small": "npm run build -- --build-optimizer=true --optimization=true",
+    "build:small": "npm run build -- --aot --build-optimizer=true --optimization=true",
     "build:prod": "npm run build -- --prod",
     "postbuild": "ionic cap copy",
     "ngsw": "npx ngsw-config www ngsw-config.json && cpx node_modules/@angular/service-worker/ngsw-worker.js www",

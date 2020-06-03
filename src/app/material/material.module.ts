@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,7 +14,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
@@ -33,7 +33,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
         MatSelectModule,
         MatSlideToggleModule,
         MatButtonToggleModule,
-        MatDialogModule,
         MatCheckboxModule
     ],
     providers: [
@@ -52,7 +51,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
         MatSelectModule,
         MatSlideToggleModule,
         MatButtonToggleModule,
-        MatDialogModule,
         MatCheckboxModule
     ]
 })

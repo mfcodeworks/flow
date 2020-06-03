@@ -9,7 +9,8 @@ import { MaterialModule } from '../material/material.module';
 import { SharedModule } from '../shared/shared.module';
 import { DateDiffPipe } from '../main/pipes/date-diff.pipe';
 import { CurrencySymbolPipe } from '../main/pipes/currency-symbol.pipe';
-import { AddPaymentSourceDialogComponent } from './components/add-payment-source/add-payment-source-dialog.component';
+import { MoneyPipe } from './pipes/money.pipe';
+import { AddPaymentSourceComponent } from './components/add-payment-source/add-payment-source.component';
 import { TransactionListComponent } from './components/transaction-list/transaction-list.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { StripeSignupComponent } from './components/stripe-signup/stripe-signup.component';
@@ -30,7 +31,7 @@ import { EncryptLoginComponent } from './components/encrypt-login/encrypt-login.
 import { EncryptLoginDialogComponent } from './components/encrypt-login/encrypt-login-dialog/encrypt-login-dialog.component';
 import { PaymentSourceDialogComponent } from './components/payment-source-dialog/payment-source-dialog.component';
 import { TransactionComponent } from './pages/transaction/transaction.component';
-import { MoneyPipe } from './pipes/money.pipe';
+import { AddPaymentSourceDialogComponent } from './components/add-payment-source-dialog/add-payment-source-dialog.component';
 
 @NgModule({
     imports: [
@@ -47,6 +48,7 @@ import { MoneyPipe } from './pipes/money.pipe';
         DateFilterPipe,
         CurrencySymbolPipe,
         BalanceDisplayComponent,
+        AddPaymentSourceComponent,
         AddPaymentSourceDialogComponent,
         TransactionListComponent,
         DashboardComponent,

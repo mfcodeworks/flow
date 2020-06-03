@@ -1,0 +1,18 @@
+<ion-grid class='h-100 d-flex flex-column ion-align-items-center ion-justify-content-evenly'>
+    <ion-row class='w-100'>
+        <ion-col size='12'>
+            <!-- type selector -->
+            <ion-label>Payment Method</ion-label>
+            <ion-select interface='popover' (ionChange)='createElements()' [(value)]="type" required>
+                <ion-select-option *ngFor="let t of types" [value]="t.value">{{ t.name }}</ion-select-option>
+            </ion-select>
+        </ion-col>
+    </ion-row>
+    <ion-row class='w-100'>
+        <ion-col size='12'>
+            <!-- method input -->
+            <div #card id='card-element' class='my-3'></div>
+            <div #sepa id='sepa-element' class='my-3'></div>
+        </ion-col>
+    </ion-row>
+</ion-grid>

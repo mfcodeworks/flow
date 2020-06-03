@@ -1,7 +1,7 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { map, switchMap, tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Component, ChangeDetectionStrategy, Input, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { switchMap, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 import { BackendService } from '../../../services/backend/backend.service';
 import { Transaction } from '../../../shared/core/transaction';
 
@@ -11,17 +11,25 @@ import { Transaction } from '../../../shared/core/transaction';
     styleUrls: ['./transaction.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TransactionComponent {
+export class TransactionComponent implements OnInit {
 
-    id: Observable<string> = this.route.paramMap.pipe(map(m => m.get('id')));
-    transaction: Observable<Transaction> = this.id.pipe(
-        switchMap(intent => this.backend.getTransactionByIntent(intent)),
-        tap(tx => console.log(tx))
-    );
+    @Input() id: string;
+    transaction: Observable<Transaction>;
 
     constructor(
-        private route: ActivatedRoute,
+        private dialogRef: ModalController,
         private backend: BackendService
     ) { }
 
+    ngOnInit(): void {
+        this.transaction = of(this.id).pipe(
+            tap(tx => console.log('Fetching tx', tx)),
+            switchMap(intent => this.backend.getTransactionByIntent(intent)),
+            tap(tx => console.log(tx))
+        );
+    }
+
+    close(): void {
+        this.dialogRef.dismiss();
+    }
 }

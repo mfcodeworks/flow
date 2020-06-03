@@ -22,7 +22,7 @@
     <div class='pr-1 pl-3 col-3 my-auto d-flex flex-column justify-content-center align-content-center' id='currency-display'>
         <ion-select [(value)]='selectedCurrency'
             (ionChange)='onCurrencyChange($event)'
-            cancelText="Dismiss"
+            interface="popover"
             placeholder='Currency'>
             <ion-select-option *ngFor='let currency of balanceCurrencies' [value]="currency">{{ currency| uppercase }}</ion-select-option>
         </ion-select>

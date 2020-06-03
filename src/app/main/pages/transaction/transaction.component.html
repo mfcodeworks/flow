@@ -1,7 +1,9 @@
 <ion-header translucent='true'>
     <ion-toolbar>
         <ion-buttons slot="start">
-            <ion-back-button defaultHref="/"></ion-back-button>
+            <ion-button (click)='close()'>
+                <ion-icon slot='start' md='arrow-back-outline' ios='chevron-back-outline'></ion-icon>
+            </ion-button>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>

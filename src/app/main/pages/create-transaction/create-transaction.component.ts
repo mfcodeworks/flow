@@ -13,6 +13,8 @@ import { MatStepper } from '@angular/material/stepper';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ThemeService } from 'src/app/services/theme/theme.service';
+import { ModalController } from '@ionic/angular';
+import { TransactionComponent } from '../transaction/transaction.component';
 declare const Stripe: any;
 
 /* TODO: Handle anonymous (guest) transactions */
@@ -45,6 +47,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
 
     constructor(
         private router: Router,
+        private dialogRef: ModalController,
         private fb: FormBuilder,
         private route: ActivatedRoute,
         private user$: UserService,
@@ -372,16 +375,18 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
             'status': paymentIntent.status,
             'type': type,
             'for_user_id': this.receiver
-        }).pipe(
-            tap(_ => {
-                // Reset form
-                this.processing.next(false);
-                this.stepper.previous();
-            }),
-            delay(1)
-        ).subscribe(_ => {
-            // Show success after reset complete
-            this.router.navigateByUrl(`/transaction/${paymentIntent.id}`);
+        }).subscribe(async _ => {
+            // Reset form
+            this.processing.next(false);
+            this.stepper.previous();
+
+            // Show transaction after reset complete
+            await this.dialogRef.create({
+                component: TransactionComponent,
+                componentProps: {
+                    id: paymentIntent.id
+                }
+            }).then(tx => tx.present());
         });
     }
 

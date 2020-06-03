@@ -7,14 +7,14 @@ import { environment } from 'src/environments/environment';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { Transaction } from '../../../shared/core/transaction';
 import { map, tap, distinctUntilChanged, filter } from 'rxjs/operators';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
-import { AddPaymentSourceDialogComponent } from '../../components/add-payment-source/add-payment-source-dialog.component';
+import { Observable, BehaviorSubject, from } from 'rxjs';
+import { AddPaymentSourceDialogComponent } from '../../components/add-payment-source-dialog/add-payment-source-dialog.component';
 import { PaymentSourceDialogComponent } from '../../components/payment-source-dialog/payment-source-dialog.component';
 import { BalanceService } from '../../../services/balance/balance.service';
 import { Balance } from '../../../shared/core/balance';
 import { TransactionsService } from '../../../services/transactions/transactions.service';
 import { SourcesService } from '../../../services/sources/sources.service';
+import { ModalController } from '@ionic/angular';
 
 const { Browser } = Plugins;
 
@@ -33,7 +33,7 @@ export class DashboardComponent implements OnInit {
     constructor(
         private _user: UserService,
         private backend: BackendService,
-        public dialog: MatDialog,
+        public dialog: ModalController,
         private _balance: BalanceService,
         private _transactions: TransactionsService,
         private _sources: SourcesService
@@ -78,22 +78,33 @@ export class DashboardComponent implements OnInit {
         setTimeout(() => ev.target.complete(), 1500);
     }
 
-    openSourceDialog(id: string): void {
+    async openSourceDialog(id: string): Promise<void> {
         // Open payment source dialog
-        const dialogRef = this.dialog.open(PaymentSourceDialogComponent, {
-            data: { paymentMethod: id }
+        const dialogRef = await this.dialog.create({
+            component: PaymentSourceDialogComponent,
+            componentProps: {paymentMethod: id},
+            cssClass: 'narrow-dialog'
         });
+        await dialogRef.present();
 
         // Handle dialog close (success/cancel), if success then refresh sources
-        dialogRef.afterClosed().subscribe(success => !!success && this._sources.refresh());
+        from(dialogRef.onWillDismiss()).subscribe(
+            ({data: {success} = {success: false}}) => !!success && this._sources.refresh()
+        );
     }
 
-    openAddNewSource(): void {
+    async openAddNewSource(): Promise<void> {
         // Open add payment source dialog
-        const dialogRef = this.dialog.open(AddPaymentSourceDialogComponent, { width: '600px' });
+        const dialogRef = await this.dialog.create({
+            component: AddPaymentSourceDialogComponent,
+            cssClass: 'narrow-dialog'
+        });
+        await dialogRef.present();
 
         // Handle dialog close (success/cancel), if success then refresh sources
-        dialogRef.afterClosed().subscribe(success => !!success && this._sources.refresh());
+        from(dialogRef.onWillDismiss()).subscribe(
+            ({data: {success} = {success: false}}) => !!success && this._sources.refresh()
+        );
     }
 
     // Open login link in browser window
