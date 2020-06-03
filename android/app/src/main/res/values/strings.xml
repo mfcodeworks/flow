@@ -4,4 +4,6 @@
     <string name="title_activity_main">Flow</string>
     <string name="package_name">com.ulfurmoon.flow</string>
     <string name="custom_url_scheme">com.ulfurmoon.flow</string>
+    <string name="url_host">flow.ulfurmoon.com</string>
+    <string name="url_host_dev">flow.mfcodeworks.com</string>
 </resources>

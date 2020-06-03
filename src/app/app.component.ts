@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, NgZone } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Plugins } from '@capacitor/core';
 import { AuthService } from './services/auth/auth.service';
@@ -6,8 +6,9 @@ import { UserService } from './services/user/user.service';
 import { Link } from './shared/core/link';
 import { Observable, of } from 'rxjs';
 import { tap, distinctUntilChanged, switchMap, map } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
-const { SplashScreen } = Plugins;
+const { App, SplashScreen } = Plugins;
 
 @Component({
     selector: 'app-root',
@@ -30,6 +31,8 @@ export class AppComponent {
 
     constructor(
         private platform: Platform,
+        private zone: NgZone,
+        private router: Router,
         private user$: UserService,
         private auth: AuthService,
     ) {
@@ -37,6 +40,16 @@ export class AppComponent {
     }
 
     init(): void {
+        // Route deeplinks
+        App.addListener('appUrlOpen', data => {
+            this.zone.run(() => {
+                console.log('Opening deeplink', data);
+                const slug = data.url.split(".com").pop();
+                slug && this.router.navigateByUrl(slug);
+            });
+        });
+
+        // Remove splash screen on load
         this.platform.ready()
             .then(() => SplashScreen.hide());
     }
