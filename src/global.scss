@@ -70,6 +70,13 @@ html, body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+.w-fit {
+    max-width: fit-content;
+}
+.justify-content-evenly {
+    justify-content: space-evenly !important;
+}
+
 .avatar {
     width: 40px;
     height: 40px;
@@ -102,6 +109,11 @@ html, body {
 }
 .logo-branded {
     background-image: var(--ulfurLogoBranded);
+}
+
+ion-list, ion-item {
+    background-color: var(--ion-background-color);
+    --background: var(--ion-background-color);
 }
 
 @media(min-width: 768px) {

@@ -1,7 +1,6 @@
-<!-- TODO: Add UI skeleton -->
-<!-- <ion-grid>
-    <ion-row>
-        <ion-col size='9'>
+<ion-grid>
+    <ion-row class='d-flex flex-row align-items-center justify-content-center'>
+        <ion-col class='px-lg-3'>
             <ion-grid>
                 <ion-row>
                     <ion-col>
@@ -25,9 +24,10 @@
                 </ion-row>
             </ion-grid>
         </ion-col>
-        <ion-col size='3'>
+
+        <ion-col class='px-lg-3'>
             <ion-item>
-                <ion-label class='d-none'>Currency</ion-label>
+                <ion-label>Currency</ion-label>
                 <ion-select [(value)]='selectedCurrency'
                     (ionChange)='onCurrencyChange($event)'
                     placeholder='Currency'>
@@ -36,33 +36,4 @@
             </ion-item>
         </ion-col>
     </ion-row>
-</ion-grid> -->
-
-<div class='row d-flex flex-row align-content-center justify-content-between'>
-    <div *ngIf='balanceCurrencies.length' class='px-2 pr-md-4 col-9 col-md-7' id='balance-display'>
-        <p class='d-flex flex-row justify-content-between align-content-center'>
-            <span class='mat-display-1 my-0 mr-3'>
-                <ion-text color='dark'>{{ balance[selectedCurrency].available }}</ion-text>
-            </span>
-            <span class='my-auto'>
-                <ion-text color='dark'>Available</ion-text>
-            </span>
-        </p>
-        <p class='d-flex flex-row justify-content-between align-content-center'>
-            <span class='mat-display-1 my-0 mr-3 text-muted'>
-                <ion-text color='dark'>{{ balance[selectedCurrency].pending }}</ion-text>
-            </span>
-            <span class='my-auto'>
-                <ion-text color='dark'>Pending</ion-text>
-            </span>
-        </p>
-    </div>
-
-    <div class='pr-1 pl-3 col-3 my-auto d-flex flex-column justify-content-center align-content-center' id='currency-display'>
-        <ion-select [(value)]='selectedCurrency'
-            (ionChange)='onCurrencyChange($event)'
-            placeholder='Currency'>
-            <ion-select-option *ngFor='let currency of balanceCurrencies' [value]="currency">{{ currency| uppercase }}</ion-select-option>
-        </ion-select>
-    </div>
-</div>
+</ion-grid>

@@ -1,11 +1,15 @@
-<mat-form-field>
-    <mat-label>Theme</mat-label>
-    <mat-select [value]="_theme.currentTheme()">
-        <mat-option *ngFor="let theme of _theme.availableThemes()" [value]='theme'>
+<ion-item class='m-3'>
+    <ion-label>Theme</ion-label>
+    <ion-select [value]="currentTheme$ | async">
+        <ion-select-option *ngFor='let theme of availableThemes$ | async' [value]="theme">
             {{ theme | titlecase }}
-        </mat-option>
-    </mat-select>
-</mat-form-field>
-<br>
-<mat-slide-toggle [checked]='_theme.isDarkMode() | async' (change)='onToggleDarkMode($event)'>Dark Mode</mat-slide-toggle>
-<br>
+        </ion-select-option>
+    </ion-select>
+</ion-item>
+
+<div class='w-fit mx-auto'>
+    <ion-item lines='none'>
+        <ion-toggle color='secondary' [checked]='isDark$ | async' (ionChange)='onToggleDarkMode($event)'></ion-toggle>
+        <ion-label>Dark Mode</ion-label>
+    </ion-item>
+</div>

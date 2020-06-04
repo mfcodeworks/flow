@@ -9,15 +9,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
-    declarations: [],
     imports: [
         CommonModule,
         MatSnackBarModule,
@@ -30,14 +26,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
         MatFormFieldModule,
         MatProgressBarModule,
         MatStepperModule,
-        MatSelectModule,
-        MatSlideToggleModule,
-        MatButtonToggleModule,
-        MatCheckboxModule
+        MatSelectModule
     ],
-    providers: [
-        MatSnackBar
-    ],
+    providers: [MatSnackBar],
     exports: [
         MatButtonModule,
         MatChipsModule,
@@ -48,10 +39,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
         MatFormFieldModule,
         MatProgressBarModule,
         MatStepperModule,
-        MatSelectModule,
-        MatSlideToggleModule,
-        MatButtonToggleModule,
-        MatCheckboxModule
+        MatSelectModule
     ]
 })
 export class MaterialModule { }

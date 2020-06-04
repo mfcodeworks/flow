@@ -7,6 +7,7 @@ import { CacheService } from '../cache/cache.service';
   providedIn: 'root'
 })
 export class ZoomService {
+    // FIXME: Fix for no nodeIntegration
     // Get zoom level (localStorage required for electron index.js)
     zoom$ = new BehaviorSubject(100);
     doZoom$: Observable<number>;

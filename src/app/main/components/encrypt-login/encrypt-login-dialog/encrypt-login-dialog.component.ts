@@ -28,7 +28,7 @@ export class EncryptLoginDialogComponent implements OnInit {
         this.encryptForm = this.fb.group({
             password: ['', Validators.required],
             password_repeat: ['', Validators.required]
-        }, { validator: this.matchPasswords('password', 'password_repeat') });
+        }, {validator: this.matchPasswords('password', 'password_repeat')});
     }
 
     matchPasswords(control1: string, control2: string) {
@@ -42,18 +42,16 @@ export class EncryptLoginDialogComponent implements OnInit {
             }
 
             // set error on matchingControl if validation fails
-            if (control.value !== matchingControl.value) {
-                matchingControl.setErrors({ mismatch: true });
-            } else {
-                matchingControl.setErrors(null);
-            }
+            control.value !== matchingControl.value
+                ? matchingControl.setErrors({mismatch: true})
+                : matchingControl.setErrors(null);
         };
     }
 
     getErrors(control: string) {
         switch (true) {
             case this.encryptForm.get(control).hasError('required'):
-                return `${this.prettyCapitalize(control)} is required`;
+                return `${this.prettyCapitalize(control)} required`;
 
             case this.encryptForm.get(control).hasError('mismatch'):
                 return `Passwords must match`;

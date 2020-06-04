@@ -16,16 +16,13 @@
                 <app-add-payment-source #stripeElement></app-add-payment-source>
             </ion-col>
 
-            <ion-col size='12' class='mt-3'>
-                <div mat-dialog-actions class='d-flex flex-row justify-content-around'>
-                    <button color='accent' mat-raised-button (click)='onCancel()'>Cancel</button>
-                    <button color='primary'
-                        [disabled]='processing | async'
-                        mat-raised-button
-                        (click)='createPaymentMethod()'>
-                        Save <i *ngIf='processing | async' class='ml-2 fas fa-spin fa-spinner'></i>
-                    </button>
-                </div>
+            <ion-col size='12' class='mt-3 d-flex flex-row justify-content-around'>
+                <ion-button color='danger' (click)='onCancel()'>Cancel</ion-button>
+                <ion-button color='primary'
+                    [disabled]='processing | async'
+                    (click)='createPaymentMethod()'>
+                    Save <i *ngIf='processing | async' class='ml-2 fas fa-spin fa-spinner'></i>
+                </ion-button>
             </ion-col>
         </ion-row>
     </ion-grid>

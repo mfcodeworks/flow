@@ -1,3 +1,7 @@
+* {
+    white-space: nowrap;
+}
+
 /* Seperate balance and currency on extra small phones (iPhone 5-) */
 @media(max-width: 400px) {
     #balance-display {

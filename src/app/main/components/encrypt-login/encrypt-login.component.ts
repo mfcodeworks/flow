@@ -39,7 +39,8 @@ export class EncryptLoginComponent implements OnInit {
     async openDialog(): Promise<void> {
         // Open dialog
         const dialogRef = await this.dialog.create({
-            component: EncryptLoginDialogComponent
+            component: EncryptLoginDialogComponent,
+            cssClass: 'narrow-dialog'
         });
         await dialogRef.present();
 
@@ -49,8 +50,8 @@ export class EncryptLoginComponent implements OnInit {
         });
     }
 
-    onEncryptLogin(event: MatSlideToggleChange): void {
-        if (event.checked) {
+    onEncryptLogin({detail}): void {
+        if (detail.checked) {
             this.openDialog();
         } else {
             // Unencrypt login

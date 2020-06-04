@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+
 import { LongholdDirective } from './directives/longhold.directive';
 import { RouteTransformerDirective } from './directives/route-transformer.directive';
 import { TopBarComponent } from './components/top-bar/top-bar.component';
@@ -15,6 +16,11 @@ import { AuthService } from '../services/auth/auth.service';
 import { BalanceService } from '../services/balance/balance.service';
 import { TransactionsService } from '../services/transactions/transactions.service';
 import { SourcesService } from '../services/sources/sources.service';
+import { DateDiffPipe } from './pipes/date-diff.pipe';
+import { DateFilterPipe } from './pipes/date-filter.pipe';
+import { MoneyPipe } from './pipes/money.pipe';
+import { CurrencySymbolPipe } from './pipes/currency-symbol.pipe';
+import { ReplacePipe } from './pipes/replace.pipe';
 
 @NgModule({
     imports: [
@@ -22,6 +28,11 @@ import { SourcesService } from '../services/sources/sources.service';
         IonicModule.forRoot()
     ],
     declarations: [
+        DateDiffPipe,
+        DateFilterPipe,
+        MoneyPipe,
+        CurrencySymbolPipe,
+        ReplacePipe,
         LongholdDirective,
         RouteTransformerDirective,
         TopBarComponent
@@ -67,6 +78,11 @@ import { SourcesService } from '../services/sources/sources.service';
         }
     ],
     exports: [
+        DateDiffPipe,
+        DateFilterPipe,
+        MoneyPipe,
+        CurrencySymbolPipe,
+        ReplacePipe,
         LongholdDirective,
         RouteTransformerDirective,
         TopBarComponent

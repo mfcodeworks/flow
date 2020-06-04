@@ -19,14 +19,12 @@ export class TransactionListComponent implements OnInit {
 
     constructor(
         public money: MoneyService,
-        private user$: UserService
+        private _user: UserService
     ) {
-        this.user = user$.profile;
+        this.user = _user.profile;
     }
 
     ngOnInit() {
-        console.log('Displaying Transactions', this.transactions);
-
         // Create month array
         for (let i in [0, 1, 2]) {
             this.months.push(moment().subtract(i, 'months'))

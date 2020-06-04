@@ -1,5 +1,6 @@
-<form [formGroup]='encryptForm'>
-    <mat-slide-toggle
-        formControlName='encrypt'
-        (change)='onEncryptLogin($event)'>Encrypt Login</mat-slide-toggle>
+<form [formGroup]='encryptForm' class='mx-auto w-fit'>
+    <ion-item lines='none'>
+        <ion-toggle color='secondary' formControlName='encrypt' (ionChange)='onEncryptLogin($event)'></ion-toggle>
+        <ion-label>Encrypt Login</ion-label>
+    </ion-item>
 </form>
