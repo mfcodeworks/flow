@@ -5,6 +5,7 @@
 @import '~@angular/material/theming';
 @import './component-themes.scss';
 @import './colors.scss';
+@import './colors/dark-purple.scss';
 
 @include mat-core();
 
@@ -28,29 +29,21 @@ $theme: mat-light-theme($primary, $accent, $warn);
   --ulfurLogo: url('../assets/images/logo-marker.png');
   --ulfurLogoBranded: url("../assets/images/Logo_Transparent-scaledown.png");
 
+  /*** THEME COLOURS ***/
+
   /** primary **/
-  --ion-color-primary: #3880ff;
-  --ion-color-primary-rgb: 56, 128, 255;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #3171e0;
-  --ion-color-primary-tint: #4c8dff;
 
   /** secondary **/
-  --ion-color-secondary: #3dc2ff;
-  --ion-color-secondary-rgb: 61, 194, 255;
   --ion-color-secondary-contrast: #ffffff;
   --ion-color-secondary-contrast-rgb: 255, 255, 255;
-  --ion-color-secondary-shade: #36abe0;
-  --ion-color-secondary-tint: #50c8ff;
 
   /** tertiary **/
-  --ion-color-tertiary: #5260ff;
-  --ion-color-tertiary-rgb: 82, 96, 255;
   --ion-color-tertiary-contrast: #ffffff;
   --ion-color-tertiary-contrast-rgb: 255, 255, 255;
-  --ion-color-tertiary-shade: #4854e0;
-  --ion-color-tertiary-tint: #6370ff;
+
+  /*** CONTEXT COLOURS ***/
 
   /** success **/
   --ion-color-success: #2dd36f;
@@ -75,6 +68,8 @@ $theme: mat-light-theme($primary, $accent, $warn);
   --ion-color-danger-contrast-rgb: 255, 255, 255;
   --ion-color-danger-shade: #cf3c4f;
   --ion-color-danger-tint: #ed576b;
+
+  /*** DARK MODE ***/
 
   /** dark **/
   --ion-color-dark: #222428;
@@ -104,7 +99,7 @@ $theme: mat-light-theme($primary, $accent, $warn);
 // @media (prefers-color-scheme: dark) {
 body.dark-theme {
   --ulfurTextColor: rgba(250, 250, 250, 0.87);
-  
+
   /** logo **/
   --ulfurLogo: url('../assets/images/logo-white.png');
   --ulfurLogoBranded: url("../assets/images/Logo_Transparent_White-scaledown.png");
@@ -118,30 +113,7 @@ body.dark-theme {
   @include component-themes($dark-theme);
   @include angular-material-theme($dark-theme);
 
-  /*
-   * Dark Colors
-   * -------------------------------------------
-   */
-  --ion-color-primary: #428cff;
-  --ion-color-primary-rgb: 66,140,255;
-  --ion-color-primary-contrast: #ffffff;
-  --ion-color-primary-contrast-rgb: 255,255,255;
-  --ion-color-primary-shade: #3a7be0;
-  --ion-color-primary-tint: #5598ff;
-
-  --ion-color-secondary: #50c8ff;
-  --ion-color-secondary-rgb: 80,200,255;
-  --ion-color-secondary-contrast: #ffffff;
-  --ion-color-secondary-contrast-rgb: 255,255,255;
-  --ion-color-secondary-shade: #46b0e0;
-  --ion-color-secondary-tint: #62ceff;
-
-  --ion-color-tertiary: #6a64ff;
-  --ion-color-tertiary-rgb: 106,100,255;
-  --ion-color-tertiary-contrast: #ffffff;
-  --ion-color-tertiary-contrast-rgb: 255,255,255;
-  --ion-color-tertiary-shade: #5d58e0;
-  --ion-color-tertiary-tint: #7974ff;
+  /*** CONTEXT COLOURS ***/
 
   --ion-color-success: #2fdf75;
   --ion-color-success-rgb: 47,223,117;
@@ -163,6 +135,8 @@ body.dark-theme {
   --ion-color-danger-contrast-rgb: 255,255,255;
   --ion-color-danger-shade: #e04055;
   --ion-color-danger-tint: #ff5b71;
+
+  /*** DARK MODE ***/
 
   --ion-color-dark: #f4f5f8;
   --ion-color-dark-rgb: 244,245,248;

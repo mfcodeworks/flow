@@ -5,64 +5,67 @@
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
 
-    <div class='row mx-3'>
-        <div class='col-12 col-md-6'>
-            <!-- Balance -->
-            <div class='mt-3 mx-2 mt-md-5 row d-flex flex-row align-content-center justify-content-center'>
-                <div *ngIf='!user.stripeConnectId'>
-                    <button mat-raised-button color="primary"
-                        (click)='openLoginLink()'>Complete login to start receiving</button>
-                </div>
+    <ion-grid>
+        <ion-row class='mx-3'>
+            <ion-col size='12' size-md='6'>
 
-                <app-balance-display [balances]='getBalance() | async'></app-balance-display>
-            </div>
+                <!-- Balance -->
+                <section class='mt-3 mx-2 mt-md-5 d-flex flex-row align-content-center justify-content-center'>
+                    <ng-container *ngIf='!user.stripeConnectId'>
+                        <ion-button color="primary" (click)='openLoginLink()'>
+                            Complete login to start receiving
+                        </ion-button>
+                    </ng-container>
 
-            <div class='col-12 col-md-9 mx-auto'>
-                <!-- Payment Methods -->
-                <div class='mat-typography my-4'>
-                    <mat-nav-list>
-                        <a mat-list-item
-                            *ngFor="let source of getSources() | async"
-                            (click)="openSourceDialog(source.id)">
-                            <!-- Popup update/delete modal -->
-                            <div *ngIf='source.card'
-                                class='d-flex justify-content-between w-100'>
-                                <i class="mx-auto fab fa-cc-{{source.card.brand}}"></i>
-                                <span class='mx-auto text-secondary'>**** **** **** {{ source.card.last4 }}</span>
-                                <span class='mx-auto'>{{ source.card.exp_month }}/{{ source.card.exp_year }}</span>
-                            </div>
-                            <mat-divider></mat-divider>
-                        </a>
-                        <a mat-list-item (click)='openAddNewSource()'>
-                            <span class='w-100 text-center'>Add New Payment Method</span>
-                        </a>
-                    </mat-nav-list>
-                </div>
+                    <app-balance-display *ngIf='balance$ | async' [balances]='balance$ | async'></app-balance-display>
+                </section>
 
-                <!-- Dashboard Link -->
-                <div *ngIf='user.stripeConnectId' class='w-100 text-center'>
-                    <button mat-raised-button
-                        color="primary"
-                        class='mx-auto'
-                        [disabled]='!(dashboardLink | async)'
-                        (click)='openDashboardLink()'>
-                        Advanced Wallet Management
-                        <i *ngIf='!(dashboardLink | async)' class='lead fas fa-circle-notch fa-spin ml-1'></i>
-                    </button>
-                    <br><br>
-                    <button mat-raised-button
-                        color="accent"
-                        class='mx-auto'
-                        routerLink="/transaction/create"
-                        [queryParams]="{ to: 'me' }">Top Up Account</button>
-                </div>
-            </div>
-        </div>
-        <div class='col-12 col-md-6'>
-            <!-- Most Recent Transaction Log -->
-            <div class='my-3 pt-md-3'>
-                <app-transaction-list [transactions]='getTransactions() | async'></app-transaction-list>
-            </div>
-        </div>
-    </div>
+                <section class='col-12 col-md-9 mx-auto'>
+                    <!-- Payment Methods -->
+                    <div class='mat-typography my-4'>
+                        <mat-nav-list>
+                            <a mat-list-item
+                                *ngFor="let source of sources$ | async"
+                                (click)="openSourceDialog(source.id)">
+                                <!-- Popup update/delete modal -->
+                                <div *ngIf='source.card'
+                                    class='d-flex justify-content-between w-100'>
+                                    <i class="mx-auto fab fa-cc-{{source.card.brand}}"></i>
+                                    <span class='mx-auto text-secondary'>**** **** **** {{ source.card.last4 }}</span>
+                                    <span class='mx-auto'>{{ source.card.exp_month }}/{{ source.card.exp_year }}</span>
+                                </div>
+                                <mat-divider></mat-divider>
+                            </a>
+                            <a mat-list-item (click)='openAddNewSource()'>
+                                <span class='w-100 text-center'>Add New Payment Method</span>
+                            </a>
+                        </mat-nav-list>
+                    </div>
+
+                    <!-- Dashboard Link -->
+                    <section *ngIf='user.stripeConnectId' class='w-100 text-center'>
+                        <ion-button color="primary"
+                            class='mx-auto'
+                            [disabled]='!(dashboardLink | async)'
+                            (click)='openDashboardLink()'>
+                            Advanced Wallet Management
+                            <i *ngIf='!(dashboardLink | async)' class='lead fas fa-circle-notch fa-spin ml-1'></i>
+                        </ion-button>
+                        <br><br>
+                        <ion-button color="secondary"
+                            class='mx-auto'
+                            routerLink="/transaction/create"
+                            [queryParams]="{ to: 'me' }">
+                            Top Up Account
+                        </ion-button>
+                    </section>
+                </section>
+            </ion-col>
+
+            <!-- Recent Transaction Log -->
+            <ion-col size='12' size-md='6' class='my-3 pt-md-3 pt-md-5'>
+                <app-transaction-list [transactions]='transactions$ | async'></app-transaction-list>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 </ion-content>

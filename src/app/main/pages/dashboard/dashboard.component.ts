@@ -5,13 +5,11 @@ import { Profile } from '../../../shared/core/profile';
 import { UserService } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
 import { BackendService } from 'src/app/services/backend/backend.service';
-import { Transaction } from '../../../shared/core/transaction';
 import { map, tap, distinctUntilChanged, filter } from 'rxjs/operators';
-import { Observable, BehaviorSubject, from } from 'rxjs';
+import { Observable, from } from 'rxjs';
 import { AddPaymentSourceDialogComponent } from '../../components/add-payment-source-dialog/add-payment-source-dialog.component';
 import { PaymentSourceDialogComponent } from '../../components/payment-source-dialog/payment-source-dialog.component';
 import { BalanceService } from '../../../services/balance/balance.service';
-import { Balance } from '../../../shared/core/balance';
 import { TransactionsService } from '../../../services/transactions/transactions.service';
 import { SourcesService } from '../../../services/sources/sources.service';
 import { ModalController } from '@ionic/angular';
@@ -29,6 +27,13 @@ export class DashboardComponent implements OnInit {
     user: Profile;
     qrData: string;
     dashboardLink: Observable<string>;
+    balance$ = this._balance.get();
+    sources$ = this._sources.get();
+    transactions$ = this._transactions.get().pipe(
+        distinctUntilChanged(),
+        filter(t => !!t),
+        map(t => Array.prototype.concat(t.sent, t.received))
+    );
 
     constructor(
         private _user: UserService,
@@ -45,30 +50,11 @@ export class DashboardComponent implements OnInit {
         this.qrData = `${environment.appUrl}/profile/${this.user.id}`;
 
         // Get User Dashboard or Login Link
-        if (this.user.stripeConnectId) {
-            this.dashboardLink = this.backend.getUserDashboard().pipe(
+        this.user.stripeConnectId
+            ? this.dashboardLink = this.backend.getUserDashboard().pipe(
                 map(l => l.url),
                 tap(l => console.log('Dashboard link:', l))
-            );
-        } else {
-            Browser.prefetch({urls: [this.loginLink]});
-        }
-    }
-
-    getBalance(): BehaviorSubject<Balance|null> {
-        return this._balance.get();
-    }
-
-    getTransactions(): Observable<Transaction[]> {
-        return this._transactions.get().pipe(
-            distinctUntilChanged(),
-            filter(t => !!t),
-            map(t => Array.prototype.concat(t.sent, t.received))
-        );
-    }
-
-    getSources(): BehaviorSubject<any[]|null> {
-        return this._sources.get();
+            ) : Browser.prefetch({urls: [this.loginLink]});
     }
 
     refresh(ev: any): void {
