@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { formatDistanceStrict, formatDistanceToNowStrict } from 'date-fns';
+import formatDistanceStrict from 'date-fns/formatDistanceStrict';
+import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict';
 
 @Pipe({
     name: 'dateDiff'

@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { of, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { SHA256, enc } from 'crypto-js';
+import SHA256 from "crypto-js/sha256";
+import Hex from 'crypto-js/enc-hex';
 
 import { BackendService } from '../../services/backend/backend.service';
 import { UserService } from '../../services/user/user.service';
@@ -22,7 +23,7 @@ export class PaymentIntentResolver implements Resolve<Observable<any>> {
         let nonce = SHA256(
             `${this.user$.profile.id}${this.user$.profile.username}${new Date().getTime()}`,
             environment.stripe.public_key
-        ).toString(enc.Hex);
+        ).toString(Hex);
 
         console.log(for_user_id, nonce);
 

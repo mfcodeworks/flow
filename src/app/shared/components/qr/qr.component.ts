@@ -17,8 +17,8 @@ export class QRComponent implements AfterViewInit {
     @Input() logo: string = '';
     @Input() logoBackgroundColor: string ='#fff';
     @Input() logoBackgroundTransparent: boolean = false;
-    @Input() logoWidth: number = 80;
-    @Input() logoHeight: number = 80;
+    @Input() logoWidth: number = 92;
+    @Input() logoHeight: number = 92;
     @Input() correctLevel: any = QRCode.CorrectLevel.H;
     @Input() dotScale: number = 1;
     qr: QRCode;

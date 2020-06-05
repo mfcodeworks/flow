@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { SHA256, enc } from 'crypto-js';
+import SHA256 from "crypto-js/sha256";
+import Hex from 'crypto-js/enc-hex';
 import { Profile } from '../../../shared/core/profile';
 import { UserService } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
@@ -39,6 +40,6 @@ export class StripeSignupComponent implements OnInit {
     }
 
     verifyState(): boolean {
-        return SHA256(this.user.toString(), environment.stripe.public_key).toString(enc.Hex) === this.state
+        return SHA256(this.user.toString(), environment.stripe.public_key).toString(Hex) === this.state
     }
 }

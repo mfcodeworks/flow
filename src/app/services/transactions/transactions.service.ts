@@ -39,9 +39,7 @@ export class TransactionsService {
             switchMap(() => this._auth.isLoggedIn()),
             filter(l => !!l),
             // Get transactions from API
-            mergeMap(() => this._backend.getUserTransaction()),
-            // DEBUG: Log transactions
-            tap(b => console.warn(`${this.constructor.name} retrieved Transactions:`, b))
+            mergeMap(() => this._backend.getUserTransaction())
         ).subscribe(b => this.transactions$.next(b));
     }
 

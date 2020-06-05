@@ -4,7 +4,9 @@ import { Transaction } from '../../../shared/core/transaction';
 import { UserService } from 'src/app/services/user/user.service';
 import { Profile } from '../../../shared/core/profile';
 import { MoneyService } from 'src/app/services/money/money.service';
-import { subMonths, format, compareDesc } from 'date-fns';
+import subMonths from 'date-fns/subMonths';
+import format from 'date-fns/format';
+import compareDesc from 'date-fns/compareDesc'
 
 @Component({
     selector: 'app-transaction-list',

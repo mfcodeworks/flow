@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { UserService } from '../../../services/user/user.service';
 import { EncryptLoginDialogComponent } from './encrypt-login-dialog/encrypt-login-dialog.component';
 import { CacheService } from '../../../services/cache/cache.service';

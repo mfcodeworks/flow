@@ -13,7 +13,6 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { StripeSignupComponent } from './components/stripe-signup/stripe-signup.component';
 import { CreateTransactionComponent } from './pages/create-transaction/create-transaction.component';
 import { PaymentIntentResolver } from 'src/app/main/resolvers/payment-intent.resolver';
-import { QRComponent } from './components/qr/qr.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { WithdrawComponent } from './pages/withdraw/withdraw.component';
 import { BalanceDisplayComponent } from './components/balance-display/balance-display.component';
@@ -47,7 +46,6 @@ import { AddPaymentSourceDialogComponent } from './components/add-payment-source
         DashboardComponent,
         StripeSignupComponent,
         CreateTransactionComponent,
-        QRComponent,
         ProfileComponent,
         WithdrawComponent,
         SearchComponent,

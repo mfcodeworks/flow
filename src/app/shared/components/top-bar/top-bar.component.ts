@@ -4,7 +4,7 @@ import { QRService } from '../../../services/qr/qr.service';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 
-const qrTest = new RegExp(`${environment.appUrl}/profile/[0-9]`.replace('/', '\\/'));
+const qrTest = new RegExp(`^${environment.appUrl}`.replace('/', '\\/'));
 
 @Component({
     selector: 'app-top-bar',
@@ -65,27 +65,24 @@ export class TopBarComponent implements OnInit, AfterViewInit {
             buttons: [{
                 text: 'Camera Scan QR',
                 icon: 'camera-outline',
-                handler: () => {
-                    this.qrScan('camera');
-                }
+                handler: () => this.qrScan('camera')
             }, {
                 text: 'Scan QR File',
                 icon: 'qr-code-outline',
-                handler: () => {
-                    this.getQrFile();
-                }
+                handler: () => this.getQrFile()
             }]
         });
         await actionSheet.present();
     }
 
-    async getQrFile(): Promise<void> {
+    async getQrFile(): Promise<boolean> {
         console.log(this.qrFile);
         const file = await this.qrFile.getInputElement();
         file.click();
+        return true;
     }
 
-    async qrScan(mode = 'camera'): Promise<void> {
+    async qrScan(mode = 'camera'): Promise<boolean> {
         const alert = await this._alerts.create({
             header: 'No QR Detected',
             message: 'No Flow QR code was detected',
@@ -110,12 +107,13 @@ export class TopBarComponent implements OnInit, AfterViewInit {
             if (!data) {
                 console.warn('Alerting no QR');
                 await alert.present();
+                return false;
             }
         } else {
             // Camera scan
             data = await this._qr.scan();
             if (!data) {
-                return;
+                return false;
             }
         }
 
@@ -125,10 +123,13 @@ export class TopBarComponent implements OnInit, AfterViewInit {
 
         // Test if QR code has a valid profile URL
         if (qrTest.test(data)) {
-            this._router.navigateByUrl(data.replace(environment.appUrl, ''));
+            const slug = data.replace(environment.appUrl, '');
+            console.log(`Routing to ${slug}`);
+            this._router.navigateByUrl(slug);
         } else {
             console.warn('Alerting no QR');
             await alert.present();
+            return false;
         }
 
         // Clear QR file input

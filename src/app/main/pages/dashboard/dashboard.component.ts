@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Plugins } from '@capacitor/core';
-import { SHA256, enc } from 'crypto-js';
+import SHA256 from "crypto-js/sha256";
+import Hex from 'crypto-js/enc-hex';
 import { Profile } from '../../../shared/core/profile';
 import { UserService } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
@@ -46,7 +47,7 @@ export class DashboardComponent implements OnInit {
 
     ngOnInit() {
         this.user = this._user.profile;
-        this.loginLink = `https://connect.stripe.com/express/oauth/authorize?redirect_uri=http://localhost:4200/wallet/signup/stripe&client_id=${environment.stripe.client_id}&state=${SHA256(this.user.toString(), environment.stripe.public_key).toString(enc.Hex)}&scope=read&write`;
+        this.loginLink = `https://connect.stripe.com/express/oauth/authorize?redirect_uri=http://localhost:4200/wallet/signup/stripe&client_id=${environment.stripe.client_id}&state=${SHA256(this.user.toString(), environment.stripe.public_key).toString(Hex)}&scope=read&write`;
         this.qrData = `${environment.appUrl}/profile/${this.user.id}`;
 
         // Get User Dashboard or Login Link

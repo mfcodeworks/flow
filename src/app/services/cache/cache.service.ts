@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { from, Observable, iif, of } from 'rxjs';
-import * as localforage from 'localforage';
-import { AES, enc } from 'crypto-js';
+import localforage from 'localforage';
+import AES from "crypto-js/aes";
+import Utf8 from 'crypto-js/enc-utf8';
 import { environment } from 'src/environments/environment';
 import { map, mergeMap, catchError } from 'rxjs/operators';
 
@@ -44,7 +45,7 @@ export class CacheService {
                     // Decode data
                     of(true).pipe(
                         map(() => JSON.parse(
-                            AES.decrypt(data, passphrase).toString(enc.Utf8)
+                            AES.decrypt(data, passphrase).toString(Utf8)
                         ))
                     ),
                     // Return data

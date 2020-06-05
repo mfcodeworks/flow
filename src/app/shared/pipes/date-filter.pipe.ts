@@ -1,14 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {
-    isSameSecond,
-    isSameMinute,
-    isSameHour,
-    isSameDay,
-    isSameWeek,
-    isSameMonth,
-    isSameQuarter,
-    isSameYear
-} from 'date-fns';
+import isSameSecond from 'date-fns/isSameSecond';
+import isSameMinute from 'date-fns/isSameMinute';
+import isSameHour from 'date-fns/isSameHour';
+import isSameDay from 'date-fns/isSameDay';
+import isSameWeek from 'date-fns/isSameWeek';
+import isSameMonth from 'date-fns/isSameMonth';
+import isSameQuarter from 'date-fns/isSameQuarter';
+import isSameYear from 'date-fns/isSameYear';
 
 type comparison ='second'|'minute'|'hour'|'day'|'week'|'month'|'quarter'|'year';
 

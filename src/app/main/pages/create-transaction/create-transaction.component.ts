@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { from, Observable, of, Subscription, BehaviorSubject } from 'rxjs';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { switchMap, map, catchError, tap, mergeMap, filter, delay } from 'rxjs/operators';
+import { switchMap, map, catchError, tap, mergeMap, filter } from 'rxjs/operators';
 import { CurrencyMinimumAmount } from '../../../shared/core/currency-minimum-amount.enum';
 import { MoneyService } from 'src/app/services/money/money.service';
 import { MatStepper } from '@angular/material/stepper';

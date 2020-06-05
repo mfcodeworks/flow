@@ -39,7 +39,7 @@ export class ProfileComponent implements OnInit {
         );
 
         // Create QR Data
-        this.qrData = of(`${environment.appUrl}/profile/${this.user.id}`);
+        this.qrData = of(`${environment.appUrl}/profile/${this.user.username}`);
 
         // Set User Stripe Profile
         this.stripeProfile = this.profile.pipe(

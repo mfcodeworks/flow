@@ -18,7 +18,7 @@ export class QRService {
 
                 // Read and return
                 const text = await QrScanner.scanImage(file);
-                console.warn(`${this.constructor.name} read image:`, text);
+                console.log(`${this.constructor.name} read image:`, text);
                 return text;
             }
 

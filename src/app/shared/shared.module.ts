@@ -21,6 +21,7 @@ import { DateFilterPipe } from './pipes/date-filter.pipe';
 import { MoneyPipe } from './pipes/money.pipe';
 import { CurrencySymbolPipe } from './pipes/currency-symbol.pipe';
 import { ReplacePipe } from './pipes/replace.pipe';
+import { QRComponent } from './components/qr/qr.component';
 
 @NgModule({
     imports: [
@@ -35,7 +36,8 @@ import { ReplacePipe } from './pipes/replace.pipe';
         ReplacePipe,
         LongholdDirective,
         RouteTransformerDirective,
-        TopBarComponent
+        TopBarComponent,
+        QRComponent
     ],
     providers: [
         SplashScreen,
@@ -85,7 +87,8 @@ import { ReplacePipe } from './pipes/replace.pipe';
         ReplacePipe,
         LongholdDirective,
         RouteTransformerDirective,
-        TopBarComponent
+        TopBarComponent,
+        QRComponent
     ]
 })
 export class SharedModule {}

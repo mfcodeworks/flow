@@ -38,9 +38,7 @@ export class BalanceService {
             switchMap(() => this._auth.isLoggedIn()),
             filter(l => !!l),
             // Get balance from API
-            mergeMap(() => this._backend.getUserBalance()),
-            // DEBUG: Log balance
-            tap(b => console.warn(`${this.constructor.name} retrieved Balance:`, b))
+            mergeMap(() => this._backend.getUserBalance())
         ).subscribe(b => this.balance$.next(b));
     }
 

@@ -10,7 +10,7 @@ import { map, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Balance } from '../../../shared/core/balance';
 import { BalanceService } from '../../../services/balance/balance.service';
-import { add } from 'date-fns';
+import add from 'date-fns/add';
 
 @Component({
     selector: 'app-withdraw',

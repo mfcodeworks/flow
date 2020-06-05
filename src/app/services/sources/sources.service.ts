@@ -37,9 +37,7 @@ export class SourcesService {
             switchMap(() => this._auth.isLoggedIn()),
             filter(l => !!l),
             // Get sources from API
-            mergeMap(() => this._backend.getUserSources()),
-            // DEBUG: Log sources
-            tap(b => console.warn(`${this.constructor.name} retrieved Transactions:`, b))
+            mergeMap(() => this._backend.getUserSources())
         ).subscribe(b => this.sources$.next(b));
     }
 

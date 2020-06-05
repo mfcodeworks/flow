@@ -25,7 +25,7 @@ export class NotificationService {
             filter(token => !!token),
             filter(() => this.auth.loggedIn.value),
             switchMap(t => this.saveToken(t))
-        ).subscribe(console.warn);
+        ).subscribe();
 
         // On new login status, update token status
         this.auth.loggedIn.pipe(
@@ -38,7 +38,7 @@ export class NotificationService {
                 ? this.saveToken(this.push.token.value)
                 : this.deleteToken(this.push.token.value)
             )
-        ).subscribe(console.warn);
+        ).subscribe();
 
         return this.push.init()
     }
