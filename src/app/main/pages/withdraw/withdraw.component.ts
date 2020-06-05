@@ -1,9 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import * as moment from 'moment';
 import { Profile } from '../../../shared/core/profile';
 import { UserService } from 'src/app/services/user/user.service';
 import { BackendService } from 'src/app/services/backend/backend.service';
-import { ActivatedRoute } from '@angular/router';
 import { MoneyService } from 'src/app/services/money/money.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { CurrencyMinimumAmount } from '../../../shared/core/currency-minimum-amount.enum';
@@ -12,6 +10,7 @@ import { map, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Balance } from '../../../shared/core/balance';
 import { BalanceService } from '../../../services/balance/balance.service';
+import { add } from 'date-fns';
 
 @Component({
     selector: 'app-withdraw',
@@ -83,7 +82,7 @@ export class WithdrawComponent implements OnInit {
             tap(l => console.log('Last withdrawl:', l))
         );
         this.nextPayoutDate = this.lastWithdrawl.pipe(
-            map(l => moment(l.created * 1000).add(90, 'days').valueOf()),
+            map(l => add(l.created * 1000, {days: 90}).valueOf()),
             tap(n => console.log('Next payout date:', n))
         );
     }

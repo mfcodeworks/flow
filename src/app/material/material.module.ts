@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
     imports: [
@@ -26,7 +27,8 @@ import { MatTabsModule } from '@angular/material/tabs';
         MatFormFieldModule,
         MatProgressBarModule,
         MatStepperModule,
-        MatSelectModule
+        MatSelectModule,
+        MatCheckboxModule
     ],
     providers: [MatSnackBar],
     exports: [
@@ -39,7 +41,8 @@ import { MatTabsModule } from '@angular/material/tabs';
         MatFormFieldModule,
         MatProgressBarModule,
         MatStepperModule,
-        MatSelectModule
+        MatSelectModule,
+        MatCheckboxModule
     ]
 })
-export class MaterialModule { }
+export class MaterialModule {}

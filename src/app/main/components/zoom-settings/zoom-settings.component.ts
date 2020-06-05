@@ -9,11 +9,11 @@ import { ZoomService } from '../../../services/zoom/zoom.service';
 })
 export class ZoomSettingsComponent {
     isElectron = !!window.require;
-    zoomLevel = localStorage.getItem('app-zoom') || '100'
+    zoomLevel = this.zoom.zoom$;
 
     constructor(private zoom: ZoomService) {}
 
     onZoomChange({detail}) {
-        this.zoom.setZoom(parseInt(detail.value));
+        this.zoom.setZoom(detail.value);
     }
 }

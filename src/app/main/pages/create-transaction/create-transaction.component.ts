@@ -42,11 +42,10 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
     processing: BehaviorSubject<boolean> = new BehaviorSubject(false);
     sources: Observable<any[]>;
     balance: Observable<number>;
-    options: { style?: object }
+    options: {style?: object};
     isDark$: Subscription;
 
     constructor(
-        private router: Router,
         private dialogRef: ModalController,
         private fb: FormBuilder,
         private route: ActivatedRoute,
