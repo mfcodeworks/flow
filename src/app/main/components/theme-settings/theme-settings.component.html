@@ -1,6 +1,6 @@
 <ion-item class='m-3'>
     <ion-label>Theme</ion-label>
-    <ion-select [value]="currentTheme$ | async">
+    <ion-select [value]="currentTheme$ | async" (ionChange)='onToggleTheme($event)'>
         <ion-select-option *ngFor='let theme of availableThemes$ | async' [value]="theme">
             {{ theme | titlecase }}
         </ion-select-option>

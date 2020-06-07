@@ -18,7 +18,7 @@ export class NotificationService {
     ) {}
 
     // Init push services
-    init(): void {
+    async init(): Promise<void> {
         // On new token, if token has value and user is logged in, save
         this.push.token.pipe(
             tap(token => console.log(`New FCM token ${token}`)),
@@ -29,10 +29,8 @@ export class NotificationService {
 
         // On new login status, update token status
         this.auth.loggedIn.pipe(
-
             // If token has no value we can't proceed
             filter(() => !!this.push.token.value),
-
             // Make to backend call
             switchMap(l => l
                 ? this.saveToken(this.push.token.value)
@@ -40,7 +38,8 @@ export class NotificationService {
             )
         ).subscribe();
 
-        return this.push.init()
+        // Init push service
+        this.push.init();
     }
 
     // Send to server to save token

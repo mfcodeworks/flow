@@ -12,7 +12,7 @@ import { map, mergeMap, catchError } from 'rxjs/operators';
 export class CacheService {
 
     // Init Cache
-    init(): boolean {
+    async init(): Promise<boolean> {
         console.log('Configuring Cache', environment.cache);
 
         // Configure local storage

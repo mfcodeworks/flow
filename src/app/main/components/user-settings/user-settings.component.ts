@@ -3,7 +3,7 @@ import { Profile } from '../../../shared/core/profile';
 import { UserService } from '../../../services/user/user.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BackendService } from 'src/app/services/backend/backend.service';
-import { map, catchError, tap } from 'rxjs/operators';
+import { catchError, tap, filter } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject } from 'rxjs';
 
@@ -33,12 +33,12 @@ export class UserSettingsComponent implements OnInit {
             username: [this.user.username, Validators.required],
             password: [''],
             password_repeat: ['']
-        }, { validator: this.matchPasswords('password', 'password_repeat') });
+        }, {validator: this.matchPasswords('password', 'password_repeat')});
 
-        this._user.profile$.pipe(tap(u => console.log('New settings user:', u))).subscribe(u => this.settingsForm.patchValue(u));
-    }
-
-    ngAfterContentInit() {
+        this._user.profile$.pipe(
+            tap(u => console.log('New settings user:', u)),
+            filter(u => !!u)
+        ).subscribe(u => this.settingsForm.patchValue(u));
     }
 
     onSubmit(): void {

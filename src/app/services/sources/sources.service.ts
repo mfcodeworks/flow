@@ -20,16 +20,14 @@ export class SourcesService {
         private _auth: AuthService
     ) {}
 
-    init(): void {
-        // clear on logout
+    async init(): Promise<void> {
+        // Clear or refresh on login change
         this._auth.loggedIn.pipe(
-            filter(l => !l)
-        ).subscribe(() => this.clear());
-
-        // Refetch on new login
-        this._auth.loggedIn.pipe(
-            filter(l => !!l)
-        ).subscribe(() => this.refresh());
+            tap(l => !!l
+                ? this.refresh()
+                : this.clear()
+            )
+        ).subscribe();
 
         // Fetch sources
         this.trigger$.pipe(

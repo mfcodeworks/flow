@@ -25,4 +25,8 @@ export class ThemeSettingsComponent implements OnInit {
     onToggleDarkMode({detail}): void {
         this._theme.toggleDarkMode(detail.checked);
     }
+
+    onToggleTheme({detail}): void {
+        this._theme.setColourTheme(detail.value);
+    }
 }

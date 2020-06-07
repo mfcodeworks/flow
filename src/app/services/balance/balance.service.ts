@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BackendService } from '../backend/backend.service';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
-import { mergeMap, tap, switchMap, filter } from 'rxjs/operators';
+import { tap, switchMap, filter } from 'rxjs/operators';
 import { Balance } from '../../shared/core/balance';
 
 @Injectable({
@@ -21,16 +21,14 @@ export class BalanceService {
         private _auth: AuthService
     ) {}
 
-    init(): void {
-        // clear on logout
+    async init(): Promise<void> {
+        // Clear or refresh on login change
         this._auth.loggedIn.pipe(
-            filter(l => !l)
-        ).subscribe(() => this.clear());
-
-        // Refetch on new login
-        this._auth.loggedIn.pipe(
-            filter(l => !!l)
-        ).subscribe(() => this.refresh());
+            tap(l => !!l
+                ? this.refresh()
+                : this.clear()
+            )
+        ).subscribe();
 
         // Fetch balance
         this.trigger$.pipe(
@@ -38,7 +36,7 @@ export class BalanceService {
             switchMap(() => this._auth.isLoggedIn()),
             filter(l => !!l),
             // Get balance from API
-            mergeMap(() => this._backend.getUserBalance())
+            switchMap(() => this._backend.getUserBalance())
         ).subscribe(b => this.balance$.next(b));
     }
 

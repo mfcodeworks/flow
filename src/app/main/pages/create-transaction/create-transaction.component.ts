@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ChangeDetectionStrategy, OnDestroy } from
 import { UserService } from 'src/app/services/user/user.service';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { Profile } from '../../../shared/core/profile';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { from, Observable, of, Subscription, BehaviorSubject } from 'rxjs';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';

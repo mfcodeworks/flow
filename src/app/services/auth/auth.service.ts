@@ -20,13 +20,11 @@ export class AuthService {
         private backend: BackendService
     ) {}
 
-    public init(): void {
+    async init(): Promise<void> {
         // On logged in status change update user
         this.loggedIn.pipe(
-
             // Only proceed on logged in true
             filter(l => !!l),
-
             // Update user profile
             switchMap(() => this.updateProfile())
         ).subscribe();

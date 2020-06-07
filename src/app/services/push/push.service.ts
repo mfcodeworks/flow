@@ -27,7 +27,7 @@ export class PushService {
         this.electronStartPush = window?.push?.start;
     }
 
-    init(): void {
+    async init(): Promise<void> {
         console.log('Running FCM init');
 
         // DEBUG: Log device
