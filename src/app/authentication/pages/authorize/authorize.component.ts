@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import { AuthService } from '../../../services/auth/auth.service';
 import { BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-authorize',
@@ -50,20 +50,22 @@ export class AuthorizeComponent implements OnInit {
 
         const password = this.authorizeForm.controls['password'].value
 
-        this.auth.authorize(password)
-        .pipe(
+        this.auth.authorize(password).pipe(
             map(s => {
                 if(s) {
-                    return this.route.queryParamMap.subscribe(
-                        p => this.router.navigateByUrl(
-                            decodeURIComponent(p.get('redirect'))
-                        )
-                    );
+                    return this.route.queryParamMap.pipe(
+                        map(r => r.get('redirect')),
+                        map(p => this.router.navigateByUrl(
+                            decodeURIComponent(p)
+                        )),
+                        take(1)
+                    ).subscribe();
                 }
 
                 this.globalError = 'Password incorrect';
                 return false;
             }),
+            take(1)
         ).subscribe(_ => this.processing = false);
     }
 

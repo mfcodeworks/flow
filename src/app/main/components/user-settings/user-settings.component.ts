@@ -3,7 +3,7 @@ import { Profile } from '../../../shared/core/profile';
 import { UserService } from '../../../services/user/user.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BackendService } from 'src/app/services/backend/backend.service';
-import { catchError, tap, filter } from 'rxjs/operators';
+import { catchError, tap, filter, take } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject } from 'rxjs';
 
@@ -37,7 +37,8 @@ export class UserSettingsComponent implements OnInit {
 
         this._user.profile$.pipe(
             tap(u => console.log('New settings user:', u)),
-            filter(u => !!u)
+            filter(u => !!u),
+            take(1)
         ).subscribe(u => this.settingsForm.patchValue(u));
     }
 
@@ -63,7 +64,8 @@ export class UserSettingsComponent implements OnInit {
                 this.processing.next(false);
                 this.toast.open(`Profile Error: ${JSON.stringify(err)}`, 'close', { duration: 3000 });
                 return err;
-            })
+            }),
+            take(1)
         ).subscribe(u => {
             this.processing.next(false);
             this.settingsForm.patchValue(u);

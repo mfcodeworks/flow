@@ -6,7 +6,7 @@ import { Profile } from '../../../shared/core/profile';
 import { UserService } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
 import { BackendService } from 'src/app/services/backend/backend.service';
-import { map, tap, distinctUntilChanged, filter } from 'rxjs/operators';
+import { map, tap, distinctUntilChanged, filter, take } from 'rxjs/operators';
 import { Observable, from } from 'rxjs';
 import { AddPaymentSourceDialogComponent } from '../../components/add-payment-source-dialog/add-payment-source-dialog.component';
 import { PaymentSourceDialogComponent } from '../../components/payment-source-dialog/payment-source-dialog.component';
@@ -75,7 +75,9 @@ export class DashboardComponent implements OnInit {
         await dialogRef.present();
 
         // Handle dialog close (success/cancel), if success then refresh sources
-        from(dialogRef.onWillDismiss()).subscribe(
+        from(dialogRef.onWillDismiss()).pipe(
+            take(1)
+        ).subscribe(
             ({data: {success} = {success: false}}) => !!success && this._sources.refresh()
         );
     }
@@ -89,7 +91,9 @@ export class DashboardComponent implements OnInit {
         await dialogRef.present();
 
         // Handle dialog close (success/cancel), if success then refresh sources
-        from(dialogRef.onWillDismiss()).subscribe(
+        from(dialogRef.onWillDismiss()).pipe(
+            take(1)
+        ).subscribe(
             ({data: {success} = {success: false}}) => !!success && this._sources.refresh()
         );
     }
@@ -101,6 +105,8 @@ export class DashboardComponent implements OnInit {
 
     // Open dashboard link in browser window
     openDashboardLink(): void {
-        this.dashboardLink.subscribe(async l => await Browser.open({url: l}));
+        this.dashboardLink.pipe(
+            take(1)
+        ).subscribe(async l => await Browser.open({url: l}));
     }
 }

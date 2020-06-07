@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
 import { BackendService } from '../../../services/backend/backend.service';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-forgot-password',
@@ -49,45 +50,47 @@ export class ForgotPasswordComponent implements OnInit {
 
         // Submit request to API
         this.processing = true;
-        this.backend
-        .forgotPassword(email)
-        .subscribe((response: any) => {
-            // End processing
-            this.processing = false;
+        this.backend.forgotPassword(email).pipe(
+            take(1)
+        ).subscribe(
+            (response: any) => {
+                // End processing
+                this.processing = false;
 
-            // Set complete as true
-            this.complete = true;
-        }, (error: any) => {
-            // DEBUG: Log error
-            console.warn(error);
+                // Set complete as true
+                this.complete = true;
+            }, (error: any) => {
+                // DEBUG: Log error
+                console.warn(error);
 
-            // Switch error and display friendly message
-            switch (typeof error) {
-                // If error is a string attempt to friendlify string
-                case 'string':
-                    switch (true) {
-                        case error.indexOf('Unauthorized') > -1:
-                            this.globalError = 'Username or password incorrect';
-                            break;
+                // Switch error and display friendly message
+                switch (typeof error) {
+                    // If error is a string attempt to friendlify string
+                    case 'string':
+                        switch (true) {
+                            case error.indexOf('Unauthorized') > -1:
+                                this.globalError = 'Username or password incorrect';
+                                break;
 
-                        default:
-                            this.globalError = error;
-                            break;
-                    }
-                    break;
+                            default:
+                                this.globalError = error;
+                                break;
+                        }
+                        break;
 
-                // If error is an object check for validators, otherwise display error text
-                default:
-                    this.globalError = (error.error.validator) ?
-                        Object.keys(error.error.validator).map(errorText => {
-                            return `${error.error.validator[errorText]}<br />`;
-                        }).join('') : error.error.error;
-                    break;
+                    // If error is an object check for validators, otherwise display error text
+                    default:
+                        this.globalError = (error.error.validator) ?
+                            Object.keys(error.error.validator).map(errorText => {
+                                return `${error.error.validator[errorText]}<br />`;
+                            }).join('') : error.error.error;
+                        break;
+                }
+
+                // End processing
+                this.processing = false;
             }
-
-            // End processing
-            this.processing = false;
-        });
+        );
     }
 
     prettyCapitalize(text: string) {

@@ -6,7 +6,7 @@ import { MoneyService } from 'src/app/services/money/money.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { CurrencyMinimumAmount } from '../../../shared/core/currency-minimum-amount.enum';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, take } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Balance } from '../../../shared/core/balance';
 import { BalanceService } from '../../../services/balance/balance.service';
@@ -107,7 +107,9 @@ export class WithdrawComponent implements OnInit {
     }
 
     openDashboardLink(): void {
-        this.dashboardLink.subscribe(l => window.open(l));
+        this.dashboardLink.pipe(
+            take(1)
+        ).subscribe(l => window.open(l));
     }
 
     submitPayout(): void {
@@ -126,6 +128,8 @@ export class WithdrawComponent implements OnInit {
         this.backend.withdrawStripeBalance(
             this.money.unformat(this.payout.get('amount').value, this.selectedCurrency),
             this.selectedCurrency
+        ).pipe(
+            take(1)
         ).subscribe(
             (payout) => {
                 console.log(payout);

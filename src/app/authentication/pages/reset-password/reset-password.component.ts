@@ -3,6 +3,7 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
 import { BackendService } from '../../../services/backend/backend.service';
+import { tap, map, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-reset-password',
@@ -26,20 +27,20 @@ export class ResetPasswordComponent implements OnInit {
 
     ngOnInit() {
         // Get email from query params
-        this.route.queryParamMap
-        .subscribe((params: any) => {
-            console.log(params);
-            this.email = params.params.email;
-            console.log(this.email);
-        });
+        this.route.queryParamMap.pipe(
+            tap(params => console.log(params)),
+            map(params => this.email = params.get('email')),
+            tap(_ => console.log(this.email)),
+            take(1)
+        ).subscribe();
 
         // Get reset token from URL
-        this.route.paramMap
-        .subscribe((params: any) => {
-            console.log(params);
-            this.resetToken = params.params.token;
-            console.log(this.resetToken);
-        });
+        this.route.paramMap.pipe(
+            tap(params => console.log(params)),
+            map(params => this.resetToken = params.get('token')),
+            tap(_ => console.log(this.resetToken)),
+            take(1)
+        ).subscribe();
 
         this.resetForm = this.fb.group({
             email: [this.email, Validators.required],
@@ -70,8 +71,8 @@ export class ResetPasswordComponent implements OnInit {
 
         // Submit request to API
         this.processing = true;
-        this.backend
-        .resetPassword(this.resetToken, this.email, password, password2)
+        this.backend.resetPassword(this.resetToken, this.email, password, password2)
+        .pipe(take(1))
         .subscribe((response: any) => {
             // End processing
             this.processing = false;

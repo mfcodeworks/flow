@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { CacheService } from '../cache/cache.service';
 import { environment } from '../../../environments/environment';
-import { tap, map, filter, switchMap } from 'rxjs/operators';
+import { tap, map, filter, switchMap, take } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -38,15 +38,17 @@ export class ThemeService {
         ).subscribe();
 
         // Set dark theme from cache
-        let d = this._cache.get('dark-theme').pipe(
-            tap(d => this.toggleDarkMode(!!d))
-        ).subscribe(_ => d.unsubscribe());
+        this._cache.get('dark-theme').pipe(
+            tap(d => this.toggleDarkMode(!!d)),
+            take(1)
+        ).subscribe();
 
         // Set colour theme from cache
-        let c = this._cache.get('colour-theme').pipe(
+        this._cache.get('colour-theme').pipe(
             map(d => d ? d : this.defaultTheme()),
-            map(t => this.setColourTheme(t))
-        ).subscribe(_ => c.unsubscribe());
+            map(t => this.setColourTheme(t)),
+            take(1)
+        ).subscribe();
     }
 
     // Return is dark observable

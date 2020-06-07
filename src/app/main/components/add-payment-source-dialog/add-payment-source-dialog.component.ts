@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { BackendService } from 'src/app/services/backend/backend.service';
-import { tap, mergeMap } from 'rxjs/operators';
+import { tap, mergeMap, take } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AddPaymentSourceComponent } from '../add-payment-source/add-payment-source.component';
 import { BehaviorSubject } from 'rxjs';
@@ -38,6 +38,7 @@ export class AddPaymentSourceDialogComponent {
             mergeMap((pm) => this.backend.saveUserSource(pm)),
             // Log save method reply
             tap(console.log),
+            take(1)
         ).subscribe(
             () => {
                 this.toast.open('New Source Saved Successfully', 'close', { duration: 3000 });

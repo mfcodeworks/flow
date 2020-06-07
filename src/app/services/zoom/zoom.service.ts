@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { map, tap, filter, switchMap } from 'rxjs/operators';
+import { map, tap, filter, switchMap, take } from 'rxjs/operators';
 import { CacheService } from '../cache/cache.service';
 
 @Injectable({
@@ -24,9 +24,10 @@ export class ZoomService {
         ).subscribe();
 
         // Initialise zoom
-        let c = this._cache.get('app-zoom').pipe(
-            map((z: number) => this.zoom$.next(z))
-        ).subscribe(_ => c.unsubscribe());
+        this._cache.get('app-zoom').pipe(
+            map((z: number) => this.zoom$.next(z)),
+            take(1)
+        ).subscribe();
     }
 
     setZoom(zoom: number) {

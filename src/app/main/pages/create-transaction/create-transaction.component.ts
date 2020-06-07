@@ -3,10 +3,9 @@ import { UserService } from 'src/app/services/user/user.service';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { Profile } from '../../../shared/core/profile';
 import { ActivatedRoute } from '@angular/router';
-import { environment } from 'src/environments/environment';
 import { from, Observable, of, Subscription, BehaviorSubject } from 'rxjs';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { switchMap, map, catchError, tap, mergeMap, filter } from 'rxjs/operators';
+import { switchMap, map, catchError, tap, mergeMap, filter, take } from 'rxjs/operators';
 import { CurrencyMinimumAmount } from '../../../shared/core/currency-minimum-amount.enum';
 import { MoneyService } from 'src/app/services/money/money.service';
 import { MatStepper } from '@angular/material/stepper';
@@ -15,7 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ThemeService } from 'src/app/services/theme/theme.service';
 import { ModalController } from '@ionic/angular';
 import { TransactionComponent } from '../transaction/transaction.component';
-declare const Stripe: any;
+import { PaymentService } from '../../../services/payment/payment.service';
 
 /* TODO: Handle anonymous (guest) transactions */
 @Component({
@@ -40,10 +39,33 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
     newMethod: boolean = false;
     minAmount: any;
     processing: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    sources: Observable<any[]>;
-    balance: Observable<number>;
+    sources = this.backend.getUserSources();
+    balance = of(0).pipe(
+        filter(() => !!this.user?.stripeConnectId),
+        switchMap(() => this.backend.getUserBalance()),
+        map(b => this.money.compress(
+            b.available.find(c => c.currency == this.user.defaultCurrency).amount,
+            this.user.defaultCurrency
+        ))
+    );
     options: {style?: object};
-    isDark$: Subscription;
+    isDark$ = this.theme.isDarkMode().subscribe(d => {
+        this.options = !!d ? {
+            style: {
+                base: {
+                    color: '#ffffff',
+                    iconColor: '#ffffff',
+                    ':-webkit-autofill': {
+                        color: '#ffffff',
+                        backgroundColor: '#ffffff'
+                    },
+                    '::placeholder': {
+                        color: '#ffffff',
+                    },
+                }
+            }
+        } : {};
+    });
 
     constructor(
         private dialogRef: ModalController,
@@ -53,35 +75,17 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
         private backend: BackendService,
         private money: MoneyService,
         private theme: ThemeService,
+        private payment: PaymentService,
         public toast: MatSnackBar
     ) {}
 
     ngOnInit(): void {
-        // Get user and defaults
+        // Get user
         this.user = this.user$.profile;
 
         // Init stripe
-        this.stripe = Stripe(environment.stripe.public_key);
-        this.elements = this.stripe.elements();
-
-        // Change style based on theme
-        this.isDark$ = this.theme.isDarkMode().subscribe(d => {
-            this.options = !!d ? {
-                style: {
-                    base: {
-                        color: '#ffffff',
-                        iconColor: '#ffffff',
-                        ':-webkit-autofill': {
-                            color: '#ffffff',
-                            backgroundColor: '#ffffff'
-                        },
-                        '::placeholder': {
-                            color: '#ffffff',
-                        },
-                    }
-                }
-            } : {};
-        });
+        this.stripe = this.payment.stripe;
+        this.elements = this.payment.elements;
 
         // Get payment intent from route resolver data
         this.route.data.pipe(
@@ -89,35 +93,28 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
             catchError(err => {
                 console.warn(err);
                 return null;
-            })
-        ).subscribe(i => this.intent = i);
+            }),
+            map(i => this.intent = i),
+            take(1)
+        ).subscribe();
 
         // Get recipient
         this.route.queryParamMap.pipe(
             switchMap(params => this.backend.getProfile(
                 params.get('to') === 'me' ? this.user.id : parseInt(params.get('to'))
-            ))
-        ).subscribe(u => this.receiver = u);
-
-        // Get payment methods
-        this.sources = this.backend.getUserSources();
-
-        // Get balance
-        this.balance = of(0).pipe(
-            filter(() => !!this.user?.stripeConnectId),
-            switchMap(() => this.backend.getUserBalance()),
-            map(b => this.money.compress(
-                b.available.find(c => c.currency == this.user.defaultCurrency).amount,
-                this.user.defaultCurrency
-            ))
-        );
+            )),
+            map(u => this.receiver = u),
+            take(1)
+        ).subscribe();
 
         // Init forms
         this.paymentAmount = this.fb.group({
-            amount: [null, [
-                Validators.required,
-                Validators.min(CurrencyMinimumAmount[`${this.user.defaultCurrency}`.toUpperCase()])
-            ]],
+            amount: [
+                null, [
+                    Validators.required,
+                    Validators.min(CurrencyMinimumAmount[`${this.user.defaultCurrency}`.toUpperCase()])
+                ]
+            ],
             currency: [this.user.defaultCurrency, Validators.required],
             description: ['']
         });
@@ -129,40 +126,50 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
     }
 
     onCurrencyChange(): void {
-        this.minAmount = CurrencyMinimumAmount[`${this.paymentAmount.get('currency').value}`.toUpperCase()];
+        // Get minimum amount for new currency
+        this.minAmount = CurrencyMinimumAmount[
+            `${this.paymentAmount.get('currency').value}`.toUpperCase()
+        ];
+
+        // Update amount with currency minimums
         this.paymentAmount.controls['amount'].setValidators([
             Validators.required,
             Validators.min(this.minAmount)
         ]);
+
+        // Update form
         this.paymentAmount.controls['amount'].updateValueAndValidity();
+
+        // DEBUG: Log new minimum
         console.log('New minimum:', this.minAmount);
     }
 
     onMethodChange(): void {
-        if (this.paymentMethod.get('method').value == 'balance') {
-            this.balance.subscribe(b => {
-                // Get minimum amount
-                this.minAmount = CurrencyMinimumAmount[`${this.paymentAmount.get('currency').value}`.toUpperCase()];
+        // Only handle balance
+        if (this.paymentMethod.get('method').value !== 'balance')
+            return;
 
-                // Set maximum as 90% of balance - minimum
-                let max = (b * 0.9) - this.minAmount;
-                this.paymentAmount.controls['amount'].setValidators([
-                    Validators.required,
-                    Validators.min(this.minAmount),
-                    Validators.max(max > 0 ? max : 0)
-                ]);
-                this.paymentAmount.controls['amount'].updateValueAndValidity();
-                console.log('New maximum:', max);
-                if (this.paymentAmount.get('amount').value > max) {
-                    console.log('Going back for amount update');
-                    this.stepper.previous();
-                }
-            })
-        }
+        // Perform balance checks and updates
+        this.balance.pipe(
+            // Set maximum amount
+            map(b => (b * 0.9) - this.minAmount),
+            // Set maximum amount on form
+            tap(max => this.paymentAmount.controls['amount'].setValidators([
+                Validators.required,
+                Validators.min(this.minAmount),
+                Validators.max(max > 0 ? max : 0)
+            ])),
+            // Update form
+            tap(_ => this.paymentAmount.controls['amount'].updateValueAndValidity()),
+            // DEBUG: Log new maximum
+            tap(max => console.log('New maximum:', max)),
+            // If amount higher than allowed max, set form back
+            tap(max => this.paymentAmount.get('amount').value >= max && this.stepper.previous()),
+            take(1)
+        ).subscribe();
     }
 
     onStepChange(event: StepperSelectionEvent): void {
-        console.log(event);
         if (event.selectedIndex === 1) {
             this.destroyElements();
             this.createElements();
@@ -205,6 +212,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
             this.processing.next(true);
 
             this.confirmPayment(event.paymentMethod, false)
+            .pipe(take(1))
             .subscribe(confirm => {
                 if (confirm.error) {
                     event.complete('fail');
@@ -220,29 +228,25 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
     }
 
     destroyElements(): void {
-        if (this.card) {
-            this.card.destroy();
-        }
-        if (this.paymentRequest) {
-            this.paymentRequestButton.destroy();
-        }
-        if (this.sepa) {
-            this.sepa.destroy();
-        }
+        this.card?.destroy();
+        this.paymentRequestButton?.destroy();
+        this.sepa?.destroy();
         this.paymentRequest = null;
     }
 
     createPaymentMethod(): Observable<any> {
         console.log('Creating payment method');
 
-        return from(this.stripe.createPaymentMethod({
-            type: 'card',
-            card: this.card
-        }))
+        return from(
+            this.stripe.createPaymentMethod({
+                type: 'card',
+                card: this.card
+            })
+        );
     }
 
+    // TODO: Handle failed payment properly, move to payment service
     submitPayment(): void {
-        // TODO: Handle failed payment properly
         console.log('Save new method', this.paymentMethod.get('saveNewMethod').value)
         this.processing.next(true);
 
@@ -261,21 +265,26 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
 
                     // Map to payment confirmation if no error
                     switchMap(pm => this.confirmPayment(pm))
+                ).pipe(
+                    take(1)
                 ).subscribe(this.onSuccess.bind(this), this.onFailed.bind(this));
                 break;
 
             case 'sepa':
                 // Confirm payment
-                this.confirmPayment(this.sepa, true, 'sepa')
-                .pipe(tap(_ => console.log('Making SEPA payment')))
-                .subscribe(this.onSuccess.bind(this), this.onFailed.bind(this));
+                this.confirmPayment(this.sepa, true, 'sepa').pipe(
+                    tap(_ => console.log('Making SEPA payment')),
+                    take(1)
+                ).subscribe(this.onSuccess.bind(this), this.onFailed.bind(this));
                 break;
 
             case 'balance':
                 // Confirm payment
                 this.confirmPayment(null, true, 'balance')
-                .pipe(tap(_ => console.log('Making balance payment')))
-                .subscribe(this.onSuccess.bind(this), this.onFailed.bind(this));
+                .pipe(
+                    tap(_ => console.log('Making balance payment')),
+                    take(1)
+                ).subscribe(this.onSuccess.bind(this), this.onFailed.bind(this));
                 break;
 
             default:
@@ -285,12 +294,14 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
                     map(s => s[this.paymentMethod.get('method').value]),
 
                     // Do payment confirmation
-                    switchMap(pm => this.confirmPayment(pm).pipe(tap(_ => console.log('Making card payment'))))
+                    switchMap(pm => this.confirmPayment(pm).pipe(tap(_ => console.log('Making card payment')))),
+                    take(1)
                 ).subscribe(this.onSuccess.bind(this), this.onFailed.bind(this));
                 break;
         }
     }
 
+    // TODO: Move to payment service
     confirmPayment(payment_method: any, handleActions = true, type = 'card'): Observable<any> {
         // Update PaymentIntent with correct amount to server
         return this.backend.updateIntent(
@@ -347,7 +358,8 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
         );
     }
 
-    onSuccess({ paymentIntent }): void {
+    // TODO: Move to payment service
+    onSuccess({paymentIntent}): void {
         console.log('Completed:', paymentIntent);
 
         let type: string;
@@ -374,7 +386,9 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
             'status': paymentIntent.status,
             'type': type,
             'for_user_id': this.receiver
-        }).subscribe(async _ => {
+        }).pipe(
+            take(1)
+        ).subscribe(async _ => {
             // Reset form
             this.processing.next(false);
             this.stepper.previous();

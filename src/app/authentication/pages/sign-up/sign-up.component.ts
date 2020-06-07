@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { BackendService } from '../../../services/backend/backend.service';
 import { AuthService } from '../../../services/auth/auth.service';
+import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-sign-up',
@@ -62,8 +63,9 @@ export class SignUpComponent implements OnInit {
         // Submit request to API
         this.processing = true;
         this.backend
-        .signUp(username, password, email)
-        .subscribe((response: any) => {
+        .signUp(username, password, email).pipe(
+            take(1)
+        ).subscribe((response: any) => {
             // Do sign in action
             this.auth.doSignIn(response);
 

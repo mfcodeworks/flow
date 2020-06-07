@@ -3,7 +3,7 @@ import { UserService } from '../../../services/user/user.service';
 import { EncryptLoginDialogComponent } from './encrypt-login-dialog/encrypt-login-dialog.component';
 import { CacheService } from '../../../services/cache/cache.service';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { mergeMap } from 'rxjs/operators';
+import { mergeMap, take } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 import { from } from 'rxjs';
 
@@ -28,7 +28,9 @@ export class EncryptLoginComponent implements OnInit {
     }
 
     ngOnInit() {
-        this._cache.get('encrypt-login').subscribe(e =>
+        this._cache.get('encrypt-login').pipe(
+            take(1)
+        ).subscribe(e =>
             this.encryptForm.patchValue({
                 encrypt: !!e
             })
@@ -44,7 +46,9 @@ export class EncryptLoginComponent implements OnInit {
         await dialogRef.present();
 
         // Handle dialog close (Encrypt success/cancel)
-        from(dialogRef.onDidDismiss()).subscribe(({data: {encrypt} = {encrypt: false}}) => {
+        from(dialogRef.onDidDismiss()).pipe(
+            take(1)
+        ).subscribe(({data: {encrypt} = {encrypt: false}}) => {
             this.encryptForm.patchValue({ encrypt: !!encrypt })
         });
     }

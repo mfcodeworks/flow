@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, take } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 
 export interface PaymentMethodDialogData {
@@ -38,7 +38,8 @@ export class PaymentSourceDialogComponent implements OnInit {
     onDelete() {
         this.processing.next(true);
         this.delete$.pipe(
-            tap(_ => this.processing.next(false))
+            tap(_ => this.processing.next(false)),
+            take(1)
         ).subscribe(_ => this.close(true));
     }
 

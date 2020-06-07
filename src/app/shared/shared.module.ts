@@ -22,6 +22,7 @@ import { MoneyPipe } from './pipes/money.pipe';
 import { CurrencySymbolPipe } from './pipes/currency-symbol.pipe';
 import { ReplacePipe } from './pipes/replace.pipe';
 import { QRComponent } from './components/qr/qr.component';
+import { PaymentService } from '../services/payment/payment.service';
 
 @NgModule({
     imports: [
@@ -53,7 +54,8 @@ import { QRComponent } from './components/qr/qr.component';
                 a: AuthService,
                 b: BalanceService,
                 tr: TransactionsService,
-                s: SourcesService
+                s: SourcesService,
+                p: PaymentService
             ) => () => Promise.all([
                 net.init(),
                 c.init(),
@@ -64,6 +66,7 @@ import { QRComponent } from './components/qr/qr.component';
                 b.init(),
                 tr.init(),
                 s.init(),
+                p.init()
             ]),
             deps: [
                 ZoomService,
@@ -74,7 +77,8 @@ import { QRComponent } from './components/qr/qr.component';
                 AuthService,
                 BalanceService,
                 TransactionsService,
-                SourcesService
+                SourcesService,
+                PaymentService
             ],
             multi: true
         }
