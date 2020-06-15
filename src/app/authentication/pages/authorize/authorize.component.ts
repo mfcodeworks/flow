@@ -1,10 +1,10 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { AuthService } from '../../../services/auth/auth.service';
-import { BehaviorSubject } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'app-authorize',
@@ -12,7 +12,8 @@ import { map, take } from 'rxjs/operators';
     styleUrls: ['./authorize.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AuthorizeComponent implements OnInit {
+export class AuthorizeComponent implements OnInit, OnDestroy {
+    unsub$ = new Subject();
     hide = new BehaviorSubject(true);
     globalError: string = null;
     processing = false;
@@ -58,18 +59,23 @@ export class AuthorizeComponent implements OnInit {
                         map(p => this.router.navigateByUrl(
                             decodeURIComponent(p)
                         )),
-                        take(1)
+                        takeUntil(this.unsub$)
                     ).subscribe();
                 }
 
                 this.globalError = 'Password incorrect';
                 return false;
             }),
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe(_ => this.processing = false);
     }
 
     prettyCapitalize(text: string) {
         return text[0].toUpperCase() + text.substring(1);
+    }
+
+    ngOnDestroy(): void {
+        this.unsub$.next();
+        this.unsub$.complete();
     }
 }

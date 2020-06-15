@@ -29,7 +29,7 @@
         <ion-row>
             <ion-col size='12'>
                 <ion-text class='ion-text-center'>
-                    <p class='mat-headline'>From: {{ tx.fromUser.username }}</p>
+                    <p class='mat-headline'>From: {{ tx.fromUser?.username || 'Anonymous' }}</p>
                     <p class='mat-headline'>To: {{ tx.forUser.username }}</p>
                 </ion-text>
             </ion-col>

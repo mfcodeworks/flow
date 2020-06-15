@@ -19,9 +19,9 @@ export class PaymentIntentResolver implements Resolve<Observable<any>> {
     ) { }
 
     resolve(route: ActivatedRouteSnapshot): Observable<any> {
-        let for_user_id = route.queryParamMap.get('to') === 'me' ? this.user$.profile.id : parseInt(route.queryParamMap.get('to'))
+        let for_user_id = route.queryParamMap.get('to') === 'me' ? this.user$.profile?.id : parseInt(route.queryParamMap.get('to'))
         let nonce = SHA256(
-            `${this.user$.profile.id}${this.user$.profile.username}${new Date().getTime()}`,
+            `${this.user$.profile?.id || ''}${this.user$.profile?.username || ''}${new Date().getTime()}`,
             environment.stripe.public_key
         ).toString(Hex);
 

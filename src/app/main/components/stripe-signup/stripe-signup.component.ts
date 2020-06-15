@@ -6,7 +6,8 @@ import { Profile } from '../../../shared/core/profile';
 import { UserService } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
 import { BackendService } from 'src/app/services/backend/backend.service';
-import { tap, take, switchMap, map } from 'rxjs/operators';
+import { tap, switchMap, map, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-stripe-signup',
@@ -15,6 +16,7 @@ import { tap, take, switchMap, map } from 'rxjs/operators';
     styleUrls: ['./stripe-signup.component.scss']
 })
 export class StripeSignupComponent implements OnInit {
+    unsub$ = new Subject();
     user: Profile;
     code: string;
     state: string;
@@ -40,11 +42,16 @@ export class StripeSignupComponent implements OnInit {
                 }
             }),
             map(profile => Object.assign(this.user$.profile, profile)),
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe();
     }
 
     verifyState(): boolean {
         return SHA256(this.user.toString(), environment.stripe.public_key).toString(Hex) === this.state
+    }
+
+    ngOnDestroy(): void {
+        this.unsub$.next();
+        this.unsub$.complete();
     }
 }

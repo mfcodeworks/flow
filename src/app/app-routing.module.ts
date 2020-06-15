@@ -17,7 +17,7 @@ import { SignedInGuard } from './shared/guards/signed-in.guard';
 const routes: Routes = [
     {
         path: '',
-        canActivate: [SignedInGuard],
+        // canActivate: [SignedInGuard],
         loadChildren: () => import('./main/main.module').then(m => m.MainModule)
     },
     {

@@ -3,9 +3,9 @@ import { UserService } from 'src/app/services/user/user.service';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { Profile } from '../../../shared/core/profile';
 import { ActivatedRoute } from '@angular/router';
-import { from, Observable, of, Subscription, BehaviorSubject } from 'rxjs';
+import { from, Observable, of, BehaviorSubject, Subject } from 'rxjs';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { switchMap, map, catchError, tap, mergeMap, filter, take } from 'rxjs/operators';
+import { switchMap, map, catchError, tap, mergeMap, filter, takeUntil } from 'rxjs/operators';
 import { CurrencyMinimumAmount } from '../../../shared/core/currency-minimum-amount.enum';
 import { MoneyService } from 'src/app/services/money/money.service';
 import { MatStepper } from '@angular/material/stepper';
@@ -25,6 +25,7 @@ import { PaymentService } from '../../../services/payment/payment.service';
 })
 export class CreateTransactionComponent implements OnInit, OnDestroy {
     @ViewChild('paymentStepper') stepper: MatStepper
+    unsub$ = new Subject();
     paymentAmount: FormGroup;
     paymentMethod: FormGroup;
     user: Profile;
@@ -39,7 +40,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
     newMethod: boolean = false;
     minAmount: any;
     processing: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    sources = this.backend.getUserSources();
+    sources: Observable<any>;
     balance = of(0).pipe(
         filter(() => !!this.user?.stripeConnectId),
         switchMap(() => this.backend.getUserBalance()),
@@ -49,23 +50,6 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
         ))
     );
     options: {style?: object};
-    isDark$ = this.theme.isDarkMode().subscribe(d => {
-        this.options = !!d ? {
-            style: {
-                base: {
-                    color: '#ffffff',
-                    iconColor: '#ffffff',
-                    ':-webkit-autofill': {
-                        color: '#ffffff',
-                        backgroundColor: '#ffffff'
-                    },
-                    '::placeholder': {
-                        color: '#ffffff',
-                    },
-                }
-            }
-        } : {};
-    });
 
     constructor(
         private dialogRef: ModalController,
@@ -80,8 +64,34 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit(): void {
+        // Get theme
+        this.theme.isDarkMode().pipe(
+            takeUntil(this.unsub$)
+        ).subscribe(d => {
+            this.options = !!d ? {
+                style: {
+                    base: {
+                        color: '#ffffff',
+                        iconColor: '#ffffff',
+                        ':-webkit-autofill': {
+                            color: '#ffffff',
+                            backgroundColor: '#ffffff'
+                        },
+                        '::placeholder': {
+                            color: '#ffffff',
+                        },
+                    }
+                }
+            } : {};
+        });
+
         // Get user
         this.user = this.user$.profile;
+
+        this.sources = of(!!this.user).pipe(
+            filter(u => u),
+            switchMap(() => this.backend.getUserSources())
+        );
 
         // Init stripe
         this.stripe = this.payment.stripe;
@@ -95,7 +105,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
                 return null;
             }),
             map(i => this.intent = i),
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe();
 
         // Get recipient
@@ -104,7 +114,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
                 params.get('to') === 'me' ? this.user.id : parseInt(params.get('to'))
             )),
             map(u => this.receiver = u),
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe();
 
         // Init forms
@@ -112,16 +122,20 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
             amount: [
                 null, [
                     Validators.required,
-                    Validators.min(CurrencyMinimumAmount[`${this.user.defaultCurrency}`.toUpperCase()])
+                    Validators.min(
+                        CurrencyMinimumAmount[
+                            `${this.user?.defaultCurrency || 'aud'}`.toUpperCase()
+                        ]
+                    )
                 ]
             ],
-            currency: [this.user.defaultCurrency, Validators.required],
+            currency: [(this.user?.defaultCurrency || 'aud'), Validators.required],
             description: ['']
         });
 
         this.paymentMethod = this.fb.group({
-            method: [0, Validators.required],
-            saveNewMethod: ['']
+            method: [!!this.user ? 0 : 'new', Validators.required],
+            saveNewMethod: [{value: false, disabled: !this.user}]
         });
     }
 
@@ -165,11 +179,12 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
             tap(max => console.log('New maximum:', max)),
             // If amount higher than allowed max, set form back
             tap(max => this.paymentAmount.get('amount').value >= max && this.stepper.previous()),
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe();
     }
 
     onStepChange(event: StepperSelectionEvent): void {
+        console.log(this.paymentMethod.controls);
         if (event.selectedIndex === 1) {
             this.destroyElements();
             this.createElements();
@@ -189,7 +204,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
 
         /* Payment Request from browser */
         this.paymentRequest = this.stripe.paymentRequest({
-            country: this.user.country,
+            country: this.user?.country || 'AU',
             currency: this.paymentAmount.get('currency').value,
             total: {
                 label: 'NR Wallet Transfer',
@@ -212,7 +227,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
             this.processing.next(true);
 
             this.confirmPayment(event.paymentMethod, false)
-            .pipe(take(1))
+            .pipe(takeUntil(this.unsub$))
             .subscribe(confirm => {
                 if (confirm.error) {
                     event.complete('fail');
@@ -266,7 +281,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
                     // Map to payment confirmation if no error
                     switchMap(pm => this.confirmPayment(pm))
                 ).pipe(
-                    take(1)
+                    takeUntil(this.unsub$)
                 ).subscribe(this.onSuccess.bind(this), this.onFailed.bind(this));
                 break;
 
@@ -274,7 +289,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
                 // Confirm payment
                 this.confirmPayment(this.sepa, true, 'sepa').pipe(
                     tap(_ => console.log('Making SEPA payment')),
-                    take(1)
+                    takeUntil(this.unsub$)
                 ).subscribe(this.onSuccess.bind(this), this.onFailed.bind(this));
                 break;
 
@@ -283,7 +298,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
                 this.confirmPayment(null, true, 'balance')
                 .pipe(
                     tap(_ => console.log('Making balance payment')),
-                    take(1)
+                    takeUntil(this.unsub$)
                 ).subscribe(this.onSuccess.bind(this), this.onFailed.bind(this));
                 break;
 
@@ -295,7 +310,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
 
                     // Do payment confirmation
                     switchMap(pm => this.confirmPayment(pm).pipe(tap(_ => console.log('Making card payment')))),
-                    take(1)
+                    takeUntil(this.unsub$)
                 ).subscribe(this.onSuccess.bind(this), this.onFailed.bind(this));
                 break;
         }
@@ -336,7 +351,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
                         return from(this.stripe.confirmCardPayment(
                             intent.client_secret, {
                                 payment_method: payment_method.id,
-                                receipt_email: this.user.email,
+                                receipt_email: this.user?.email,
                                 save_payment_method:
                                     this.paymentMethod.get('method').value === 'new'
                                     && this.paymentMethod.get('saveNewMethod').value,
@@ -387,7 +402,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
             'type': type,
             'for_user_id': this.receiver
         }).pipe(
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe(async _ => {
             // Reset form
             this.processing.next(false);
@@ -412,6 +427,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.destroyElements();
-        this.isDark$.unsubscribe();
+        this.unsub$.next();
+        this.unsub$.complete();
     }
 }

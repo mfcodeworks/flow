@@ -15,6 +15,19 @@ import { TransactionComponent } from './pages/transaction/transaction.component'
 /* TODO: Don't require SignedIn for Profile and CreateTransaction */
 export const routes: Routes = [
     {
+        path: 'profile/:profile',
+        component: ProfileComponent
+    },
+    {
+        path: 'transaction/create',
+        component: CreateTransactionComponent,
+        resolve: { intent: PaymentIntentResolver }
+    },
+    {
+        path: 'transaction/:id',
+        component: TransactionComponent
+    },
+    {
         path: '',
         canActivateChild: [ SignedInGuard ],
         children: [
@@ -44,19 +57,6 @@ export const routes: Routes = [
                 component: StripeSignupComponent
             }
         ]
-    },
-    {
-        path: 'profile/:profile',
-        component: ProfileComponent
-    },
-    {
-        path: 'transaction/create',
-        component: CreateTransactionComponent,
-        resolve: { intent: PaymentIntentResolver }
-    },
-    {
-        path: 'transaction/:id',
-        component: TransactionComponent
     }
 ];
 

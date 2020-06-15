@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { UserService } from '../../../../services/user/user.service';
-import { tap, mergeMap, switchMap, take } from 'rxjs/operators';
+import { tap, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
 import { CacheService } from '../../../../services/cache/cache.service';
 import { ModalController } from '@ionic/angular';
+import { Subject } from 'rxjs';
 
 export interface EncryptLoginDialogData {
     encrypt: boolean;
@@ -14,7 +15,8 @@ export interface EncryptLoginDialogData {
     templateUrl: './encrypt-login-dialog.component.html',
     styleUrls: ['./encrypt-login-dialog.component.scss']
 })
-export class EncryptLoginDialogComponent implements OnInit {
+export class EncryptLoginDialogComponent implements OnInit, OnDestroy {
+    unsub$ = new Subject();
     encryptForm: FormGroup
 
     constructor(
@@ -73,7 +75,7 @@ export class EncryptLoginDialogComponent implements OnInit {
         this._user.cacheUser(this.encryptForm.get('password').value).pipe(
             tap(console.log),
             switchMap(() => this._cache.store('encrypt-login', true)),
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe(
             () => this.close(true),
             err => {
@@ -82,7 +84,7 @@ export class EncryptLoginDialogComponent implements OnInit {
                 this._user.cacheUser().pipe(
                     mergeMap(() => this._cache.store('encrypt-login', false)),
                     tap(() => this.close(false)),
-                    take(1)
+                    takeUntil(this.unsub$)
                 ).subscribe();
             }
         )
@@ -94,5 +96,10 @@ export class EncryptLoginDialogComponent implements OnInit {
 
     close(encrypt = false): void {
         this.dialogRef.dismiss({encrypt});
+    }
+
+    ngOnDestroy(): void {
+        this.unsub$.next();
+        this.unsub$.complete();
     }
 }

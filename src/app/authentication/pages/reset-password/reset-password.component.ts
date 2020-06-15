@@ -1,16 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
 import { BackendService } from '../../../services/backend/backend.service';
-import { tap, map, take } from 'rxjs/operators';
+import { tap, map, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-reset-password',
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.css']
 })
-export class ResetPasswordComponent implements OnInit {
+export class ResetPasswordComponent implements OnInit, OnDestroy {
+    unsub$ = new Subject();
     hide = true;
     globalError: string = null;
     processing = false;
@@ -31,7 +33,7 @@ export class ResetPasswordComponent implements OnInit {
             tap(params => console.log(params)),
             map(params => this.email = params.get('email')),
             tap(_ => console.log(this.email)),
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe();
 
         // Get reset token from URL
@@ -39,7 +41,7 @@ export class ResetPasswordComponent implements OnInit {
             tap(params => console.log(params)),
             map(params => this.resetToken = params.get('token')),
             tap(_ => console.log(this.resetToken)),
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe();
 
         this.resetForm = this.fb.group({
@@ -72,7 +74,7 @@ export class ResetPasswordComponent implements OnInit {
         // Submit request to API
         this.processing = true;
         this.backend.resetPassword(this.resetToken, this.email, password, password2)
-        .pipe(take(1))
+        .pipe(takeUntil(this.unsub$))
         .subscribe((response: any) => {
             // End processing
             this.processing = false;
@@ -133,5 +135,10 @@ export class ResetPasswordComponent implements OnInit {
 
     prettyCapitalize(text: string) {
         return text[0].toUpperCase() + text.substring(1);
+    }
+
+    ngOnDestroy(): void {
+        this.unsub$.next();
+        this.unsub$.complete();
     }
 }

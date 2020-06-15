@@ -2,7 +2,7 @@
 
 <!-- TODO: Add UI skeleton -->
 <ion-content>
-    <div class='row mx-3 mat-typography' *ngIf='profile | async as p'>
+    <div class='row mx-3 mat-typography' *ngIf='profile$ | async as p'>
         <div class='col-12'>
             <div class='text-center w-100 my-5'>
                 <app-qr [data]='qrData | async'
@@ -20,8 +20,8 @@
                     [routerLink]="['/transaction/create']"
                     [queryParams]="{ to: p.id }"
                     [disabled]='!(stripeProfile | async)?.canAcceptPayments'>
-                    <span *ngIf='user.id === p.id'>Top-up</span>
-                    <span *ngIf='user.id !== p.id'>Transfer</span>
+                    <span *ngIf='user?.id === p.id'>Top-up</span>
+                    <span *ngIf='user?.id !== p.id'>Transfer</span>
                     <i class="ml-2 fas fa-money-check"></i>
                 </button>
             </div>

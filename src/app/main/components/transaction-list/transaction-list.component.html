@@ -13,7 +13,7 @@
                 </h3>
                 <mat-list-item>
                     <p mat-line class='lead'>
-                        <ion-text color='dark'>From: {{ transaction.fromUser.username }}</ion-text>
+                        <ion-text color='dark'>From: {{ transaction.fromUser?.username || 'Anonymous' }}</ion-text>
                     </p>
                     <p mat-line class='my-3' *ngIf='transaction.description'>
                         <ion-text color='dark'>Note: {{ transaction.description }}</ion-text>

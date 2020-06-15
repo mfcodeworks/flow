@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
 import { BackendService } from '../../../services/backend/backend.service';
-import { take } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.css']
 })
-export class ForgotPasswordComponent implements OnInit {
+export class ForgotPasswordComponent implements OnInit, OnDestroy {
+    unsub$ = new Subject();
     globalError: string = null;
     processing = false;
     complete = false;
@@ -51,7 +53,7 @@ export class ForgotPasswordComponent implements OnInit {
         // Submit request to API
         this.processing = true;
         this.backend.forgotPassword(email).pipe(
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe(
             (response: any) => {
                 // End processing
@@ -95,5 +97,10 @@ export class ForgotPasswordComponent implements OnInit {
 
     prettyCapitalize(text: string) {
         return text[0].toUpperCase() + text.substring(1);
+    }
+
+    ngOnDestroy(): void {
+        this.unsub$.next();
+        this.unsub$.complete();
     }
 }

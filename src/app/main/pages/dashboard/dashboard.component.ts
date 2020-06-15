@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { Plugins } from '@capacitor/core';
 import SHA256 from "crypto-js/sha256";
 import Hex from 'crypto-js/enc-hex';
@@ -6,8 +6,8 @@ import { Profile } from '../../../shared/core/profile';
 import { UserService } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
 import { BackendService } from 'src/app/services/backend/backend.service';
-import { map, tap, distinctUntilChanged, filter, take } from 'rxjs/operators';
-import { Observable, from } from 'rxjs';
+import { map, tap, distinctUntilChanged, filter, takeUntil } from 'rxjs/operators';
+import { Observable, from, Subject } from 'rxjs';
 import { AddPaymentSourceDialogComponent } from '../../components/add-payment-source-dialog/add-payment-source-dialog.component';
 import { PaymentSourceDialogComponent } from '../../components/payment-source-dialog/payment-source-dialog.component';
 import { BalanceService } from '../../../services/balance/balance.service';
@@ -23,7 +23,8 @@ const { Browser } = Plugins;
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
+    unsub$ = new Subject();
     loginLink: string;
     user: Profile;
     qrData: string;
@@ -76,7 +77,7 @@ export class DashboardComponent implements OnInit {
 
         // Handle dialog close (success/cancel), if success then refresh sources
         from(dialogRef.onWillDismiss()).pipe(
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe(
             ({data: {success} = {success: false}}) => !!success && this._sources.refresh()
         );
@@ -92,7 +93,7 @@ export class DashboardComponent implements OnInit {
 
         // Handle dialog close (success/cancel), if success then refresh sources
         from(dialogRef.onWillDismiss()).pipe(
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe(
             ({data: {success} = {success: false}}) => !!success && this._sources.refresh()
         );
@@ -106,7 +107,12 @@ export class DashboardComponent implements OnInit {
     // Open dashboard link in browser window
     openDashboardLink(): void {
         this.dashboardLink.pipe(
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe(async l => await Browser.open({url: l}));
+    }
+
+    ngOnDestroy(): void {
+        this.unsub$.next();
+        this.unsub$.complete();
     }
 }

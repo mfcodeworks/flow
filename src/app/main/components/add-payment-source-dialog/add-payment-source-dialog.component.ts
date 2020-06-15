@@ -1,9 +1,9 @@
-import { Component, ChangeDetectionStrategy, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewChild, OnDestroy } from '@angular/core';
 import { BackendService } from 'src/app/services/backend/backend.service';
-import { tap, mergeMap, take } from 'rxjs/operators';
+import { tap, mergeMap, takeUntil } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AddPaymentSourceComponent } from '../add-payment-source/add-payment-source.component';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { ModalController } from '@ionic/angular';
 
 export interface AddPaymentMethodData {
@@ -16,9 +16,10 @@ export interface AddPaymentMethodData {
     styleUrls: ['./add-payment-source-dialog.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddPaymentSourceDialogComponent {
+export class AddPaymentSourceDialogComponent implements OnDestroy {
 
     @ViewChild('stripeElement', {static: false}) stripeElement: AddPaymentSourceComponent;
+    unsub$ = new Subject();
     processing =  new BehaviorSubject<boolean>(false)
 
     constructor(
@@ -38,7 +39,7 @@ export class AddPaymentSourceDialogComponent {
             mergeMap((pm) => this.backend.saveUserSource(pm)),
             // Log save method reply
             tap(console.log),
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe(
             () => {
                 this.toast.open('New Source Saved Successfully', 'close', { duration: 3000 });
@@ -59,5 +60,10 @@ export class AddPaymentSourceDialogComponent {
 
     close(success = false): void {
         this.dialogRef.dismiss({success});
+    }
+
+    ngOnDestroy(): void {
+        this.unsub$.next();
+        this.unsub$.complete();
     }
 }

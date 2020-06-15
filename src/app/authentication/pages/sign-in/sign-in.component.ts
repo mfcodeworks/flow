@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { BackendService } from '../../../services/backend/backend.service';
 import { AuthService } from '../../../services/auth/auth.service';
-import { take } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-sign-in',
     templateUrl: './sign-in.component.html',
     styleUrls: ['./sign-in.component.css']
 })
-export class SignInComponent implements OnInit {
+export class SignInComponent implements OnInit, OnDestroy {
+    unsub$ = new Subject();
     hide = true;
     globalError: string = null;
     processing = false;
@@ -52,7 +54,7 @@ export class SignInComponent implements OnInit {
         this.processing = true;
 
         this.backend.signIn(username, password).pipe(
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe((response: any) => {
             // Do sign in action
             this.auth.doSignIn(response);
@@ -97,5 +99,10 @@ export class SignInComponent implements OnInit {
 
     prettyCapitalize(text: string) {
         return text[0].toUpperCase() + text.substring(1);
+    }
+
+    ngOnDestroy(): void {
+        this.unsub$.next();
+        this.unsub$.complete();
     }
 }

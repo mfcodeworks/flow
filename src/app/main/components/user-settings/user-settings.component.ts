@@ -1,11 +1,11 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { Profile } from '../../../shared/core/profile';
 import { UserService } from '../../../services/user/user.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BackendService } from 'src/app/services/backend/backend.service';
-import { catchError, tap, filter, take } from 'rxjs/operators';
+import { catchError, tap, filter, takeUntil } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Component({
     selector: 'app-user-settings',
@@ -13,7 +13,8 @@ import { BehaviorSubject } from 'rxjs';
     templateUrl: './user-settings.component.html',
     styleUrls: ['./user-settings.component.scss']
 })
-export class UserSettingsComponent implements OnInit {
+export class UserSettingsComponent implements OnInit, OnDestroy {
+    unsub$ = new Subject();
     user: Profile
     settingsForm: FormGroup
     processing: BehaviorSubject<boolean> = new BehaviorSubject(false)
@@ -38,7 +39,7 @@ export class UserSettingsComponent implements OnInit {
         this._user.profile$.pipe(
             tap(u => console.log('New settings user:', u)),
             filter(u => !!u),
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe(u => this.settingsForm.patchValue(u));
     }
 
@@ -65,7 +66,7 @@ export class UserSettingsComponent implements OnInit {
                 this.toast.open(`Profile Error: ${JSON.stringify(err)}`, 'close', { duration: 3000 });
                 return err;
             }),
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe(u => {
             this.processing.next(false);
             this.settingsForm.patchValue(u);
@@ -104,5 +105,10 @@ export class UserSettingsComponent implements OnInit {
 
     prettyCapitalize(text: string) {
         return text[0].toUpperCase() + text.substring(1);
+    }
+
+    ngOnDestroy(): void {
+        this.unsub$.next();
+        this.unsub$.complete();
     }
 }

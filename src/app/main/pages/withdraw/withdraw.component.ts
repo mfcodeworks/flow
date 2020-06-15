@@ -1,12 +1,12 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { Profile } from '../../../shared/core/profile';
 import { UserService } from 'src/app/services/user/user.service';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { MoneyService } from 'src/app/services/money/money.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { CurrencyMinimumAmount } from '../../../shared/core/currency-minimum-amount.enum';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map, tap, take } from 'rxjs/operators';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import { map, tap, takeUntil } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Balance } from '../../../shared/core/balance';
 import { BalanceService } from '../../../services/balance/balance.service';
@@ -18,7 +18,8 @@ import add from 'date-fns/add';
     templateUrl: './withdraw.component.html',
     styleUrls: ['./withdraw.component.scss']
 })
-export class WithdrawComponent implements OnInit {
+export class WithdrawComponent implements OnInit, OnDestroy {
+    unsub$ = new Subject();
     payout: FormGroup;
     user: Profile;
     stripeAccount: Observable<any>;
@@ -108,7 +109,7 @@ export class WithdrawComponent implements OnInit {
 
     openDashboardLink(): void {
         this.dashboardLink.pipe(
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe(l => window.open(l));
     }
 
@@ -129,7 +130,7 @@ export class WithdrawComponent implements OnInit {
             this.money.unformat(this.payout.get('amount').value, this.selectedCurrency),
             this.selectedCurrency
         ).pipe(
-            take(1)
+            takeUntil(this.unsub$)
         ).subscribe(
             (payout) => {
                 console.log(payout);
@@ -142,5 +143,10 @@ export class WithdrawComponent implements OnInit {
                 this.processing.next(false);
             }
         );
+    }
+
+    ngOnDestroy(): void {
+        this.unsub$.next();
+        this.unsub$.complete();
     }
 }
