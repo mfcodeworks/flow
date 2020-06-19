@@ -1,0 +1,4 @@
+<ng-content *ngIf='(display | async) else hidden'></ng-content>
+<ng-template #hidden>
+  Hidden
+</ng-template>

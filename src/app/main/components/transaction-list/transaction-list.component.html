@@ -1,6 +1,6 @@
-<mat-tab-group>
-    <mat-tab *ngFor='let month of months | keyvalue:sortMonthMap' [label]='month.key'>
-        <mat-list *ngIf='transactions'>
+<app-tab-list>
+    <app-tab-content *ngFor='let month of months | keyvalue:sortMonthMap' [label]='month.key'>
+        <mat-list *ngIf='transactions' [attr.data-tab-label]='month.key'>
             <span *ngIf='!(transactions | dateFilter:"month":month.value:"createdAt").length'>
                 <h3 mat-subheader>
                     <ion-text color='dark'>No Transactions Found</ion-text>
@@ -32,5 +32,5 @@
                 <mat-divider></mat-divider>
             </span>
         </mat-list>
-    </mat-tab>
-</mat-tab-group>
+    </app-tab-content>
+</app-tab-list>

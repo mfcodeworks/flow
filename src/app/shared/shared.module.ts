@@ -23,6 +23,9 @@ import { CurrencySymbolPipe } from './pipes/currency-symbol.pipe';
 import { ReplacePipe } from './pipes/replace.pipe';
 import { QRComponent } from './components/qr/qr.component';
 import { PaymentService } from '../services/payment/payment.service';
+import { TabListComponent } from './components/tab-list/tab-list.component';
+import { MapPipe } from './pipes/map.pipe';
+import { TabContentComponent } from './components/tab-list/tab-content/tab-content.component';
 
 @NgModule({
     imports: [
@@ -35,10 +38,13 @@ import { PaymentService } from '../services/payment/payment.service';
         MoneyPipe,
         CurrencySymbolPipe,
         ReplacePipe,
+        MapPipe,
         LongholdDirective,
         RouteTransformerDirective,
         TopBarComponent,
-        QRComponent
+        QRComponent,
+        TabListComponent,
+        TabContentComponent
     ],
     providers: [
         SplashScreen,
@@ -84,15 +90,19 @@ import { PaymentService } from '../services/payment/payment.service';
         }
     ],
     exports: [
+        CommonModule,
         DateDiffPipe,
         DateFilterPipe,
         MoneyPipe,
         CurrencySymbolPipe,
         ReplacePipe,
+        MapPipe,
         LongholdDirective,
         RouteTransformerDirective,
         TopBarComponent,
-        QRComponent
+        QRComponent,
+        TabListComponent,
+        TabContentComponent
     ]
 })
 export class SharedModule {}

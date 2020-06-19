@@ -1,0 +1,9 @@
+<ion-segment (ionChange)='tab($event)' [value]='active$ | async' class='tabs'>
+    <ion-segment-button *ngFor='let c of content' [value]='c.label'>
+        {{ c.label }}
+    </ion-segment-button>
+</ion-segment>
+
+<section>
+    <ng-content></ng-content>
+</section>

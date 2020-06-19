@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { IonicModule } from '@ionic/angular';
@@ -30,7 +29,6 @@ import { AddPaymentSourceDialogComponent } from './components/add-payment-source
 
 @NgModule({
     imports: [
-        CommonModule,
         IonicModule.forRoot(),
         MaterialModule,
         SharedModule,
