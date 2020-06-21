@@ -4,13 +4,13 @@ import { SignedOutGuard } from './shared/guards/signed-out.guard';
 
 const routes: Routes = [
     {
-        path: 'wallet',
-        loadChildren: () => import('./main/main.module').then(m => m.MainModule)
-    },
-    {
         path: '',
         canActivate: [SignedOutGuard],
         loadChildren: () => import('./authentication/authentication.module').then(m => m.AuthenticationModule)
+    },
+    {
+        path: 'wallet',
+        loadChildren: () => import('./main/main.module').then(m => m.MainModule)
     }
 ];
 
