@@ -3,7 +3,7 @@ import { Observable, of, BehaviorSubject } from 'rxjs';
 
 import { Profile } from '../../shared/core/profile';
 import { CacheService } from '../cache/cache.service';
-import { filter, catchError, map } from 'rxjs/operators';
+import { filter, catchError, map, take } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -26,7 +26,8 @@ export class UserService {
             catchError(err => {
                 console.warn(err);
                 return of(false);
-            })
+            }),
+            take(1)
         );
     }
 
@@ -49,6 +50,7 @@ export class UserService {
 
     // Destroy local user
     public destroy(): void {
+        this.profile$.next(null);
         this.token = null;
         this.profile = null;
     }

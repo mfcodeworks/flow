@@ -10,13 +10,11 @@ import { CurrencyMinimumAmount } from '../../../shared/core/currency-minimum-amo
 import { MoneyService } from 'src/app/services/money/money.service';
 import { MatStepper } from '@angular/material/stepper';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ThemeService } from 'src/app/services/theme/theme.service';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { TransactionComponent } from '../transaction/transaction.component';
 import { PaymentService } from '../../../services/payment/payment.service';
 
-/* TODO: Handle anonymous (guest) transactions */
 @Component({
     selector: 'app-create-transaction',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,7 +58,7 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
         private money: MoneyService,
         private theme: ThemeService,
         private payment: PaymentService,
-        public toast: MatSnackBar
+        public toast: ToastController
     ) {}
 
     ngOnInit(): void {
@@ -421,7 +419,10 @@ export class CreateTransactionComponent implements OnInit, OnDestroy {
     // Handle Error
     onFailed(error: any): void {
         this.processing.next(false);
-        this.toast.open(`Error: ${error.message}`, 'close', { duration: 3000 });
+        this.toast.create({
+            header: `Error: ${error.message}`,
+            duration: 3000
+        }).then(t => t.present());
         console.warn(error);
     }
 

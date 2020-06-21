@@ -26,8 +26,12 @@
 @import "~@ionic/angular/css/flex-utils.css";
 
 /* Vendor styles */
-@import "~bootstrap/dist/css/bootstrap.min.css";
-@import "~@fortawesome/fontawesome-free/css/all.min.css";
+$fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
+@import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "~@fortawesome/fontawesome-free/scss/solid.scss";
+@import "~@fortawesome/fontawesome-free/scss/regular.scss";
+@import "~@fortawesome/fontawesome-free/scss/brands.scss";
+@import '~bootstrap/scss/bootstrap.scss';
 @import "assets/css/themify-icons.css";
 
 * {
@@ -68,6 +72,17 @@ html, body {
     margin: 0;
     -webkit-overflow-scrolling: touch;
     font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+hr {
+    display: block;
+    margin: 0;
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: rgba(0, 0, 0, 0.12);
+}
+.transparent {
+    background-color: transparent;
 }
 
 .w-fit {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, of, BehaviorSubject, iif } from 'rxjs';
-import { map, filter, tap, mergeMap, switchMap } from 'rxjs/operators';
+import { map, filter, tap, mergeMap, switchMap, take } from 'rxjs/operators';
 import { UserService } from '../user/user.service';
 import { CacheService } from '../cache/cache.service';
 import { Profile } from 'src/app/shared/core/profile';
@@ -20,7 +20,7 @@ export class AuthService {
         private backend: BackendService
     ) {}
 
-    async init(): Promise<void> {
+    async init(): Promise<boolean> {
         // On logged in status change update user
         this.loggedIn.pipe(
             // Only proceed on logged in true
@@ -32,7 +32,10 @@ export class AuthService {
         console.log('Attempting to load user');
 
         // On initial load attempt loading user
-        this.user.loadCache().subscribe(u => this.loggedIn.next(!!u));
+        return this.user.loadCache().pipe(
+            tap(u => this.loggedIn.next(!!u)),
+            take(1)
+        ).toPromise();
     }
 
     public isLoggedIn(): Observable<boolean> {
@@ -47,7 +50,6 @@ export class AuthService {
     }
 
     public doSignIn(response: any, passphrase?: string): void {
-        // TODO: This function should call the API and proceed with response
         this.user.build(response, passphrase);
         this.loggedIn.next(true);
     }
@@ -59,7 +61,7 @@ export class AuthService {
             tap(user => console.log('Attempting to save user:', user)),
             mergeMap(user =>
                 iif(
-                    () => !!user.token,
+                    () => !!user?.token,
                     of(true).pipe(
                         tap(_ => console.log('User exists, updating service')),
                         tap(_ => Object.assign(this.user, user)),
@@ -87,8 +89,8 @@ export class AuthService {
     public doSignOut(): void {
         this.cache.clear();
         this.loggedIn.next(false);
-        this.router.navigate(['/login']);
         this.user.destroy();
+        this.router.navigateByUrl('/login');
     }
 
     public getToken(): string {

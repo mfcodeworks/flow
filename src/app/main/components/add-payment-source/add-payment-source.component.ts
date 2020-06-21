@@ -5,11 +5,11 @@ import {
     OnDestroy,
     ChangeDetectionStrategy
 } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { from, Subscription, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { ThemeService } from '../../../services/theme/theme.service';
+import { ToastController } from '@ionic/angular';
 
 declare const Stripe: any;
 
@@ -44,10 +44,7 @@ export class AddPaymentSourceComponent implements OnInit, AfterViewInit, OnDestr
     card: any;
     sepa: any;
 
-    constructor(
-        private theme: ThemeService,
-        public toast: MatSnackBar
-    ) {}
+    constructor(private theme: ThemeService) {}
 
     ngOnInit() {
         console.log('Loading add source component');

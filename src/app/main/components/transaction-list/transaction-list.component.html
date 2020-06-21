@@ -1,24 +1,26 @@
 <app-tab-list>
     <app-tab-content *ngFor='let month of months | keyvalue:sortMonthMap' [label]='month.key'>
-        <mat-list *ngIf='transactions' [attr.data-tab-label]='month.key'>
+        <ion-list *ngIf='transactions' [attr.data-tab-label]='month.key'>
             <span *ngIf='!(transactions | dateFilter:"month":month.value:"createdAt").length'>
                 <h3 mat-subheader>
                     <ion-text color='dark'>No Transactions Found</ion-text>
                 </h3>
             </span>
 
-            <span *ngFor='let transaction of transactions | dateFilter:"month":month.value:"createdAt"; trackBy:trackTransactionById'>
-                <h3 mat-subheader>
+            <section *ngFor='let transaction of transactions | dateFilter:"month":month.value:"createdAt"; trackBy:trackTransactionById'>
+                <p class='my-3'>
                     <ion-text color='dark'>{{ transaction.createdAt | date:'short' }}</ion-text>
-                </h3>
-                <mat-list-item>
-                    <p mat-line class='lead'>
-                        <ion-text color='dark'>From: {{ transaction.fromUser?.username || 'Anonymous' }}</ion-text>
-                    </p>
-                    <p mat-line class='my-3' *ngIf='transaction.description'>
-                        <ion-text color='dark'>Note: {{ transaction.description }}</ion-text>
-                    </p>
-                    <p mat-line class='text-right'>
+                </p>
+                <section class='w-100 d-flex flex-row justify-content-between'>
+                    <section>
+                        <p mat-line class='lead'>
+                            <ion-text color='dark'>From: {{ transaction.fromUser?.username || 'Anonymous' }}</ion-text>
+                        </p>
+                        <p mat-line class='my-3' *ngIf='transaction.description'>
+                            <ion-text color='dark'>Note: {{ transaction.description }}</ion-text>
+                        </p>
+                    </section>
+                    <p mat-line class='text-right align-self-end'>
                         <span *ngIf='transaction.forUserId === user.id' class='debit'>+</span>
                         <span *ngIf='transaction.forUserId !== user.id' class='credit'>-</span>
                         <span class='mx-1'>
@@ -27,10 +29,10 @@
                             </ion-text>
                         </span>
                     </p>
-                </mat-list-item>
+                </section>
 
-                <mat-divider></mat-divider>
-            </span>
-        </mat-list>
+                <hr/>
+            </section>
+        </ion-list>
     </app-tab-content>
 </app-tab-list>

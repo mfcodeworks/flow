@@ -1,22 +1,23 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
 import { BackendService } from '../../../services/backend/backend.service';
 import { tap, map, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-reset-password',
   templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.css']
+  styleUrls: ['./reset-password.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResetPasswordComponent implements OnInit, OnDestroy {
     unsub$ = new Subject();
-    hide = true;
-    globalError: string = null;
-    processing = false;
-    complete = false;
+    hide$ = new BehaviorSubject(true);
+    processing$ = new BehaviorSubject(false);
+    complete$ = new BehaviorSubject(false);
+    globalError$ = new BehaviorSubject('');
     resetToken: string;
     email: string;
     resetForm: FormGroup;
@@ -63,54 +64,56 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
         }
     }
 
-    doReset(password: string, password2: string) {
+    doReset() {
         // Reset error
-        this.globalError = null;
+        this.globalError$.next('');
 
         // Validate form before submission
         this.resetForm.markAllAsTouched();
-        if (this.resetForm.invalid) { return; }
+        if (this.resetForm.invalid)
+            return;
 
         // Submit request to API
-        this.processing = true;
-        this.backend.resetPassword(this.resetToken, this.email, password, password2)
-        .pipe(takeUntil(this.unsub$))
-        .subscribe((response: any) => {
-            // End processing
-            this.processing = false;
+        this.processing$.next(true);
 
-            // Set complete as true
-            this.complete = true;
-        }, (error: any) => {
-            // DEBUG: Log error
-            console.warn(error);
+        const password = this.resetForm.controls['password'].value;
+        const password2 = this.resetForm.controls['password2'].value;
 
-            // Switch error and display friendly message
-            switch (typeof error) {
-                // If error is a string attempt to friendlify string
-                case 'string':
-                    switch (true) {
-                        case error.indexOf('Unauthorized') > -1:
-                            this.globalError = 'Username or password incorrect';
-                            break;
+        this.backend.resetPassword(this.resetToken, this.email, password, password2) .pipe(
+            tap(() => this.processing$.next(false)),
+            tap(() => this.complete$.next(false)),
+            takeUntil(this.unsub$)
+        ).subscribe({
+            next: () => {},
+            error: (error: any) => {
+                // DEBUG: Log error
+                console.warn(error);
 
-                        default:
-                            this.globalError = error;
-                            break;
-                    }
-                    break;
+                // Switch error and display friendly message
+                switch (typeof error) {
+                    // If error is a string attempt to friendlify string
+                    case 'string':
+                        switch (true) {
+                            case error.indexOf('Unauthorized') > -1:
+                                this.globalError$.next('Username or password incorrect');
+                                break;
 
-                // If error is an object check for validators, otherwise display error text
-                default:
-                    this.globalError = (!!error.error.validator) ?
-                        Object.keys(error.error.validator).map(errorText => {
-                            return `${error.error.validator[errorText]}<br />`;
-                        }).join('') : error.error.error.email;
-                    break;
+                            default:
+                                this.globalError$.next(error);
+                                break;
+                        }
+                        break;
+
+                    // If error is an object check for validators, otherwise display error text
+                    default:
+                        this.globalError$.next((!!error.error.validator) ?
+                            Object.keys(error.error.validator).map(errorText => {
+                                return `${error.error.validator[errorText]}<br />`;
+                            }).join('') : error.error.error.email
+                        )
+                        break;
+                }
             }
-
-            // End processing
-            this.processing = false;
         });
     }
 

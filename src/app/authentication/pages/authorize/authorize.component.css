@@ -1,21 +1,6 @@
-.form-container {
-    display: flex;
-    flex-direction: column;
+ion-icon {
+    font-size: 1.5rem;
 }
-.form-container > * {
-    width: 80%;
-}
-
-.form-input-prefix {
-    margin: 0px 10px;
-}
-.form-button-row button {
-    flex: 1 1 auto;
-}
-.form-button-spacer {
-    margin: 0px 8px;
-}
-
 .url-link {
     text-decoration: none;
 }

@@ -3,9 +3,9 @@ import { Profile } from '../../../shared/core/profile';
 import { UserService } from '../../../services/user/user.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BackendService } from 'src/app/services/backend/backend.service';
-import { catchError, tap, filter, takeUntil } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { tap, filter, takeUntil } from 'rxjs/operators';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { ToastController } from '@ionic/angular';
 
 @Component({
     selector: 'app-user-settings',
@@ -23,7 +23,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
         private _user: UserService,
         private fb: FormBuilder,
         private _backend: BackendService,
-        public toast: MatSnackBar
+        public toast: ToastController
     ) {}
 
     ngOnInit() {
@@ -60,17 +60,25 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
         this._backend.updateUser(Object.assign({}, this.user, data)).pipe(
             tap(u => this._user.profile = u),
             tap(u => this._user.profile$.next(u)),
-            catchError(err => {
+            takeUntil(this.unsub$)
+        ).subscribe({
+            next: u => {
+                this.processing.next(false);
+                this.settingsForm.patchValue(u);
+                this.toast.create({
+                    header: 'Profile Successfully Updated',
+                    duration: 3000
+                }).then(t => t.present());
+            },
+            error: err => {
                 console.warn(err);
                 this.processing.next(false);
-                this.toast.open(`Profile Error: ${JSON.stringify(err)}`, 'close', { duration: 3000 });
+                this.toast.create({
+                    header: `Profile Error: ${JSON.stringify(err)}`,
+                    duration: 3000
+                }).then(t => t.present());
                 return err;
-            }),
-            takeUntil(this.unsub$)
-        ).subscribe(u => {
-            this.processing.next(false);
-            this.settingsForm.patchValue(u);
-            this.toast.open('Profile Successfully Updated', 'close', { duration: 3000 });
+            }
         });
     }
 

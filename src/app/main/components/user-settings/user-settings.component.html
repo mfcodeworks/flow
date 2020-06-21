@@ -2,25 +2,25 @@
     <mat-form-field>
         <mat-label>Username</mat-label>
         <input matInput formControlName='username'>
-        <ion-text color='red' *ngIf="settingsForm.controls['username'].invalid">{{ getErrors('username') }}</ion-text>
+        <ion-text color='danger' *ngIf="settingsForm.controls['username'].invalid">{{ getErrors('username') }}</ion-text>
     </mat-form-field>
 
     <mat-form-field>
         <mat-label>Email</mat-label>
         <input matInput formControlName='email'>
-        <ion-text color='red' *ngIf="settingsForm.controls['email'].invalid">{{ getErrors('email') }}</ion-text>
+        <ion-text color='danger' *ngIf="settingsForm.controls['email'].invalid">{{ getErrors('email') }}</ion-text>
     </mat-form-field>
 
     <mat-form-field>
         <mat-label>Password</mat-label>
         <input matInput type='password' autocomplete="off" formControlName='password'>
-        <ion-text color='red' *ngIf="settingsForm.controls['password'].invalid">{{ getErrors('password') }}</ion-text>
+        <ion-text color='danger' *ngIf="settingsForm.controls['password'].invalid">{{ getErrors('password') }}</ion-text>
     </mat-form-field>
 
     <mat-form-field>
         <mat-label>Confirm Password</mat-label>
         <input matInput type='password' autocomplete="off" formControlName='password_repeat'>
-        <ion-text color='red' *ngIf="settingsForm.controls['password_repeat'].invalid">{{ getErrors('password_repeat') }}</ion-text>
+        <ion-text color='danger' *ngIf="settingsForm.controls['password_repeat'].invalid">{{ getErrors('password_repeat') }}</ion-text>
     </mat-form-field>
 
     <button mat-raised-button

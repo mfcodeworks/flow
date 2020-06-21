@@ -3,30 +3,35 @@
 <ion-content>
     <!-- Sign In Form -->
     <form [formGroup]="authorizeForm"
-        class="form-container d-flex flex-column h-100 pb-3"
+        class="d-flex flex-column h-100 pb-3 mx-3"
         (ngSubmit)="doSignIn()">
 
         <!-- Branding -->
         <div class="branding logo logo-branded w-100 mx-auto my-5 d-block"></div>
 
-        <mat-form-field class="form-group m-auto">
-            <input matInput formControlName="password" placeholder="Enter your password" [type]="(hide | async) ? 'password' : 'text'" />
-            <button mat-icon-button matSuffix (click)="hide.next(!hide)" type="button" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide | async">
-                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-            </button>
-            <span matPrefix><i class="ti-lock form-input-prefix"></i></span>
-            <ion-text color='red' *ngIf="authorizeForm.controls['password'].invalid">{{ getErrors('password') }}</ion-text>
-        </mat-form-field>
+        <ion-list class='m-auto' color='dark' inset>
+            <ion-item class="form-group m-auto">
+                <ion-icon class="ti-lock form-input-prefix mr-3"></ion-icon>
+                <ion-input formControlName="password" placeholder="Enter your password" [type]="(hide$ | async) ? 'password' : 'text'"></ion-input>
+                <button class='transparent' (click)="hide$.next(!hide$.value)" type="button" attr.aria-label="hide password" [attr.aria-pressed]="hide$ | async">
+                    <ion-icon color='dark' [name]='(hide$ | async) ? "eye-outline" : "eye-off-outline"'></ion-icon>
+                </button>
+            </ion-item>
+            <ion-text color='danger' *ngIf="authorizeForm.controls['password'].invalid">{{ getErrors('password') }}</ion-text>
+        </ion-list>
 
-        <span class="mb-4 text-center w-100"><ion-text color='red' *ngIf="globalError" [innerHTML]="globalError"></ion-text></span>
+        <span class="mb-4 text-center w-100">
+            <ion-text color='danger' *ngIf="globalError$ | async; let g" [innerHTML]="g"></ion-text>
+        </span>
 
         <div class="justify-content-center d-flex form-group mx-auto">
-            <button mat-raised-button color="primary" type="button" class="form-button-spacer" [routerLink]="['/password/reset']">Forgot Password</button>
-            <button mat-raised-button color="primary" type="submit" [disabled]="processing">
+            <ion-button color="primary" type="button" class="form-button-spacer" routerLink="/password/reset">
+                Forgot Password
+            </ion-button>
+            <ion-button color="primary" type="submit" [disabled]="processing$ | async">
                 Login
-                <i *ngIf="processing" class="ml-2 fas fa-spin fa-spinner"></i>
-            </button>
+                <i *ngIf="processing$ | async" class="ml-2 fas fa-circle-notch fa-spin"></i>
+            </ion-button>
         </div>
-
     </form>
 </ion-content>

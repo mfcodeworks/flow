@@ -9,12 +9,14 @@ import {
 import { Observable, of } from 'rxjs';
 import { tap, map, switchMap } from 'rxjs/operators';
 import { AuthService } from '../../services/auth/auth.service';
+import { UserService } from '../../services/user/user.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SignedInGuard implements CanActivate, CanActivateChild {
     constructor(
+        private user: UserService,
         private auth: AuthService,
         private router: Router
     ) {}
@@ -24,7 +26,10 @@ export class SignedInGuard implements CanActivate, CanActivateChild {
         state: RouterStateSnapshot
     ): Observable<boolean> {
         // Check user is logged in
-        return this.auth.isLoggedIn().pipe(
+        return this.user.profile$.pipe(
+            // DEBUG:
+            tap(() => console.log('Run signed in guard')),
+
             // Check logged in state
             switchMap(u => !!u
                 // If logged in return true
@@ -42,7 +47,9 @@ export class SignedInGuard implements CanActivate, CanActivateChild {
                     ),
                     map(() => false)
                 )
-            )
+            ),
+            
+            tap(a => console.log('Is signed in', a))
         );
     }
 

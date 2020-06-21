@@ -12,7 +12,6 @@ import { SearchComponent } from './pages/search/search.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { TransactionComponent } from './pages/transaction/transaction.component';
 
-/* TODO: Don't require SignedIn for Profile and CreateTransaction */
 export const routes: Routes = [
     {
         path: 'profile/:profile',
@@ -29,15 +28,10 @@ export const routes: Routes = [
     },
     {
         path: '',
-        canActivateChild: [ SignedInGuard ],
+        canActivateChild: [SignedInGuard],
         children: [
             {
                 path: '',
-                redirectTo: 'wallet',
-                pathMatch: 'full'
-            },
-            {
-                path: 'wallet',
                 component: DashboardComponent
             },
             {

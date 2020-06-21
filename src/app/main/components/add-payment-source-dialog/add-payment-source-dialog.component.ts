@@ -1,10 +1,9 @@
 import { Component, ChangeDetectionStrategy, ViewChild, OnDestroy } from '@angular/core';
 import { BackendService } from 'src/app/services/backend/backend.service';
 import { tap, mergeMap, takeUntil } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { AddPaymentSourceComponent } from '../add-payment-source/add-payment-source.component';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 
 export interface AddPaymentMethodData {
     success: boolean;
@@ -25,7 +24,7 @@ export class AddPaymentSourceDialogComponent implements OnDestroy {
     constructor(
         private backend: BackendService,
         public dialogRef: ModalController,
-        public toast: MatSnackBar
+        public toast: ToastController
     ) {}
 
     async createPaymentMethod() {
@@ -42,12 +41,18 @@ export class AddPaymentSourceDialogComponent implements OnDestroy {
             takeUntil(this.unsub$)
         ).subscribe(
             () => {
-                this.toast.open('New Source Saved Successfully', 'close', { duration: 3000 });
+                this.toast.create({
+                    header: 'New Source Saved Successfully',
+                    duration: 3000
+                }).then(t => t.present())
                 this.processing.next(false);
                 this.close(true);
             },
             error => {
-                this.toast.open(`Error Saving Card`, 'close', { duration: 3000 });
+                this.toast.create({
+                    header: `Error Saving Card`,
+                    duration: 3000
+                }).then(t => t.present())
                 this.processing.next(false);
                 console.warn(error);
             }

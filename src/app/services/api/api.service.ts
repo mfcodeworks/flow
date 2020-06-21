@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { map, retry, catchError, publishReplay, refCount } from 'rxjs/operators';
+import { retry, catchError, publishReplay, refCount } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import { Profile } from '../../shared/core/profile';
 import { Transaction } from '../../shared/core/transaction';
 import { IOpenExchangeRates } from '../../shared/core/open-exchange-rates';
 import { UserTransactions } from '../../shared/core/user-transactions';
+import { ToastController } from '@ionic/angular';
 
 const API_URL = environment.apiUrl;
 
@@ -18,7 +18,7 @@ const API_URL = environment.apiUrl;
 export class ApiService {
     constructor(
         private http: HttpClient,
-        public errorToast: MatSnackBar
+        public toast: ToastController
     ) {}
 
     // API: Sign Up User
@@ -360,9 +360,10 @@ export class ApiService {
     // Success handling
     handleSuccess(message: string) {
         // Open snackbar
-        this.errorToast.open(message, 'close', {
+        this.toast.create({
+            header: message,
             duration: 3000
-        });
+        }).then(t => t.present());
     }
 
     // Error handling
@@ -374,9 +375,10 @@ export class ApiService {
         errorMessage = `(${error.status}) Message: ${error.error.message || error.statusText}`
 
         // Open error snackbar
-        this.errorToast.open(errorMessage, 'close', {
+        this.toast.create({
+            header: errorMessage,
             duration: 3000
-        });
+        }).then(t => t.present());
 
         return throwError(errorMessage);
     }

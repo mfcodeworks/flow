@@ -39,22 +39,16 @@ export class CacheService {
         console.log(`Retrieving ${key} from cache`);
         return from(localforage.getItem(key)).pipe(
             // Switch passphrase present
-            mergeMap((data: any) =>
-                iif(
-                    () => !!passphrase,
-                    // Decode data
-                    of(true).pipe(
-                        map(() => JSON.parse(
-                            AES.decrypt(data, passphrase).toString(Utf8)
-                        ))
-                    ),
-                    // Return data
-                    of(data)
-                )
+            mergeMap((data: any) => !!passphrase
+                ? of(null).pipe(
+                    map(() => JSON.parse(
+                        AES.decrypt(data, passphrase).toString(Utf8)
+                    ))
+                ) : of(data)
             ),
             catchError(err => {
                 console.warn(err);
-                return null;
+                return of(null);
             })
         );
     }

@@ -20,7 +20,7 @@
 
             <!-- Next Payout Alert -->
             <div *ngIf='nextPayoutDate' class='mt-md-5 mb-md-3 d-flex flex-row justify-content-center align-content-start'>
-                    <ion-chip color="primary" outline>
+                    <ion-chip color="danger" outline>
                         <ion-label>Next payout date: {{ nextPayoutDate | async | date }}</ion-label>
                     </ion-chip>
             </div>

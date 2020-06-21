@@ -7,10 +7,11 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { CurrencyMinimumAmount } from '../../../shared/core/currency-minimum-amount.enum';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { map, tap, takeUntil } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Balance } from '../../../shared/core/balance';
 import { BalanceService } from '../../../services/balance/balance.service';
 import add from 'date-fns/add';
+import { ToastController } from '@ionic/angular';
+import { ThemeService } from '../../../services/theme/theme.service';
 
 @Component({
     selector: 'app-withdraw',
@@ -38,8 +39,9 @@ export class WithdrawComponent implements OnInit, OnDestroy {
         private money: MoneyService,
         private fb: FormBuilder,
         private backend: BackendService,
-        public toast: MatSnackBar,
-        private _balance: BalanceService
+        public toast: ToastController,
+        private _balance: BalanceService,
+        private theme: ThemeService
     ) { }
 
     ngOnInit() {
@@ -131,18 +133,25 @@ export class WithdrawComponent implements OnInit, OnDestroy {
             this.selectedCurrency
         ).pipe(
             takeUntil(this.unsub$)
-        ).subscribe(
-            (payout) => {
+        ).subscribe({
+            next: (payout) => {
                 console.log(payout);
                 this.payout.reset();
-                this.toast.open(`Withdraw Complete`, 'close', { duration: 3000 });
+                this.toast.create({
+                    header: `Withdraw Complete`,
+                    duration: 3000
+                }).then(t => t.present());
                 this.processing.next(false);
-            }, (err) => {
+            },
+            error: (err) => {
                 console.warn(err);
-                this.toast.open(`Withdraw Error: ${JSON.stringify(err)}`, 'close', { duration: 3000 });
+                this.toast.create({
+                    header: `Withdraw Error: ${JSON.stringify(err)}`,
+                    duration: 3000
+                }).then(t => t.present());
                 this.processing.next(false);
             }
-        );
+        });
     }
 
     ngOnDestroy(): void {

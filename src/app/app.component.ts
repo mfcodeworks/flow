@@ -99,28 +99,28 @@ export class AppComponent {
                 }, {
                     name: 'Withdraw',
                     icon: 'fas fa-coins',
-                    link: '/withdraw',
+                    link: '/wallet/withdraw',
                     condition: !!this.userHasAccount()
                 }, {
                     name: 'Search',
                     icon: 'fas fa-search-dollar',
-                    link: '/search',
+                    link: '/wallet/search',
                     condition: true
                 }, {
                     name: 'Profile',
                     icon: 'fas fa-qrcode',
-                    link: `/profile/${p?.username}`,
+                    link: `/wallet/profile/${p?.username}`,
                     condition: true
                 }, {
                     name: 'Top-up Wallet',
                     icon: 'fas fa-hand-holding-usd',
-                    link: '/transaction/create',
+                    link: '/wallet/transaction/create',
                     params: {to: 'me'},
                     condition: true
                 }, {
                     name: 'Settings',
                     icon: 'fas fa-cog',
-                    link: '/settings',
+                    link: '/wallet/settings',
                     condition: true
                 }
             ])

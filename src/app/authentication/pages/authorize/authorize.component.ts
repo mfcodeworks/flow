@@ -14,9 +14,9 @@ import { map, takeUntil } from 'rxjs/operators';
 })
 export class AuthorizeComponent implements OnInit, OnDestroy {
     unsub$ = new Subject();
-    hide = new BehaviorSubject(true);
-    globalError: string = null;
-    processing = false;
+    hide$ = new BehaviorSubject(true);
+    globalError$ = new BehaviorSubject('');
+    processing$ = new BehaviorSubject(false);
 
     authorizeForm = this.fb.group({
         password: ['', Validators.required]
@@ -40,14 +40,15 @@ export class AuthorizeComponent implements OnInit, OnDestroy {
 
     doSignIn() {
         // Reset error
-        this.globalError = null;
+        this.globalError$.next('');
 
         // Validate form before submission
         this.authorizeForm.markAllAsTouched();
-        if (this.authorizeForm.invalid) { return; }
+        if (this.authorizeForm.invalid)
+            return;
 
         // Submit request to API
-        this.processing = true;
+        this.processing$.next(true);
 
         const password = this.authorizeForm.controls['password'].value
 
@@ -57,17 +58,17 @@ export class AuthorizeComponent implements OnInit, OnDestroy {
                     return this.route.queryParamMap.pipe(
                         map(r => r.get('redirect')),
                         map(p => this.router.navigateByUrl(
-                            decodeURIComponent(p)
+                            decodeURIComponent(p ?? '/wallet')
                         )),
                         takeUntil(this.unsub$)
                     ).subscribe();
                 }
 
-                this.globalError = 'Password incorrect';
+                this.globalError$.next('Password incorrect');
                 return false;
             }),
             takeUntil(this.unsub$)
-        ).subscribe(_ => this.processing = false);
+        ).subscribe(() => this.processing$.next(false));
     }
 
     prettyCapitalize(text: string) {

@@ -1,20 +1,21 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
 import { BackendService } from '../../../services/backend/backend.service';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { takeUntil, tap } from 'rxjs/operators';
+import { Subject, BehaviorSubject } from 'rxjs';
 
 @Component({
-  selector: 'app-forgot-password',
-  templateUrl: './forgot-password.component.html',
-  styleUrls: ['./forgot-password.component.css']
+    selector: 'app-forgot-password',
+    templateUrl: './forgot-password.component.html',
+    styleUrls: ['./forgot-password.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ForgotPasswordComponent implements OnInit, OnDestroy {
+export class ForgotPasswordComponent implements OnDestroy {
     unsub$ = new Subject();
-    globalError: string = null;
-    processing = false;
-    complete = false;
+    globalError$ = new BehaviorSubject('');
+    processing$ = new BehaviorSubject(false);
+    complete$ = new BehaviorSubject(false);
 
     forgotForm = this.fb.group({
         email: ['',
@@ -30,8 +31,6 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
         private fb: FormBuilder
     ) {}
 
-    ngOnInit() {}
-
     getErrors(control: string) {
         switch (true) {
             case this.forgotForm.get(control).hasError('required'):
@@ -42,26 +41,29 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
         }
     }
 
-    doReset(email: string) {
+    doReset() {
         // Reset error
-        this.globalError = null;
+        this.globalError$.next('');
 
         // Validate form before submission
         this.forgotForm.markAllAsTouched();
-        if (this.forgotForm.invalid) { return; }
+        if (this.forgotForm.invalid)
+            return;
 
         // Submit request to API
-        this.processing = true;
-        this.backend.forgotPassword(email).pipe(
-            takeUntil(this.unsub$)
-        ).subscribe(
-            (response: any) => {
-                // End processing
-                this.processing = false;
+        this.processing$.next(true);
 
+        const email = this.forgotForm.controls['email'].value;
+
+        this.backend.forgotPassword(email).pipe(
+            tap(() => this.processing$.next(false)),
+            takeUntil(this.unsub$)
+        ).subscribe({
+            next: () => {
                 // Set complete as true
-                this.complete = true;
-            }, (error: any) => {
+                this.complete$.next(true);
+            },
+            error: (error: any) => {
                 // DEBUG: Log error
                 console.warn(error);
 
@@ -71,28 +73,26 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
                     case 'string':
                         switch (true) {
                             case error.indexOf('Unauthorized') > -1:
-                                this.globalError = 'Username or password incorrect';
+                                this.globalError$.next('Username or password incorrect');
                                 break;
 
                             default:
-                                this.globalError = error;
+                                this.globalError$.next(error);
                                 break;
                         }
                         break;
 
                     // If error is an object check for validators, otherwise display error text
                     default:
-                        this.globalError = (error.error.validator) ?
+                        this.globalError$.next((error.error.validator) ?
                             Object.keys(error.error.validator).map(errorText => {
                                 return `${error.error.validator[errorText]}<br />`;
-                            }).join('') : error.error.error;
+                            }).join('') : error.error.error
+                        )
                         break;
                 }
-
-                // End processing
-                this.processing = false;
             }
-        );
+        });
     }
 
     prettyCapitalize(text: string) {
