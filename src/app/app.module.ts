@@ -27,7 +27,6 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
         { 
             provide: HTTP_INTERCEPTORS, 
             useClass: JwtInterceptor, 
-            multi: true 
         }
     ],
     bootstrap: [AppComponent]
