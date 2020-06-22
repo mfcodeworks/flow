@@ -22,7 +22,6 @@ import { NetworkService } from './services/network/network.service';
     providers: [
         StatusBar,
         SplashScreen,
-        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
         {
             provide: APP_INITIALIZER,
             useFactory: (
