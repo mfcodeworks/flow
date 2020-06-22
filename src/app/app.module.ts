@@ -26,7 +26,11 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
     providers: [        
         { 
             provide: HTTP_INTERCEPTORS, 
-            useClass: JwtInterceptor, 
+            useClass: JwtInterceptor
+        },
+        { 
+            provide: RouteReuseStrategy, 
+            useClass: IonicRouteStrategy 
         }
     ],
     bootstrap: [AppComponent]
