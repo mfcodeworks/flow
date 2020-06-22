@@ -18,7 +18,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
         BrowserModule,
         BrowserAnimationsModule,
         IonicModule.forRoot(),
-        CoreModule
+        CoreModule,
         AppRoutingModule,
         HttpClientModule,
         MaterialModule,
