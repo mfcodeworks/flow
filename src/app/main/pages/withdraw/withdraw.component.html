@@ -33,15 +33,14 @@
                         access advanced wallet management below
                     </ion-text>
                 </p>
-                <button
-                    mat-raised-button
+                <ion-button
                     color="primary"
                     class='mx-auto'
                     [disabled]='!(dashboardLink | async)'
                     (click)='openDashboardLink()'>
                     Advanced Wallet Management
                     <i *ngIf='!(dashboardLink | async)' class='lead fas fa-circle-notch fa-spin ml-1'></i>
-                </button>
+                </ion-button>
             </div>
 
             <!-- Withdraw Form -->
@@ -56,15 +55,15 @@
                             class="text-right">
                         <span matPrefix class='mr-3'>{{ selectedCurrency | currencySymbol }}</span>
                     </mat-form-field>
-                    <button mat-raised-button
+                    <ion-button
                         type='submit'
                         color="primary"
                         class='col-4 my-auto'
                         [disabled]='processing | async'
                         (click)='submitPayout()'>
                         Withdraw
-                        <i *ngIf='processing | async' class='lead fas fa-circle-notch fa-spin ml-1'></i>
-                    </button>
+                        <i *ngIf='processing | async' class='fas fa-circle-notch fa-spin ml-1'></i>
+                    </ion-button>
                 </form>
             </div>
         </div>

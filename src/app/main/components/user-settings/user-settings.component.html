@@ -23,7 +23,7 @@
         <ion-text color='danger' *ngIf="settingsForm.controls['password_repeat'].invalid">{{ getErrors('password_repeat') }}</ion-text>
     </mat-form-field>
 
-    <button mat-raised-button
+    <ion-button
         class='my-3'
         color='primary'
         type='submit'
@@ -31,5 +31,5 @@
         (click)='onSubmit()'>
         Save
         <i *ngIf='processing | async' class='far fa-spin fa-spinner'></i>
-    </button>
+    </ion-button>
 </form>

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { IonicModule } from '@ionic/angular';
 
 import { Routing } from './main.routing';
 import { MaterialModule } from '../material/material.module';
@@ -29,13 +28,11 @@ import { AddPaymentSourceDialogComponent } from './components/add-payment-source
 
 @NgModule({
     imports: [
-        IonicModule.forRoot(),
         MaterialModule,
         SharedModule,
         OverlayModule,
         ReactiveFormsModule,
-        Routing,
-        IonicModule.forRoot()
+        Routing
     ],
     declarations: [
         BalanceDisplayComponent,

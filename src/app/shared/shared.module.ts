@@ -30,7 +30,7 @@ import { TabContentComponent } from './components/tab-list/tab-content/tab-conte
 @NgModule({
     imports: [
         CommonModule,
-        IonicModule.forRoot()
+        IonicModule
     ],
     declarations: [
         DateDiffPipe,
@@ -90,6 +90,7 @@ import { TabContentComponent } from './components/tab-list/tab-content/tab-conte
         }
     ],
     exports: [
+        IonicModule,
         CommonModule,
         DateDiffPipe,
         DateFilterPipe,

@@ -20,7 +20,7 @@ export class UserService {
         console.log('Attempting to load user');
 
         return this.cache.get('login').pipe(
-            filter(u => !!u?.token),
+            filter(u => !(typeof u === 'string')),
             map((user: { token: string }) => Object.assign(this, user)),
             map(() => true),
             catchError(err => {

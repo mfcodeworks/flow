@@ -15,15 +15,15 @@
                 </ion-chip>
             </div>
             <div class='text-center w-100 my-5'>
-                <button color="primary"
-                    mat-raised-button
-                    [routerLink]="['/transaction/create']"
+                <ion-button
+                    color="primary"
+                    routerLink='/wallet/transaction/create'
                     [queryParams]="{ to: p.id }"
                     [disabled]='!(stripeProfile | async)?.canAcceptPayments'>
                     <span *ngIf='user?.id === p.id'>Top-up</span>
                     <span *ngIf='user?.id !== p.id'>Transfer</span>
                     <i class="ml-2 fas fa-money-check"></i>
-                </button>
+                </ion-button>
             </div>
         </div>
     </div>

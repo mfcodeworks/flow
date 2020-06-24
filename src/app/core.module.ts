@@ -16,6 +16,7 @@ import { BalanceService } from './services/balance/balance.service';
 import { AuthService } from './services/auth/auth.service';
 import { TransactionsService } from './services/transactions/transactions.service';
 import { SourcesService } from './services/sources/sources.service';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 @NgModule({
     imports: [
@@ -24,6 +25,7 @@ import { SourcesService } from './services/sources/sources.service';
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: true }) //{ enabled: environment.production })
     ],
     providers: [
+        BarcodeScanner,
         StatusBar,
         SplashScreen,
         {
