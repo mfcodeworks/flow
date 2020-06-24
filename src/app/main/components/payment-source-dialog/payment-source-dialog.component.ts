@@ -1,8 +1,8 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { BackendService } from 'src/app/services/backend/backend.service';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import { tap, takeUntil } from 'rxjs/operators';
+import { ModalController } from '@ionic/angular';
 
 export interface PaymentMethodDialogData {
     paymentMethod: string;
@@ -11,31 +11,45 @@ export interface PaymentMethodDialogData {
 @Component({
     selector: 'app-payment-source-dialog',
     templateUrl: './payment-source-dialog.component.html',
-    styleUrls: ['./payment-source-dialog.component.scss']
+    styleUrls: ['./payment-source-dialog.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PaymentSourceDialogComponent implements OnInit {
-    id: string;
+export class PaymentSourceDialogComponent implements OnInit, OnDestroy {
+    @Input() paymentMethod: string;
+    unsub$ = new Subject();
     source$: Observable<any>;
     delete$: Observable<boolean>;
-    processing = false;
+    processing = new BehaviorSubject<boolean>(false);
+    title = new BehaviorSubject<string>('');
+    loaded = new BehaviorSubject<boolean>(false);
 
     constructor(
         private _backend: BackendService,
-        public dialogRef: MatDialogRef<PaymentMethodDialogData>,
-        @Inject(MAT_DIALOG_DATA) public data: PaymentMethodDialogData
-    ) {
-        this.id = data.paymentMethod
-    }
+        public dialogRef: ModalController
+    ) {}
 
     ngOnInit(): void {
-        this.source$ = this._backend.getUserSource(this.id);
-        this.delete$ = this._backend.deleteUserSource(this.id);
+        this.source$ = this._backend.getUserSource(this.paymentMethod).pipe(
+            tap(pm => this.title.next(pm?.card?.brand)),
+            tap(_ => this.loaded.next(true))
+        );
+        this.delete$ = this._backend.deleteUserSource(this.paymentMethod);
     }
 
     onDelete() {
-        this.processing = true;
+        this.processing.next(true);
         this.delete$.pipe(
-            tap(() => this.processing = false)
-        ).subscribe(d => this.dialogRef.close(1));
+            tap(_ => this.processing.next(false)),
+            takeUntil(this.unsub$)
+        ).subscribe(_ => this.close(true));
+    }
+
+    close(success = false) {
+        this.dialogRef.dismiss({success});
+    }
+
+    ngOnDestroy(): void {
+        this.unsub$.next();
+        this.unsub$.complete();
     }
 }

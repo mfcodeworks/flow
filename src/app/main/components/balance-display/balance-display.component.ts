@@ -1,18 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnChanges } from '@angular/core';
 import { MoneyService } from 'src/app/services/money/money.service';
-import { MatSelectChange } from '@angular/material/select';
-
-interface IBalanceAmount {
-    amount: number;
-    currency: string;
-}
-interface IBalance {
-    object: string;
-    available: IBalanceAmount[];
-    connect_reserved?: IBalanceAmount[];
-    livemode: boolean;
-    pending: IBalanceAmount[];
-}
+import { Balance } from '../../../shared/core/balance';
+import { BalanceAmount } from '../../../shared/core/balance-amount';
+import { BalanceHoldings } from '../../../shared/core/balance-holdings';
 
 @Component({
     selector: 'app-balance-display',
@@ -20,41 +10,36 @@ interface IBalance {
     templateUrl: './balance-display.component.html',
     styleUrls: ['./balance-display.component.scss']
 })
-export class BalanceDisplayComponent implements OnInit {
+export class BalanceDisplayComponent implements OnChanges {
     @Output() currency: EventEmitter<string> = new EventEmitter();
-    @Input() balances: IBalance;
-    balance: {
-        currency?: {
-            available: string,
-            pending: string
-        }
-    } = {}
+    @Input() balances: Balance;
+    balance: BalanceHoldings = {}
     balanceCurrencies: string[] = [];
     selectedCurrency: string;
 
     constructor(private money: MoneyService) {}
 
-    ngOnInit() {
+    ngOnChanges() {
         /* Map balances */
-        for (let i = 0; i < this.balances.available.length; i++) {
-            this.balance[this.balances.available[i].currency] = {
+        this.balances?.available.forEach((b: BalanceAmount, i: number) => {
+            this.balance[b.currency] = {
                 available: this.money.format(
-                    this.balances.available[i].amount,
-                    this.balances.available[i].currency
+                    b.amount,
+                    b.currency
                 ),
-
                 pending: this.money.format(
                     this.balances.pending[i].amount,
                     this.balances.pending[i].currency
-                ),
-            };
-        }
+                )
+            }
+        });
         this.balanceCurrencies = Object.keys(this.balance);
         this.selectedCurrency = this.balanceCurrencies[0];
         this.currency.emit(this.selectedCurrency);
     }
 
-    onCurrencyChange(ev: MatSelectChange): void {
+    onCurrencyChange(ev: any): void {
+        console.log('Currency change', ev);
         this.currency.emit(ev.value);
     }
 }

@@ -26,61 +26,47 @@
 @import "~@ionic/angular/css/flex-utils.css";
 
 /* Vendor styles */
-@import "~bootstrap/dist/css/bootstrap.min.css";
-@import "~@fortawesome/fontawesome-free/css/all.min.css";
+$fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
+@import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "~@fortawesome/fontawesome-free/scss/solid.scss";
+@import "~@fortawesome/fontawesome-free/scss/regular.scss";
+@import "~@fortawesome/fontawesome-free/scss/brands.scss";
+@import '~bootstrap/scss/bootstrap.scss';
 @import "assets/css/themify-icons.css";
 
-/* Theme Specific Styling */
-@import "assets/css/theme.scss";
-
-/* Remove Scrollbars Globally */
 * {
-    -ms-overflow-style: none;  // IE 10+
-    scrollbar-width: none;  // Firefox
-    scroll-behavior: smooth;
-}
-::-webkit-scrollbar, *::-webkit-scrollbar {
-    display: none;
-}
-ion-content {
-    overflow: scroll;
-    -webkit-overflow-scrolling: touch;
-    -ms-overflow-style: none;  // IE 10+
-    scrollbar-width: none;  // Firefox
-    scroll-behavior: smooth;
-
-    &::-webkit-scrollbar {
-        display: none; // Safari and Chrome
-    }
-}
-
-*, *:focus, *:active {
-    /* Remove accessibility outline */
-    // outline: none !important;
-    // box-shadow: none;
-    // -webkit-box-shadow: none;
-    // -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
-    // -webkit-tap-highlight-color: transparent !important;
     /* Set better text rendering */
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Optimize mobile scrolling and longpress */
-    // -webkit-overflow-scrolling: touch;
-    // -webkit-touch-callout: none;
-    // -webkit-user-select: none;
-    // -khtml-user-select: none;
-    // -webkit-appearance: none;
-    // -moz-user-select: none;
-    // -ms-user-select: none;
-    // user-select: none;
     /* Optimize image view */
     image-rendering: -moz-crisp-edges; /* Firefox */
     image-rendering: -o-crisp-edges; /* Opera */
     image-rendering: -webkit-optimize-contrast; /* Webkit (non-standard naming) */
     image-rendering: crisp-edges;
     -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
+
+    /* Remove Scrollbars Globally */
+    -ms-overflow-style: none;  // IE 10+
+    scrollbar-width: none;  // Firefox
+    scroll-behavior: smooth;
+    ::-webkit-scrollbar, *::-webkit-scrollbar {
+        display: none;
+    }
+
+    ion-content {
+        overflow: scroll;
+        -webkit-overflow-scrolling: touch;
+        -ms-overflow-style: none;  // IE 10+
+        scrollbar-width: none;  // Firefox
+        scroll-behavior: smooth;
+
+        &::-webkit-scrollbar {
+            display: none; // Safari and Chrome
+        }
+    }
 }
+
 html, body {
     height: 100%;
     margin: 0;
@@ -88,6 +74,45 @@ html, body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+hr {
+    display: block;
+    margin: 0;
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: rgba(0, 0, 0, 0.12);
+}
+.transparent {
+    background-color: transparent;
+}
+
+.w-fit {
+    max-width: fit-content;
+}
+.justify-content-evenly {
+    justify-content: space-evenly !important;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.text-black,
+.icon-black,
+.ptr--icon,
+.ptr--text {
+    color: var(--ulfurTextColor);
+}
+
+.dark-theme .text-secondary,
+.dark-theme .text-muted {
+    color: #908787 !important;
+}
+
+.branding {
+    height: 180px;
+}
 .logo-branded, .logo {
     background-size: contain;
     background-repeat: no-repeat;
@@ -95,31 +120,20 @@ html, body {
     background-position: center;
 }
 .logo {
-    background-image: url("assets/images/logo-marker.png");
+    background-image: var(--ulfurLogo);
 }
 .logo-branded {
-    background-image: url("assets/images/Logo_Transparent-scaledown.png") !important;
+    background-image: var(--ulfurLogoBranded);
 }
-.dark-theme .logo {
-    background-image: url("assets/images/logo-white.png");
+
+ion-list, ion-item {
+    background-color: var(--ion-background-color);
+    --background: var(--ion-background-color);
 }
-.dark-theme .logo-branded {
-    background-image: url("assets/images/Logo_Transparent_White-scaledown.png") !important;
-}
-.avatar {
-    width: 40px !important;
-    height: 40px !important;
-    border-radius: 50%;
-}
-.ptr--icon,
-.ptr--text {
-    color: rgba(0, 0, 0, 0.87) !important;
-}
-.dark-theme .ptr--icon,
-.dark-theme .ptr--text {
-    color: rgba(250, 250, 250, 0.87) !important;
-}
-.text-black,
-.icon-black {
-    color: rgba(0, 0, 0, 0.87);
+
+@media(min-width: 768px) {
+    .narrow-dialog .modal-wrapper {
+        --max-width: 500px;
+        --max-height: 400px;
+    }
 }

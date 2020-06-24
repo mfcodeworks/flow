@@ -1,0 +1,46 @@
+<ion-header translucent='true'>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-button (click)='close()'>
+                <ion-icon slot='start' md='arrow-back-outline' ios='chevron-back-outline'></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-grid *ngIf='transaction | async as tx'
+        class='h-100 d-flex flex-column ion-align-items-center ion-justify-content-evenly'>
+        <ion-row class='w-100'>
+            <ion-col size='12'>
+                <div class="branding logo logo-branded w-100 mx-auto"></div>
+            </ion-col>
+        </ion-row>
+
+        <ion-row>
+            <ion-col size='12'>
+                <ion-text class='ion-text-center'>
+                    <h1 class='mat-display-2 mb-0'>{{ tx.amount | money:tx.currency }}</h1>
+                    <p class='mat-subheading-1'>{{ tx.createdAt | date:'short' }}</p>
+                </ion-text>
+            </ion-col>
+        </ion-row>
+
+        <ion-row>
+            <ion-col size='12'>
+                <ion-text class='ion-text-center'>
+                    <p class='mat-headline'>From: {{ tx.fromUser?.username || 'Anonymous' }}</p>
+                    <p class='mat-headline'>To: {{ tx.forUser.username }}</p>
+                </ion-text>
+            </ion-col>
+        </ion-row>
+
+        <ion-row>
+            <ion-col size='12'>
+                <ion-text class='ion-text-center'>
+                    <p class='mat-title'>Status: {{ tx.status | titlecase }}</p>
+                </ion-text>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>

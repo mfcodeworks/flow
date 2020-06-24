@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 
-import { Profile } from '../../main/core/profile';
+import { Profile } from '../../shared/core/profile';
 import { CacheService } from '../cache/cache.service';
-import { filter, catchError, map } from 'rxjs/operators';
+import { filter, catchError, map, take } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
     public token: string;
-    public profile: Profile = new Profile();
-    public profile$: BehaviorSubject<Profile> = new BehaviorSubject(new Profile())
+    public profile: Profile = null;
+    public profile$: BehaviorSubject<Profile> = new BehaviorSubject(null);
 
     constructor(private cache: CacheService) {}
 
@@ -20,13 +20,14 @@ export class UserService {
         console.log('Attempting to load user');
 
         return this.cache.get('login').pipe(
-            filter(u => !!u && u.token),
+            filter(u => !!u?.token),
             map((user: { token: string }) => Object.assign(this, user)),
             map(() => true),
             catchError(err => {
                 console.warn(err);
                 return of(false);
-            })
+            }),
+            take(1)
         );
     }
 
@@ -49,6 +50,7 @@ export class UserService {
 
     // Destroy local user
     public destroy(): void {
+        this.profile$.next(null);
         this.token = null;
         this.profile = null;
     }

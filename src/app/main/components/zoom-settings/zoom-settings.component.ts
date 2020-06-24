@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { ZoomService } from '../../../services/zoom/zoom.service';
 
 @Component({
@@ -10,11 +9,11 @@ import { ZoomService } from '../../../services/zoom/zoom.service';
 })
 export class ZoomSettingsComponent {
     isElectron = !!window.require;
-    zoomLevel = localStorage.getItem('app-zoom') || '100'
+    zoomLevel = this.zoom.zoom$;
 
     constructor(private zoom: ZoomService) {}
 
-    onZoomChange(event: MatButtonToggleChange) {
-        this.zoom.setZoom(parseInt(event.value));
+    onZoomChange({detail}) {
+        this.zoom.setZoom(detail.value);
     }
 }

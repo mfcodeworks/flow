@@ -4,3 +4,7 @@
 
 app/
 node_modules/
+
+out/
+
+environment.bat

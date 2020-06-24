@@ -1,10 +1,13 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { SHA256, enc } from 'crypto-js';
-import { Profile } from '../../core/profile';
+import SHA256 from "crypto-js/sha256";
+import Hex from 'crypto-js/enc-hex';
+import { Profile } from '../../../shared/core/profile';
 import { UserService } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
 import { BackendService } from 'src/app/services/backend/backend.service';
+import { tap, switchMap, map, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-stripe-signup',
@@ -13,6 +16,7 @@ import { BackendService } from 'src/app/services/backend/backend.service';
     styleUrls: ['./stripe-signup.component.scss']
 })
 export class StripeSignupComponent implements OnInit {
+    unsub$ = new Subject();
     user: Profile;
     code: string;
     state: string;
@@ -26,19 +30,28 @@ export class StripeSignupComponent implements OnInit {
 
     ngOnInit() {
         this.user = this.user$.profile
-        this.route.queryParamMap.subscribe(params => {
-            this.code = params.get('code')
-            this.state = params.get('state')
-
-            if (this.verifyState()) {
-                this.verified = true;
-                this.backend.registerStripe(this.code)
-                .subscribe(profile => Object.assign(this.user$.profile, profile))
-            }
-        })
+        this.route.queryParamMap.pipe(
+            tap(params => {
+                this.code = params.get('code');
+                this.state = params.get('state');
+            }),
+            switchMap(_ => {
+                if (this.verifyState()) {
+                    this.verified = true;
+                    return this.backend.registerStripe(this.code);
+                }
+            }),
+            map(profile => Object.assign(this.user$.profile, profile)),
+            takeUntil(this.unsub$)
+        ).subscribe();
     }
 
     verifyState(): boolean {
-        return SHA256(this.user.toString(), environment.stripe.public_key).toString(enc.Hex) === this.state
+        return SHA256(this.user.toString(), environment.stripe.public_key).toString(Hex) === this.state
+    }
+
+    ngOnDestroy(): void {
+        this.unsub$.next();
+        this.unsub$.complete();
     }
 }

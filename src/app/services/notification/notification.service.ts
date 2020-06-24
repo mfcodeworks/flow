@@ -2,43 +2,44 @@ import { Injectable } from '@angular/core';
 import { PushService } from '../push/push.service';
 import { AuthService } from '../auth/auth.service';
 import { BackendService } from '../backend/backend.service';
-import { filter, tap, mergeMap } from 'rxjs/operators';
+import { filter, tap, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class NotificationService {
-    // DEBUG: Fix backend save token and subscribe topic
+    // DEBUG: Subscribe topic
 
     constructor(
         private push: PushService,
         private auth: AuthService,
         private backend: BackendService
-    ) {
-        // On new token, if token has value and user is logged in, save
-        push.token.pipe(
-            tap(token => console.log(`New FCM token ${token}`)),
-            filter(token => !!token),
-            filter(() => auth.loggedIn.value),
-            mergeMap(token => this.saveToken(token))
-        ).subscribe()
-
-        // On new login status, update token status
-        auth.loggedIn.pipe(
-            tap(l => console.log(`User Login Status Changed to ${l}`)),
-
-            // If token has no value we can't proceed
-            filter(() => !!push.token.value),
-
-            // Merge to backend call
-            mergeMap(l => l ? this.saveToken(push.token.value) : this.deleteToken(push.token.value))
-        ).subscribe()
-    }
+    ) {}
 
     // Init push services
-    init(): void {
-        return this.push.init()
+    async init(): Promise<void> {
+        // On new token, if token has value and user is logged in, save
+        this.push.token.pipe(
+            tap(token => console.log(`New FCM token ${token}`)),
+            filter(token => !!token),
+            filter(() => this.auth.loggedIn.value),
+            switchMap(t => this.saveToken(t))
+        ).subscribe();
+
+        // On new login status, update token status
+        this.auth.loggedIn.pipe(
+            // If token has no value we can't proceed
+            filter(() => !!this.push.token.value),
+            // Make to backend call
+            switchMap(l => l
+                ? this.saveToken(this.push.token.value)
+                : this.deleteToken(this.push.token.value)
+            )
+        ).subscribe();
+
+        // Init push service
+        this.push.init();
     }
 
     // Send to server to save token
@@ -47,7 +48,7 @@ export class NotificationService {
 
         // Send token to server
         return this.backend.saveFcm(token).pipe(
-            tap(() => console.log(`Saved FCM ${token}`))
+            tap(_ => console.log(`Saved FCM ${token}`))
         );
     }
 
@@ -57,7 +58,7 @@ export class NotificationService {
 
         // Send token to server
         return this.backend.deleteFcm(token).pipe(
-            tap(() => console.log(`Deleted FCM ${token}`))
+            tap(_ => console.log(`Deleted FCM ${token}`))
         );
     }
 

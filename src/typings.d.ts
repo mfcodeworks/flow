@@ -1,3 +1,5 @@
 interface Window {
-    require: NodeRequire;
+    push?: {
+        start: (token: string) => void
+    };
 }

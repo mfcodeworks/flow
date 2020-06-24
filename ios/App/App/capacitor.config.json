@@ -6,11 +6,25 @@
   "linuxAndroidStudioPath": "/opt/android-studio/bin/studio.sh",
   "windowsAndroidStudioPath": "C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe",
   "bundledWebRuntime": false,
-  "cordova": {},
   "server": {
     "hostname": "localhost",
     "iosScheme": "https",
-    "androidScheme": "https"
+    "androidScheme": "https",
+    "allowNavigation": [
+      "*.flow.ulfurmoon.com"
+    ]
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false,
+      "backgroundColor": "#000000"
+    },
+    "PushNotifications": {
+      "presentationOptions": [
+        "sound",
+        "alert"
+      ]
+    }
   },
   "android": {
     "webContentsDebuggingEnabled": true

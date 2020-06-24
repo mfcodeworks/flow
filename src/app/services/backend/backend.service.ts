@@ -4,9 +4,10 @@ import { catchError } from 'rxjs/operators';
 
 import { ApiService } from '../api/api.service';
 import { CacheService } from '../cache/cache.service';
-import { Profile } from '../../main/core/profile';
-import { Transaction } from '../../main/core/transaction';
-import { IOpenExchangeRates } from '../../main/core/open-exchange-rates';
+import { Profile } from '../../shared/core/profile';
+import { Transaction } from '../../shared/core/transaction';
+import { IOpenExchangeRates } from '../../shared/core/open-exchange-rates';
+import { UserTransactions } from '../../shared/core/user-transactions';
 
 @Injectable({
   providedIn: 'root'
@@ -58,7 +59,7 @@ export class BackendService {
     }
 
     // Get user transactions
-    getUserTransaction(): Observable<Transaction[]> {
+    getUserTransaction(): Observable<UserTransactions> {
         return this.api.getUserTransactions();
     }
 
@@ -117,8 +118,16 @@ export class BackendService {
         return this.api.unsubscribeFcm(token, topic);
     }
 
+    // Get Transaction
+    getTransaction(id: number): Observable<Transaction> {
+        return this.api.getTransaction(id);
+    }
+    getTransactionByIntent(intent: string): Observable<Transaction> {
+        return this.api.getTransactionByIntent(intent);
+    }
+
     // Get Profile
-    getProfile(id: number): Observable<Profile> {
+    getProfile(id: string | number): Observable<Profile> {
         return this.api.getProfile(id).pipe(
             catchError((error) => {
                 // Return from localStorage

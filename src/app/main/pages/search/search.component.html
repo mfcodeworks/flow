@@ -1,0 +1,45 @@
+<app-top-bar hasMenuButton=true hasQRButton=true></app-top-bar>
+<ion-progress-bar
+    color='danger'
+    *ngIf='loading$ | async'
+    type="indeterminate"
+></ion-progress-bar>
+
+<ion-content>
+    <div class='row'>
+        <div class='col-12 col-md-6'>
+            <div class='d-flex flex-column justify-content-start'>
+                <!-- Search Input -->
+                <ion-searchbar
+                    class='m-3'
+                    (ionChange)='onInput($event)'
+                    debounce='600'
+                    type="search"
+                    placeholder="Search"
+                    spellcheck='false'
+                    autofocus
+                ></ion-searchbar>
+
+                <!-- Display search results -->
+                <span *ngIf="!(profiles$ | async)?.length" class='mx-3'>
+                    <p class="mat-body error-placeholder">
+                        Haven't found anything yet&hellip;
+                    </p>
+                </span>
+                <ion-list class="mb-2">
+                    <ion-item *ngFor="let result of profiles$ | async">
+                        <hr/>
+                        <!-- <img matListAvatar [src]="result.profilePic" class="avatar"  [routerLink]="['/profile', result.username]"/> -->
+                        <h4 matLine [routerLink]="['/wallet', 'profile', result.username.indexOf(' ') >= 0 ? result.id : result.username]" class="mat-h3 ml-3">{{result.username}}</h4>
+                    </ion-item>
+                </ion-list>
+            </div>
+        </div>
+
+        <div class='col-12 col-md-6 d-none d-md-flex flex-column justify-content-center align-items-center'>
+            <div class='my-auto'>
+                <app-quotes></app-quotes>
+            </div>
+        </div>
+    </div>
+</ion-content>

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, of, BehaviorSubject, iif } from 'rxjs';
-import { map, filter, tap, mergeMap } from 'rxjs/operators';
+import { map, filter, tap, mergeMap, switchMap, take } from 'rxjs/operators';
 import { UserService } from '../user/user.service';
 import { CacheService } from '../cache/cache.service';
-import { Profile } from 'src/app/main/core/profile';
+import { Profile } from 'src/app/shared/core/profile';
 import { BackendService } from '../backend/backend.service';
 
 @Injectable({
@@ -18,19 +18,28 @@ export class AuthService {
         private router: Router,
         private cache: CacheService,
         private backend: BackendService
-    ) {
+    ) {}
+
+    async init(): Promise<boolean> {
         // On logged in status change update user
-        this.loggedIn.pipe(filter(l => !!l))
-        .subscribe(() => this.updateProfile().subscribe());
+        this.loggedIn.pipe(
+            // Only proceed on logged in true
+            filter(l => !!l),
+            // Update user profile
+            switchMap(() => this.updateProfile())
+        ).subscribe();
+
+        console.log('Attempting to load user');
 
         // On initial load attempt loading user
-        console.log('Attempting to load user');
-        this.user.loadCache()
-        .subscribe(u => u ? this.loggedIn.next(true) : router.navigate(['/authorize']))
+        return this.user.loadCache().pipe(
+            tap(u => this.loggedIn.next(!!u)),
+            take(1)
+        ).toPromise();
     }
 
     public isLoggedIn(): Observable<boolean> {
-        return of(!!this.user.token)
+        return of(!!this.user.token);
     }
 
     public hasSession(): Observable<boolean> {
@@ -47,18 +56,19 @@ export class AuthService {
 
     public authorize(passphrase: string): Observable<boolean> {
         console.log('Decode user with passphrase', passphrase);
+
         return this.cache.get('login', passphrase).pipe(
             tap(user => console.log('Attempting to save user:', user)),
             mergeMap(user =>
                 iif(
-                    () => !!user.token,
+                    () => !!user?.token,
                     of(true).pipe(
-                        tap(() => console.log('User exists, updating service')),
-                        tap(() => Object.assign(this.user, user)),
-                        tap(() => console.log('Service updated, fetching from backend')),
+                        tap(_ => console.log('User exists, updating service')),
+                        tap(_ => Object.assign(this.user, user)),
+                        tap(_ => console.log('Service updated, fetching from backend')),
                         mergeMap(() => this.updateProfile()),
-                        tap(() => console.log('Service updated', this.user)),
-                        tap(() => this.loggedIn.next(true)),
+                        tap(_ => console.log('Service updated', this.user)),
+                        tap(_ => this.loggedIn.next(true)),
                         map(() => true)
                     ),
                     of(false)
@@ -69,6 +79,7 @@ export class AuthService {
 
     public updateProfile(): Observable<Profile> {
         console.log('Updating profile');
+
         return this.backend.getUser().pipe(
             map(profile => Object.assign(this.user.profile, profile)),
             tap(u => this.user.profile$.next(u))
@@ -78,8 +89,8 @@ export class AuthService {
     public doSignOut(): void {
         this.cache.clear();
         this.loggedIn.next(false);
-        this.router.navigate(['/login']);
         this.user.destroy();
+        this.router.navigateByUrl('/login');
     }
 
     public getToken(): string {

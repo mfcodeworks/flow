@@ -1,11 +1,11 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { Profile } from '../../core/profile';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import { Profile } from '../../../shared/core/profile';
 import { UserService } from '../../../services/user/user.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BackendService } from 'src/app/services/backend/backend.service';
-import { map, catchError, tap } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject } from 'rxjs';
+import { tap, filter, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { ToastController } from '@ionic/angular';
 
 @Component({
     selector: 'app-user-settings',
@@ -13,7 +13,8 @@ import { BehaviorSubject } from 'rxjs';
     templateUrl: './user-settings.component.html',
     styleUrls: ['./user-settings.component.scss']
 })
-export class UserSettingsComponent implements OnInit {
+export class UserSettingsComponent implements OnInit, OnDestroy {
+    unsub$ = new Subject();
     user: Profile
     settingsForm: FormGroup
     processing: BehaviorSubject<boolean> = new BehaviorSubject(false)
@@ -22,7 +23,7 @@ export class UserSettingsComponent implements OnInit {
         private _user: UserService,
         private fb: FormBuilder,
         private _backend: BackendService,
-        public toast: MatSnackBar
+        public toast: ToastController
     ) {}
 
     ngOnInit() {
@@ -33,12 +34,13 @@ export class UserSettingsComponent implements OnInit {
             username: [this.user.username, Validators.required],
             password: [''],
             password_repeat: ['']
-        }, { validator: this.matchPasswords('password', 'password_repeat') });
+        }, {validator: this.matchPasswords('password', 'password_repeat')});
 
-        this._user.profile$.pipe(tap(u => console.log('New settings user:', u))).subscribe(u => this.settingsForm.patchValue(u));
-    }
-
-    ngAfterContentInit() {
+        this._user.profile$.pipe(
+            tap(u => console.log('New settings user:', u)),
+            filter(u => !!u),
+            takeUntil(this.unsub$)
+        ).subscribe(u => this.settingsForm.patchValue(u));
     }
 
     onSubmit(): void {
@@ -58,16 +60,25 @@ export class UserSettingsComponent implements OnInit {
         this._backend.updateUser(Object.assign({}, this.user, data)).pipe(
             tap(u => this._user.profile = u),
             tap(u => this._user.profile$.next(u)),
-            catchError(err => {
+            takeUntil(this.unsub$)
+        ).subscribe({
+            next: u => {
+                this.processing.next(false);
+                this.settingsForm.patchValue(u);
+                this.toast.create({
+                    header: 'Profile Successfully Updated',
+                    duration: 3000
+                }).then(t => t.present());
+            },
+            error: err => {
                 console.warn(err);
                 this.processing.next(false);
-                this.toast.open(`Profile Error: ${JSON.stringify(err)}`, 'close', { duration: 3000 });
+                this.toast.create({
+                    header: `Profile Error: ${JSON.stringify(err)}`,
+                    duration: 3000
+                }).then(t => t.present());
                 return err;
-            })
-        ).subscribe(u => {
-            this.processing.next(false);
-            this.settingsForm.patchValue(u);
-            this.toast.open('Profile Successfully Updated', 'close', { duration: 3000 });
+            }
         });
     }
 
@@ -102,5 +113,10 @@ export class UserSettingsComponent implements OnInit {
 
     prettyCapitalize(text: string) {
         return text[0].toUpperCase() + text.substring(1);
+    }
+
+    ngOnDestroy(): void {
+        this.unsub$.next();
+        this.unsub$.complete();
     }
 }

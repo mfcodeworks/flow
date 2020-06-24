@@ -1,0 +1,29 @@
+<ion-header id='topbar' #topbar>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-toggle id='main-menu-toggle' menu='dir' *ngIf='hasMenuButton'>
+                <ion-button><ion-icon slot='icon-only' name="menu-outline"></ion-icon></ion-button>
+            </ion-menu-toggle>
+
+            <ng-content select='[start]'></ng-content>
+        </ion-buttons>
+
+        <ion-buttons slot="end">
+            <ng-container *ngIf='hasQRButton'>
+                <ion-button (click)='scanQR()'>
+                    <ion-icon slot='icon-only' class='fas fa-qrcode'></ion-icon>
+                </ion-button>
+
+                <ion-input #qrFile
+                    id='qrFile'
+                    type="file"
+                    accept="image/*"
+                    (ionChange)="qrScan('photo')">
+                </ion-input>
+                <canvas #qrFileCanvas id='qrFileCanvas'></canvas>
+            </ng-container>
+
+            <ng-content select='[end]'></ng-content>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>

@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { UserService } from '../../../../services/user/user.service';
-import { tap, mergeMap } from 'rxjs/operators';
+import { tap, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
 import { CacheService } from '../../../../services/cache/cache.service';
+import { ModalController } from '@ionic/angular';
+import { Subject } from 'rxjs';
 
 export interface EncryptLoginDialogData {
     encrypt: boolean;
@@ -14,21 +15,22 @@ export interface EncryptLoginDialogData {
     templateUrl: './encrypt-login-dialog.component.html',
     styleUrls: ['./encrypt-login-dialog.component.scss']
 })
-export class EncryptLoginDialogComponent implements OnInit {
+export class EncryptLoginDialogComponent implements OnInit, OnDestroy {
+    unsub$ = new Subject();
     encryptForm: FormGroup
 
     constructor(
         private fb: FormBuilder,
         private _user: UserService,
         private _cache: CacheService,
-        public dialogRef: MatDialogRef<EncryptLoginDialogData>
+        public dialogRef: ModalController
     ) { }
 
     ngOnInit() {
         this.encryptForm = this.fb.group({
             password: ['', Validators.required],
             password_repeat: ['', Validators.required]
-        }, { validator: this.matchPasswords('password', 'password_repeat') });
+        }, {validator: this.matchPasswords('password', 'password_repeat')});
     }
 
     matchPasswords(control1: string, control2: string) {
@@ -42,18 +44,16 @@ export class EncryptLoginDialogComponent implements OnInit {
             }
 
             // set error on matchingControl if validation fails
-            if (control.value !== matchingControl.value) {
-                matchingControl.setErrors({ mismatch: true });
-            } else {
-                matchingControl.setErrors(null);
-            }
+            control.value !== matchingControl.value
+                ? matchingControl.setErrors({mismatch: true})
+                : matchingControl.setErrors(null);
         };
     }
 
     getErrors(control: string) {
         switch (true) {
             case this.encryptForm.get(control).hasError('required'):
-                return `${this.prettyCapitalize(control)} is required`;
+                return `${this.prettyCapitalize(control)} required`;
 
             case this.encryptForm.get(control).hasError('mismatch'):
                 return `Passwords must match`;
@@ -61,7 +61,7 @@ export class EncryptLoginDialogComponent implements OnInit {
     }
 
     onNoClick(): void {
-        this.dialogRef.close(false);
+        this.close(false);
     }
 
     onSuccess(): void {
@@ -74,20 +74,32 @@ export class EncryptLoginDialogComponent implements OnInit {
         // Encrypt login
         this._user.cacheUser(this.encryptForm.get('password').value).pipe(
             tap(console.log),
-            mergeMap(() => this._cache.store('encrypt-login', true))
+            switchMap(() => this._cache.store('encrypt-login', true)),
+            takeUntil(this.unsub$)
         ).subscribe(
-            () => this.dialogRef.close(true),
+            () => this.close(true),
             err => {
                 console.warn('Encrypt Login Error:', err);
                 // Ensure unencrypted login
                 this._user.cacheUser().pipe(
-                    mergeMap(() => this._cache.store('encrypt-login', false))
-                ).subscribe(() => this.dialogRef.close(false));
+                    mergeMap(() => this._cache.store('encrypt-login', false)),
+                    tap(() => this.close(false)),
+                    takeUntil(this.unsub$)
+                ).subscribe();
             }
         )
     }
 
     prettyCapitalize(text: string) {
         return text[0].toUpperCase() + text.substring(1);
+    }
+
+    close(encrypt = false): void {
+        this.dialogRef.dismiss({encrypt});
+    }
+
+    ngOnDestroy(): void {
+        this.unsub$.next();
+        this.unsub$.complete();
     }
 }

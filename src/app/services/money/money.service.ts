@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import Decimal from 'decimal.js';
-import * as fx from 'money';
-import { CurrencyDecimalPlaces } from '../../main/core/currency-decimal-places.enum';
-import { BackendService } from '../backend/backend.service';
-import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { IOpenExchangeRates } from '../../main/core/open-exchange-rates';
+import { map } from 'rxjs/operators';
+import Big from 'big.js';
+import * as fx from 'money';
+import { CurrencyDecimalPlaces } from '../../shared/core/currency-decimal-places.enum';
+import { BackendService } from '../backend/backend.service';
+import { IOpenExchangeRates } from '../../shared/core/open-exchange-rates';
 
 @Injectable({
     providedIn: 'root'
@@ -28,12 +28,28 @@ export class MoneyService {
 
     // Compress format to decimal amount
     compress(amount: number, currency: string): number {
-        return new Decimal(amount).div(new Decimal(10).pow(CurrencyDecimalPlaces[currency.toUpperCase()])).toNumber();
+        // Return number
+        return parseFloat(
+            // Take amount
+            new Big(amount)
+            // Convert to base to decimal (Based on currency, default 2 decimals)
+            .div(new Big(10).pow(CurrencyDecimalPlaces[currency.toUpperCase()] || 2))
+            // Return big.js string
+            .toPrecision()
+        );
     }
 
     // Uncompress format to base denomination
     uncompress(amount: number, currency: string): number {
-        return new Decimal(amount).times(new Decimal(10).pow(CurrencyDecimalPlaces[currency.toUpperCase()])).toNumber();
+        // Return number
+        return parseFloat(
+            // Take amount
+            new Big(amount)
+            // Convert to base (Based on currency, default from 2 decimals)
+            .times(new Big(10).pow(CurrencyDecimalPlaces[currency.toUpperCase()] || 2))
+            // Return number
+            .toPrecision()
+        );
     }
 
     // Take a base currency and convert to a secondary currency
@@ -42,7 +58,7 @@ export class MoneyService {
             // Compress in base currency, convert to fx and uncompress using fx
             map(() => Math.round(
                 this.uncompress(
-                    fx(this.compress(amount, from)).convert({ from: from.toUpperCase(), to: to.toUpperCase() }),
+                    fx(this.compress(amount, from)).convert({from: from.toUpperCase(), to: to.toUpperCase()}),
                     from
                 )
             ))

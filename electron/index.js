@@ -1,6 +1,13 @@
-const { app, BrowserWindow, Menu } = require('electron');
+// @ts-nocheck
+const {
+  app,
+  BrowserWindow,
+  Menu,
+  Tray
+} = require('electron');
 const isDevMode = require('electron-is-dev');
 const { CapacitorSplashScreen, configCapacitor } = require('@capacitor/electron');
+const { setup: setupPushReceiver } = require('electron-push-receiver');
 
 const path = require('path');
 
@@ -10,23 +17,42 @@ let mainWindow = null;
 // Placeholder for SplashScreen ref
 let splashScreen = null;
 
-//Change this if you do not wish to have a splash screen
+// Placeholder for Tray ref
+let tray = null;
+
+// Placeholder for quitting
+let quitting = false;
+
+// Change this if you do not wish to have a splash screen
 let useSplashScreen = true;
 
 // Create simple menu for easy devtools access, and for demo
-const menuTemplateDev = [
-  {
-    label: 'Options',
-    submenu: [
-      {
-        label: 'Open Dev Tools',
-        click() {
-          mainWindow.openDevTools();
-        },
+const menuTemplateDev = [{
+  label: 'Options',
+  submenu: [
+    {
+      label: 'Open Dev Tools',
+      click() {
+        mainWindow.openDevTools();
       },
-    ],
-  },
-];
+    },
+  ],
+}];
+
+// Create tray menu
+const contextMenu = Menu.buildFromTemplate([{
+  label: 'Open',
+  click: () => mainWindow.show()
+}, {
+  label: 'Quit',
+  click: () => {
+    quitting = true;
+    app.quit();
+  }
+}])
+
+// Set icon
+const icon = path.join(__dirname, 'app', 'assets', 'icons', 'icon-512x512.png');
 
 async function createWindow () {
   // Define our main window size
@@ -34,37 +60,89 @@ async function createWindow () {
     height: 920,
     width: 1600,
     show: false,
+    icon: icon,
+    title: 'Flow',
     webPreferences: {
-      nodeIntegration: true,
-      preload: path.join(__dirname, 'node_modules', '@capacitor', 'electron', 'dist', 'electron-bridge.js')
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js')
     }
   });
 
+  // Do setups
   configCapacitor(mainWindow);
+  setupPushReceiver(mainWindow.webContents);
 
+  // Set tray icon
+  tray = new Tray(icon);
+  tray.setToolTip('Flow');
+  tray.setContextMenu(contextMenu);
+  tray.setIgnoreDoubleClickEvents(true);
+  tray.on('click', _ =>
+      mainWindow.isVisible()
+        ? mainWindow.hide()
+        : mainWindow.show()
+  );
+
+  // Set our above template to the Menu Object if we are in development mode, dont want users having the devtools.
   if (isDevMode) {
-    // Set our above template to the Menu Object if we are in development mode, dont want users having the devtools.
     Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplateDev));
-    // If we are developers we might as well open the devtools by default.
     mainWindow.webContents.openDevTools();
   }
 
   if(useSplashScreen) {
     splashScreen = new CapacitorSplashScreen(mainWindow);
-    splashScreen.init(false);
+    splashScreen.init();
   } else {
     mainWindow.loadURL(`file://${__dirname}/app/index.html`);
     mainWindow.webContents.on('dom-ready', () => {
+      mainWindow.webContents.send('window-id', mainWindow.id);
       mainWindow.show();
     });
   }
 
+  mainWindow.on('minimize', (e) => {
+    e.preventDefault();
+    mainWindow.hide();
+  });
+
+  // Emitted when the window is closed.
+  mainWindow.on('close', (e) => {
+    if (!quitting) {
+      e.preventDefault();
+      mainWindow.hide();
+    }
+
+    return false;
+  });
+
 }
+
+// Force single instance
+if (!app.requestSingleInstanceLock() || require('electron-squirrel-startup')) {
+  app.quit();
+}
+
+app.on('second-instance', (event, argv, cwd) => {
+  if (mainWindow) {
+    mainWindow.show();
+
+    if (mainWindow.isMinimized())
+      mainWindow.restore();
+
+    mainWindow.focus();
+  }
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some Electron APIs can only be used after this event occurs.
 app.on('ready', createWindow);
+
+// Remove menu from all new windows including modals
+app.on('browser-window-created', (e,window) => {
+  window.removeMenu();
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -80,7 +158,10 @@ app.on('activate', function () {
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
     createWindow();
+  } else {
+    mainWindow.show();
   }
 });
 
-// Define any IPC or other custom functionality below here
+// Configure auto-update
+require('update-electron-app')();

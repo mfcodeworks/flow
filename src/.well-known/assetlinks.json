@@ -1,0 +1,8 @@
+[{
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target" : {
+        "namespace": "android_app",
+        "package_name": "com.ulfurmoon.flow",
+        "sha256_cert_fingerprints": ["85:8F:C7:7C:0D:40:93:BC:39:66:60:CC:A2:1F:91:99:85:EB:C9:7B:2C:45:BC:B7:23:B0:BD:49:FD:4D:8B:36"]
+    }
+}]

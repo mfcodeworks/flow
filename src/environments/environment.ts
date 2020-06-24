@@ -7,7 +7,7 @@ export const environment = {
 
     // API: Server URL
     apiUrl: 'https://api.wallet.nygmarosebeauty.com/api/v1',
-    appUrl: 'https://wallet.nygmarosebeauty.com',
+    appUrl: 'https://flow.mfcodeworks.com',
 
     // API: Exchange Rates API
     fx: {
@@ -38,7 +38,6 @@ export const environment = {
         iconColor: 'black',
         icon: 'assets/images/logo',
         channels: {
-            'PushPluginChannel': 'Miscellaneous',
             'transfers': 'Transfers',
             'payouts': 'Withdrawls',
             'payment_methods': 'Payment Sources'
@@ -74,4 +73,4 @@ export const environment = {
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.
+import 'zone.js/dist/zone-error';  // Included with Angular CLI.

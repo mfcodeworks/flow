@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { map, retry, catchError, publishReplay, refCount } from 'rxjs/operators';
+import { retry, catchError, publishReplay, refCount } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { Profile } from '../../main/core/profile';
-import { Transaction } from '../../main/core/transaction';
-import { IOpenExchangeRates } from '../../main/core/open-exchange-rates';
+import { Profile } from '../../shared/core/profile';
+import { Transaction } from '../../shared/core/transaction';
+import { IOpenExchangeRates } from '../../shared/core/open-exchange-rates';
+import { UserTransactions } from '../../shared/core/user-transactions';
+import { ToastController } from '@ionic/angular';
 
 const API_URL = environment.apiUrl;
 
@@ -17,7 +18,7 @@ const API_URL = environment.apiUrl;
 export class ApiService {
     constructor(
         private http: HttpClient,
-        public errorToast: MatSnackBar
+        public toast: ToastController
     ) {}
 
     // API: Sign Up User
@@ -176,9 +177,9 @@ export class ApiService {
     }
 
     // API: Get user transactions
-    getUserTransactions(): Observable<Transaction[]> {
+    getUserTransactions(): Observable<UserTransactions> {
         return this.http
-        .get<Transaction[]>(`${API_URL}/transaction`).pipe(
+        .get<UserTransactions>(`${API_URL}/transaction`).pipe(
             retry(1),
             catchError((error) => this.handleError(error))
         );
@@ -227,6 +228,24 @@ export class ApiService {
         );
     }
 
+    // API: Get Transaction
+    getTransaction(id: number): Observable<Transaction> {
+        return this.http
+        .get<Transaction>(`${API_URL}/transaction/${id}`)
+        .pipe(
+            retry(1),
+            catchError((error) => this.handleError(error))
+        );
+    }
+    getTransactionByIntent(intent: string): Observable<Transaction> {
+        return this.http
+        .get<Transaction>(`${API_URL}/transaction/intent/${intent}`)
+        .pipe(
+            retry(1),
+            catchError((error) => this.handleError(error))
+        );
+    }
+
     // API: Get PaymentIntent
     getIntent(for_user_id: number, nonce: string): Observable<any> {
         return this.http
@@ -264,14 +283,23 @@ export class ApiService {
     }
 
     // API: Get Profile
-    getProfile(id: number): Observable<Profile> {
+    getProfile(id: string | number): Observable<Profile> {
         return this.http
         .get<Profile>(`${API_URL}/profile/${id}`).pipe(
             publishReplay(),
             refCount(),
             retry(1),
-            catchError((error) => this.handleError(error)),
-            map(profile => new Profile(profile))
+            catchError((error) => this.handleError(error))
+        );
+    }
+
+    getProfileByName(name: string): Observable<Profile> {
+        return this.http
+        .get<Profile>(`${API_URL}/profile/${name}`).pipe(
+            publishReplay(),
+            refCount(),
+            retry(1),
+            catchError((error) => this.handleError(error))
         );
     }
 
@@ -332,9 +360,10 @@ export class ApiService {
     // Success handling
     handleSuccess(message: string) {
         // Open snackbar
-        this.errorToast.open(message, 'close', {
+        this.toast.create({
+            header: message,
             duration: 3000
-        });
+        }).then(t => t.present());
     }
 
     // Error handling
@@ -343,14 +372,13 @@ export class ApiService {
         console.warn(error);
 
         // Set error message
-        if (!!error.error.error) errorMessage = `${error.error.error}`;
-        // else if (!!error.error) errorMessage = `(${error.status}) Message: ${error.error}`;
-        else errorMessage = `(${error.status}) Message: ${error.statusText}`
+        errorMessage = `(${error.status}) Message: ${error.error.message || error.statusText}`
 
         // Open error snackbar
-        this.errorToast.open(errorMessage, 'close', {
+        this.toast.create({
+            header: errorMessage,
             duration: 3000
-        });
+        }).then(t => t.present());
 
         return throwError(errorMessage);
     }

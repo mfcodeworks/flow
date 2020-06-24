@@ -11,4 +11,4 @@ if (environment.production) {
 
 platformBrowserDynamic().bootstrapModule(AppModule)
     .then(() => defineCustomElements(window))
-    .catch(err => console.error);
+    .catch(console.error);

@@ -1,0 +1,57 @@
+<app-top-bar hasMenuButton=true hasQRButton=true></app-top-bar>
+
+<ion-content>
+    <!-- Sign In Form -->
+    <form [formGroup]="registerForm" class="d-flex flex-column h-100 pb-3 mx-3" (ngSubmit)="doRegister()">
+        <!-- Branding -->
+        <div class="branding logo logo-branded w-100 m-auto"></div>
+
+        <ion-list class='m-auto' color='dark' inset>
+            <ion-item class="form-group m-auto">
+                <ion-icon class="ml-3 ti-user form-ion-input-prefix"></ion-icon>
+                <ion-input class='ml-3' formControlName="username" placeholder="Username"></ion-input>
+            </ion-item>
+
+            <ion-item class="form-group m-auto">
+                <ion-icon class="ml-3 ti-email form-ion-input-prefix"></ion-icon>
+                <ion-input class='ml-3' formControlName="email" type="email" placeholder="Email" email></ion-input>
+            </ion-item>
+
+            <ion-item class="form-group m-auto">
+                <ion-icon class="ml-3 ti-lock form-ion-input-prefix"></ion-icon>
+                <ion-input class='ml-3' formControlName="password" placeholder="Enter your password" [type]="(hide$ | async) ? 'password' : 'text'"></ion-input>
+                <button class='transparent' (click)="hide$.next(!hide$.value)" type="button" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide$ | async">
+                    <ion-icon color='dark' [name]='(hide$ | async) ? "eye-outline" : "eye-off-outline"'></ion-icon>
+                </button>
+            </ion-item>
+
+            <ion-item class="form-group m-auto">
+                <ion-icon class="ml-3 ti-lock form-ion-input-prefix"></ion-icon>
+                <ion-input class='ml-3' formControlName="password2" placeholder="Enter matching password" [type]="(hide$ | async) ? 'password' : 'text'"></ion-input>
+                <button class='transparent' (click)="hide$.next(!hide$.value)" type="button" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide$ | async">
+                    <ion-icon color='dark' [name]='(hide$ | async) ? "eye-outline" : "eye-off-outline"'></ion-icon>
+                </button>
+            </ion-item>
+        </ion-list>
+
+        <span class="mb-4 text-center w-100">
+            <ion-text color='danger' *ngIf="registerForm.controls['password'].invalid">{{ getErrors('password2') }}</ion-text>
+            <ion-text color='danger' *ngIf="globalError$ | async; let g" [innerHTML]="g"></ion-text>
+        </span>
+
+        <div class="justify-content-center d-flex form-group mx-auto">
+            <ion-button color="primary" type="submit" [disabled]="processing$ | async">
+                Register
+                <i *ngIf="processing$ | async" class="ml-2 fas fa-circle-notch fa-spin"></i>
+            </ion-button>
+        </div>
+
+        <p class="text-center m-auto">
+            <ion-text color='dark'>
+                By registering with NR Escape you agree to our
+                <a routerLink="/privacy-policy">Privacy Policy</a> and
+                <a routerLink="/terms-and-conditions">Terms & Conditions</a>
+            </ion-text>
+        </p>
+    </form>
+</ion-content>

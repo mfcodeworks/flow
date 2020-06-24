@@ -8,11 +8,8 @@ import {
     PushNotificationActionPerformed
 } from '@capacitor/core';
 import { BehaviorSubject } from 'rxjs';
-
-import { environment } from '../../../environments/environment';
-import { IpcService } from '../ipc/ipc.service';
-import * as ipcChannels from 'electron-push-receiver/src/constants';
 import { mergeMapTo, tap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 const { PushNotifications, Device } = Plugins;
 
@@ -21,14 +18,16 @@ const { PushNotifications, Device } = Plugins;
 })
 export class PushService {
     token: BehaviorSubject<string> = new BehaviorSubject('')
+    electronStartPush: any;
 
     constructor(
-        private ipc: IpcService,
         private platform: Platform,
         private fire: AngularFireMessaging
-    ) {}
+    ) {
+        this.electronStartPush = window?.push?.start;
+    }
 
-    init(): void {
+    async init(): Promise<void> {
         console.log('Running FCM init');
 
         // DEBUG: Log device
@@ -49,8 +48,21 @@ export class PushService {
 
     // Default Non-Electron Init
     defaultInit() {
-        // Register with Apple / Google to receive push via APNS/FCM
-        PushNotifications.register();
+        // Register with Apple/Google to receive push via APNS/FCM
+        PushNotifications.requestPermission().then(({granted}) => {
+            granted && PushNotifications.register();
+
+            // Set channels
+            for (const [id, description] of Object.entries(environment.fcm.channels)) {
+                PushNotifications.createChannel({
+                    description,
+                    id,
+                    importance: 5, // High priority
+                    name: description,
+                    visibility: -1 // Secret
+                });
+            }
+        });
 
         // On success, we should be able to receive notifications
         PushNotifications.addListener('registration', (token: PushNotificationToken) => {
@@ -116,52 +128,59 @@ export class PushService {
 
     // Register push for electron
     electronInit(): void {
-        // Handle push registration
-        this.ipc.on(ipcChannels.NOTIFICATION_SERVICE_STARTED, (_, token) => {
-            console.log('Push service successfully started', token);
-            this.token.next(token);
-        });
 
-        // Handle push errors
-        this.ipc.on(ipcChannels.NOTIFICATION_SERVICE_ERROR, (_, error) => {
-            console.warn('Push notification error', error);
-        });
-
-        // Send token to backend when updated
-        this.ipc.on(ipcChannels.TOKEN_UPDATED, (_, token) => {
-            console.log('Push token updated', token);
-            this.token.next(token);
-        });
-
-        // Display notification
-        this.ipc.on(ipcChannels.NOTIFICATION_RECEIVED, (_, fcmNotification) => {
-            // DEBUG: Log notification
-            console.log('Notification', fcmNotification);
-
-            // Check notification for display title
-            if (fcmNotification.notification.title || fcmNotification.notification.body) {
-                Notification.requestPermission().then(p => {
-                    if (p !== 'granted') {
-                        return;
-                    }
-
-                    const notification = new Notification(fcmNotification.notification.title, {
-                        body: fcmNotification.notification.body || '',
-                        icon: fcmNotification.notification.icon || 'assets/icons/icon-128x128.png'
-                    });
-
-                    notification.onclick = () => {
-                        console.log('Notification clicked');
-                    };
-                });
+        window.addEventListener('message', ({ data }) => {
+            if ((data?.type as string)?.indexOf('push:') === -1) {
                 return;
             }
 
-            // Payload has no body, so consider it silent (just consider the data portion)
-        });
+            const { type, token, error, notif } = data;
+
+            switch (type) {
+                case 'push:start':
+                    console.log('Push service successfully started', token);
+                    this.token.next(token);
+                    break;
+
+                case 'push:error':
+                    console.warn('Push notification error', error);
+                    break;
+
+                case 'push:updated':
+                    console.log('Push token updated', token);
+                    this.token.next(token);
+                    break;
+
+                case 'push:notification':
+                    // DEBUG: Log notification
+                    console.log('Notification', notif);
+
+                    // Check notification for display title
+                    if (notif.notification.title || notif.notification.body) {
+                        Notification.requestPermission().then(p => {
+                            if (p !== 'granted') {
+                                return;
+                            }
+
+                            const notification = new Notification(notif.notification.title, {
+                                body: notif.notification.body || '',
+                                icon: notif.notification.icon || 'assets/icons/icon-128x128.png'
+                            });
+
+                            notification.onclick = () => {
+                                console.log('Notification clicked');
+                            };
+                        });
+                        return;
+                    }
+
+                    // Payload has no body, so consider it silent (just consider the data portion)
+                    break;
+            }
+        }, false);
 
         // Start service
         console.log('Starting Electron push');
-        this.ipc.send(ipcChannels.START_NOTIFICATION_SERVICE, environment.firebase.messagingSenderId);
+        this.electronStartPush(environment.firebase.messagingSenderId);
     }
 }

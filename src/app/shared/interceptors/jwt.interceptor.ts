@@ -6,7 +6,7 @@ import {
     HttpInterceptor
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { AuthService } from '../../services/auth/auth.service';
 import { environment } from '../../../environments/environment';
 
@@ -19,6 +19,7 @@ export class JwtInterceptor implements HttpInterceptor {
         // Only add auth to requests for our API
         return request.url.startsWith(environment.apiUrl)
             ? this.auth.isLoggedIn().pipe(
+                // Add token based on logged in status
                 map(u => !!this.auth.getToken() ? `Bearer ${this.auth.getToken()}` : ''),
                 map((Authorization: string) =>
                     request.clone(Authorization ? {
@@ -26,7 +27,8 @@ export class JwtInterceptor implements HttpInterceptor {
                         withCredentials: true
                     } : undefined)
                 ),
-                mergeMap(r => next.handle(r))
+                switchMap(r => next.handle(r))
+            // Forward non-API requests as default
             ) : next.handle(request);
     }
 }
