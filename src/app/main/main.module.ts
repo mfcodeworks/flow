@@ -34,7 +34,8 @@ import { AddPaymentSourceDialogComponent } from './components/add-payment-source
         SharedModule,
         OverlayModule,
         ReactiveFormsModule,
-        Routing
+        Routing,
+        IonicModule.forRoot()
     ],
     declarations: [
         BalanceDisplayComponent,
